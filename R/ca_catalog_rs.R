@@ -20,7 +20,7 @@ ca_catalog_rs <- function(download = FALSE, cache = download, quiet = FALSE) {
   ## If cache = TRUE, saves the results to disk in the package 'data' folder
 
   ## TODO
-  ## ask S&B when to invalidate the cache RasterSeries
+  ## ask S&B when to invalidate the cache Raster Series
 
   ## Define some constants
   rs_csv_fn <- "ca_catalog_rs.csv"
