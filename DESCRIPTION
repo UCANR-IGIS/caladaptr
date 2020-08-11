@@ -1,0 +1,29 @@
+Package: caladaptr
+Type: Package
+Title: Import and Use Cal-Adapt Data in R via the API
+Version: 0.2.2
+Date: 2020-08-08
+Author: Andy Lyons
+Maintainer: Andy Lyons <caladaptr@gmail.com>
+BugReports: caladaptr@gmail.com
+Description: Provides base functions for importing data from 
+    Cal-Adapt.org through the API.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    httr,
+    assertthat,
+    sf,
+    tibble,
+    units,
+    purrr,
+    dplyr,
+    magrittr,
+    crayon,
+    jsonlite
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat
+Depends: 
+    R (>= 2.10)
