@@ -7,10 +7,15 @@
 #' @param quiet Suppress messages
 #'
 #' @details
+#' This retrieves a copy of the raster series available through the Cal-Adapt API.
+#' To download a new copy, use \code{download = TRUE}. This is only needed when new
+#' datasets are added to the API (subscribe to the Cal-Adapt news letter for notifications).
+#'
+#' @return A data frame with raster series.
 #'
 #' @importFrom crayon bold yellow
 #' @importFrom httr GET content content_type_json
-#' @importFrom utils txtProgressBar setTxtProgressBar
+#' @importFrom utils txtProgressBar setTxtProgressBar head read.csv write.csv
 #'
 #' @export
 

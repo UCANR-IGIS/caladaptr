@@ -4,7 +4,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(ca_climvar)
+#' @usage data(climvars)
 #'
 #' @format An character vector with three abbreviated names of carbon emissions scenarios
 #'
@@ -16,8 +16,8 @@
 #'
 #' \code{tasmin}: Minimum Temperature (historical values from UW Hydro and forecast values from LOCA downscaled climate projections)
 #'
-#' \code{precip}: Precipitation (historical values from UW Hydro and forecast values from LOCA downscaled climate projections)
+#' \code{pr}: Precipitation (historical values from UW Hydro and forecast values from LOCA downscaled climate projections)
 #'
 #' @source \url{https://berkeley-gif.github.io/caladapt-docs/data-catalog.html#climate-variables}
-"ca_climvar"
+"climvars"
 

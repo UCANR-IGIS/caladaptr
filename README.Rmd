@@ -22,19 +22,17 @@ knitr::opts_chunk$set(
 
 ## Installation
 
-Currently, caladaptr is hosted on [GitHub](https://github.com/UCANR-IGIS/caladaptr){target="_blank" rel="noopener"} in a private repository. To install it, you need to i) be added to the repo as a collaborator (contact Andy Lyons or Shane Feirer), and ii) generate a [personal access token](https://github.com/settings/tokens){target="_blank" rel="noopener"} for yourself. A personal access token is a bit like a password, which you feed into the 'install_github' as shown below.
+`caladaptr` is hosted on [GitHub](https://github.com/UCANR-IGIS/caladaptr){target="_blank" rel="noopener"}. To install it, you need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} installed.
 
-
-```
+```{r install_caladaptr, eval = FALSE}
 library(devtools)
-install_github("UCANR-IGIS/caladaptr", auth_token = "insert-your-token-here")
+devtools::install_github("UCANR-IGIS/caladaptr")
 ```
 
 ## Usage
 
 ```{r example}
 library(caladaptr)
-## basic example code
 ```
 
 

@@ -4,7 +4,12 @@
 \alias{ca_getvals}
 \title{Get values from an API request object}
 \usage{
-ca_getvals(x)
+ca_getvals(x, quiet = FALSE)
+}
+\arguments{
+\item{x}{A Cal-Adapt API request}
+
+\item{quiet}{Suppress messages}
 }
 \description{
 Get values from an API request object

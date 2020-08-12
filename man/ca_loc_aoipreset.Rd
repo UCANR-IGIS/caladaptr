@@ -4,7 +4,13 @@
 \alias{ca_loc_aoipreset}
 \title{Adds a preset location to a Cal-Adapt API request}
 \usage{
-ca_loc_aoipreset(x = ca_apireq(), type, idfld = "id", idval = NULL)
+ca_loc_aoipreset(
+  x = ca_apireq(),
+  type,
+  idfld = "id",
+  idval = NULL,
+  stat = "mean"
+)
 }
 \arguments{
 \item{x}{A Cal-Adapt API request}
@@ -14,21 +20,28 @@ ca_loc_aoipreset(x = ca_apireq(), type, idfld = "id", idval = NULL)
 \item{idfld}{The name of the field that identifies the desired locations}
 
 \item{idval}{The value(s) of idfld}
+
+\item{stat}{The summary statistic(s) to retrieve for the pixels that call within the AOI}
 }
 \description{
 Adds a preset location to a Cal-Adapt API request
 }
 \details{
 \code{type} specifies one of the preset areas of interest supported by the Cal-Adapt API.
-For valid values, view the built-in constant \code{ca_aoipreset}.
+For valid values, view the built-in constant \code{aoipreset_types}.
 
 \code{idfld} is the field which contains the values you want to use to select the
 preset areas. For a list of fields you can use for each AOI preset, see the built-in list
-\code{ca_aoipreset_idfld}.
+\code{ca_aoipreset_idflds}.
 
 \code{idval} are the value(s) you can use to select specific areas of interest. For a list
-of values, see the builtin list \code{ca_aoipreset_idval}. If \code{idval = NULL}, all
+of values, see the built-in list \code{ca_aoipreset_idval}. If \code{idval = NULL}, all
 areas will be used.
+
+\code(stat) is the name(s) of summary statistic(s) to compute from the pixels that fall within the
+area of interest. Values can be \code{max}, \code{mean}, \code{median}, \code{min}, and \code{sum}.
+Defaults to \code{mean}. To get retrieve raw values for all pixels without a summary, use
+the \code{ca_getrst} function.
 }
 \seealso{
 \code{\link{ca_apireq}}

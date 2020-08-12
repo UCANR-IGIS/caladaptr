@@ -1,22 +1,29 @@
-#' Temporal aggregation periods
+#' Assign temporal aggregation period to a Cal-Adapt API call
 #'
-#' Temporal aggregation periods for raster series
+#' Specifies the temporal aggregation periond a Cal-Adapt API call should retrieve
 #'
-#' @docType data
+#' @param x Cal-Adapt API request
+#' @param period Period of temporal aggregation
 #'
-#' @usage data(ca_period)
+#' @details
+#' For valid options for \code{period}, run \code{\link{periods}}.
 #'
-#' @format An character vector with three names of temporal aggregation periods
+#' Notes:
 #'
-#' @keywords datasets
-#'
-#' @details The following temporal aggregation periods for raster series are available thru the Cal-Adapt API.
-#'
-#' \code{year}: Annual averages
-#'
-#' \code{month}: Monthly averages
-#'
-#' \code{day}: Daily values
-#'
-#' @source \url{https://berkeley-gif.github.io/caladapt-docs/data-catalog.html#period}
-"ca_period"
+#' @export
+
+ca_period <- function(x = ca_apireq(), period) {
+
+  if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
+
+  if (FALSE %in% (period %in% periods)) {
+    stop(paste0("Unknown value(s) in period: ",
+                paste0(period[!period %in% periods], collapse = ", " ), ". Run `periods` for valid values."))
+  }
+
+  x$period <- period
+  invisible(x)
+
+}
+
+

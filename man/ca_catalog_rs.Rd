@@ -13,9 +13,14 @@ ca_catalog_rs(download = FALSE, cache = download, quiet = FALSE)
 
 \item{quiet}{Suppress messages}
 }
+\value{
+A data frame with raster series.
+}
 \description{
 Get the Cal-Adapt raster series data catalog
 }
 \details{
-
+This retrieves a copy of the raster series available through the Cal-Adapt API.
+To download a new copy, use \code{download = TRUE}. This is only needed when new
+datasets are added to the API (subscribe to the Cal-Adapt news letter for notifications).
 }

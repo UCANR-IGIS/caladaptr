@@ -2,10 +2,21 @@
 % Please edit documentation in R/ca_dataset.R
 \name{ca_dataset}
 \alias{ca_dataset}
-\title{Specifies the location based on a sf object}
+\title{Assigns a dataset to a Cal-Adapt API call}
 \usage{
-ca_dataset(x, ds = "scripps_loca", gcm, sc)
+ca_dataset(x = ca_apireq(), gcm, scenario)
+}
+\arguments{
+\item{x}{Cal-Adapt API request}
+
+\item{gcm}{the name of a supported GCM}
+
+\item{scenario}{the name of an emissions scenario}
 }
 \description{
-Specifies the location based on a sf object
+Specifies a dataset to a Cal-Adapt API call
+}
+\details{
+For valid options for \code{gcm} and \code{scenario}, see the
+built-in constants \code{\link{gcms}} and \code{\link{scenarios}}.
 }

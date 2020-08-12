@@ -6,7 +6,7 @@
 #' @param cvar Climate variable
 #'
 #' @details
-#' For valid options for \code{cvar}, see \code{ca_climvar}.
+#' For valid options for \code{cvar}, see \code{\link{climvars}}.
 #'
 #' Notes:
 #'
@@ -23,7 +23,10 @@ ca_cvar <- function(x = ca_apireq(), cvar) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
 
-  if (FALSE %in% (cvar %in% ca_climvar)) stop("unknown value in cvar")
+  if (FALSE %in% (cvar %in% climvars)) {
+    stop(paste0("Unknown value(s) in period: ",
+                paste0(cvar[!cvar %in% climvars], collapse = ", " ), ". Run `climvars` for valid values."))
+  }
 
   x$cvar <- cvar
   invisible(x)

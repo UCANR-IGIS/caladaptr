@@ -4,7 +4,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(ca_gcm)
+#' @usage data(gcms)
 #'
 #' @format An character vector with the names of 10 GCMs (abbreviated)
 #'
@@ -33,4 +33,4 @@
 #' \code{HadGEM2-CC}: Met Office Hadley Centre
 #'
 #' @source \url{https://berkeley-gif.github.io/caladapt-docs/data-catalog.html#global-climate-models-gcm}
-"ca_gcm"
+"gcms"

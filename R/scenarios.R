@@ -4,7 +4,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(ca_scenario)
+#' @usage data(scenarios)
 #'
 #' @format An character vector with three abbreviated names of carbon emissions scenarios
 #'
@@ -19,4 +19,4 @@
 #' \code{historical}: Historical
 #'
 #' @source \url{https://berkeley-gif.github.io/caladapt-docs/data-catalog.html#scenarios}
-"ca_scenario"
+"scenarios"
