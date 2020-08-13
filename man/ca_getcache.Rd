@@ -22,10 +22,8 @@ ca_setcache(dir = "~/.R/caladaptr", write = TRUE, quiet = FALSE)
 View and set the directory for the data catalog
 }
 \details{
-\code{caladaptr} stores a local copy of the Cal-Adapt data catalog.
-The data catalog can be refreshed by running \code{\link{ca_catalog_update}}.
-
-Cached results are saved as native R objects.
+\code{caladaptr} has the ability to store copies of objects downloaded
+from Cal-Adapt. An example of this would be the raster series data catalog.
 
 If \code{default = TRUE}, a default directory for the cache (\emph{~/.R/caladaptr})
 will be used if another one has not already been set.
@@ -36,5 +34,5 @@ will be used if another one has not already been set.
 }}
 
 \seealso{
-\code{\link{ca_catalog_update}}
+\code{\link{ca_catalog_rs}}
 }

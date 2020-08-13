@@ -1,11 +1,11 @@
 Package: caladaptr
 Type: Package
 Title: Import and Use Cal-Adapt Data in R via the API
-Version: 0.2.3
-Date: 2020-08-11
+Version: 0.2.4
+Date: 2020-08-12
 Author: Andy Lyons
 Maintainer: Andy Lyons <caladaptr@gmail.com>
-BugReports: mailto:caladaptr@gmail.com
+BugReports: <mailto:caladaptr@gmail.com>
 Description: Provides base functions for importing data from 
     Cal-Adapt.org through the API.
 License: GPL-3

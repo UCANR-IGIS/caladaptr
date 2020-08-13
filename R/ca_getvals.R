@@ -4,7 +4,7 @@
 #' @param quiet Suppress messages
 #'
 #' @importFrom crayon bold yellow red
-#' @importFrom httr GET content content_type_json
+#' @importFrom httr GET content content_type_json modify_url
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom sf st_as_text st_point
 #' @importFrom units set_units
@@ -16,7 +16,8 @@ ca_getvals <- function(x, quiet = FALSE) {
 
   ## Error checks on the API request (to be moved to its own function)
   if (identical(x$loc, NA)) stop("A location must be specified")
-  if (identical(x$dataset, NA)) stop("A dataset must be specified")
+  if (identical(x$gcm, NA)) stop("A gcm must be specified")
+  if (identical(x$scenario, NA)) stop("An emissions scenario must be specified")
   if (identical(x$per, NA)) stop("A period must be specified")
   if (identical(x$cvar, NA)) stop("Climate variable must be provided")
 
@@ -103,10 +104,12 @@ ca_getvals <- function(x, quiet = FALSE) {
       for (myper in x$period) {
         if (call_api) res[[feat_id]][[mycvar]][[myper]] <- list()
 
-        for (mygcm in x$dataset$gcm) {
+        for (mygcm in x$gcm) {
           if (call_api) res[[feat_id]][[mycvar]][[myper]][[mygcm]] <- list()
 
-          for (myscenario in x$dataset$scenario) {
+          for (myscenario in x$scenario) {
+
+            ## Initialize the data frame with a NULL
             res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]] <- NULL
 
             ## If everything is still ok, proceed
@@ -124,9 +127,6 @@ ca_getvals <- function(x, quiet = FALSE) {
 
                 ## Construct the query parameters
                 qry_params <- c(g_qrylst, ref_qrylst, list(pagesize=10, format='json'))
-                #print(qry_params)
-
-                #list(g=g_qry_param, pagesize=10, format='json')
 
                 if (identical(x$dates, NA)) {
                   rasters_piece <- "rasters"
@@ -180,6 +180,8 @@ ca_getvals <- function(x, quiet = FALSE) {
 
                 if (count_vals == 0) {
                   if (!quiet) message(red(" - no values returned :-("))
+                  ## if (!quiet) message(red("   ", qry_url, sep=""))
+                  if (!quiet) message(red("   ", modify_url(qry_url, query=qry_params), sep=""))
                 } else {
 
                   ## Grab the units from the first one
@@ -199,9 +201,6 @@ ca_getvals <- function(x, quiet = FALSE) {
 
                   ## View dates
                   dates_this_page <- sapply(qry_content$results, function(x) x$event)
-
-                  stat_fun <- "mean"
-
 
                   ## Store those somewhere, remember the units!
                   res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]] <- rbind(
@@ -270,7 +269,7 @@ ca_getvals <- function(x, quiet = FALSE) {
   }
 
   ## Return the result
-  class(res) <- c("ca_qryvals", "list")
+  class(res) <- c("ca_qryvals_lst", "list")
   res
 
 }
@@ -291,11 +290,3 @@ ca_getvals <- function(x, quiet = FALSE) {
 
 # when type = "pt", val = a two-column matrix or data frame (col1= lon, col2=lat)
 
-
-# res <- list(loc = NA,        ## list(type="sf", val = loc)
-#             dates = NA,       ## list(start = start_dt, end = end_dt)
-#             dataset = NA,
-#             period = NA,
-#             cvar = NA,
-#             options = NA)
-#

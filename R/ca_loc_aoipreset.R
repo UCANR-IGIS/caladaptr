@@ -18,9 +18,9 @@
 #' of values, see the built-in list \code{ca_aoipreset_idval}. If \code{idval = NULL}, all
 #' areas will be used.
 #'
-#' \code(stat) is the name(s) of summary statistic(s) to compute from the pixels that fall within the
-#' area of interest. Values can be \code{max}, \code{mean}, \code{median}, \code{min}, and \code{sum}.
-#' Defaults to \code{mean}. To get retrieve raw values for all pixels without a summary, use
+#' \code{stat} is the name(s) of summary statistic(s) to compute from the pixels that fall within the
+#' area of interest. Values can be \code{mean} (default), \code{max}, \code{median}, \code{min},
+#' and \code{sum}. To get retrieve the individual values for all pixels without a summary, use
 #' the \code{ca_getrst} function.
 #'
 #' @seealso \code{\link{ca_apireq}}
@@ -31,8 +31,8 @@ ca_loc_aoipreset <- function(x = ca_apireq(), type, idfld="id", idval=NULL, stat
   if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
 
   if (length(type) != 1) stop("type must be length 1")
-  if (!type %in% aoipreset_types) stop("unknown value for type")
-  if (FALSE %in% (idfld %in% aoipreset_idfld[[type]])) stop("invalid value for idfld. See aoipreset_idflds")
+  #if (!type %in% aoipreset_types) stop("unknown value for type")
+  if (FALSE %in% (idfld %in% aoipreset_idflds[[type]])) stop("invalid value for idfld. See aoipreset_idflds")
 
   if (!is.null(idval)) {
     if (FALSE %in% (idval %in% aoipreset_idval[[type]][[idfld]])) stop("invalid value(s) in idval. See aoipreset_idval")

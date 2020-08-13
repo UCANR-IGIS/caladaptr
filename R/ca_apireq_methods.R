@@ -1,17 +1,11 @@
 #' Format a ca_apireq object
 #'
+#' @param x Cal-Adapt API request
 #' @importFrom crayon yellow bold
+#' @importFrom sf st_geometry_type
 #' @export
 
 format.ca_apireq <- function(x) {
-
-  # loc_str <- paste0(crayon::yellow("Location: "),
-  #                    if (identical(x$loc, NA)) {
-  #                       "NA\n"
-  #                     } else {
-  #                       paste0("\n  type: ", x$loc$type,
-  #                              "\n  value: ", x$loc$val, "\n")
-  #                     })
 
   loc1 <- yellow("Location(s): ")
   if (identical(x$loc, NA)) {
@@ -57,14 +51,9 @@ format.ca_apireq <- function(x) {
 
   vars_str <- paste0(crayon::yellow("Variable(s): "), paste(x$cvar, collapse = ", "), "\n")
 
-  ## Construct the dataset value
-  if (identical(x$dataset, NA)) {
-    dataset_val <- "NA"
-  } else {
-    dataset_val <- paste0("\n  GCM(s): ", paste0(x$dataset$gcm, collapse = ", "),
-                          "\n  Scenario(s): ", paste0(x$dataset$scenario, collapse = ", "))
-  }
-  data_str <- paste0(crayon::yellow("Dataset(s): "), dataset_val, "\n")
+  gcm_str <- paste0(crayon::yellow("GCM(s): "), paste(x$gcm, collapse = ", "), "\n")
+
+  scen_str <- paste0(crayon::yellow("Scenario(s): "), paste(x$scenario, collapse = ", "), "\n")
 
   per_str <- paste0(crayon::yellow("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
 
@@ -77,15 +66,13 @@ format.ca_apireq <- function(x) {
 
   options_str <- paste0(crayon::yellow("Options: "), x$options)
 
-  invisible(paste0(loc_str, vars_str, data_str, per_str, dates_str, options_str))
-
-  #tempag_str <- paste0(crayon::yellow("Temporal aggregation: "), paste(x$tempag, collapse = ", "), "\n")
-  #res <- list(geom = NA, dates = NA, resource = NA, cvar = NA, tempag = NA, options = NA)
+  invisible(paste0(loc_str, vars_str, per_str, gcm_str, scen_str, dates_str, options_str))
 
 }
 
 #' Print a ca_apireq object
 #'
+#' @param x Cal-Adapt API request
 #' @importFrom crayon yellow bold
 #' @export
 

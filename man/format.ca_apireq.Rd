@@ -6,6 +6,9 @@
 \usage{
 \method{format}{ca_apireq}(x)
 }
+\arguments{
+\item{x}{Cal-Adapt API request}
+}
 \description{
 Format a ca_apireq object
 }

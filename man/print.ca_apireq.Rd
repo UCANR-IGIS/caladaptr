@@ -6,6 +6,9 @@
 \usage{
 \method{print}{ca_apireq}(x)
 }
+\arguments{
+\item{x}{Cal-Adapt API request}
+}
 \description{
 Print a ca_apireq object
 }

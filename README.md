@@ -19,14 +19,160 @@ installed.
 
 ``` r
 library(devtools)
-devtools::install_github("UCANR-IGIS/caladaptr")
+devtools::install_github("ucanr-igis/caladaptr")
 ```
 
-## Usage
+# Example 1: Get Annual Projected Temperature at a Point Location
+
+Load the package:
 
 ``` r
 library(caladaptr)
-#> Cal-Adapt R (version 0.2.2)
+#> Cal-Adapt R (version 0.2.4)
 #> URL: https://github.com/ucanr-igis/caladaptr
 #> Bug reports: caladaptr@gmail.com
 ```
+
+First, create an API request object using a point location. This doesn’t
+actually fetch any data, it puts together the pieces pieces of an API
+request. There are a number of ‘constructor’ functions you can mix and
+match to create an API request object, for example:
+
+``` r
+cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(scenarios[1:2]) %>%
+  ca_period("year") %>%
+  ca_years(start = 2040, end = 2060) %>%
+  ca_cvar(c("tasmax", "tasmin"))
+
+cap1
+#> Cal-Adapt API Request
+#> Location(s): 
+#>   x: -121.469
+#>   y: 38.594
+#> Variable(s): tasmax, tasmin
+#> Temporal aggregration period(s): year
+#> GCM(s): HadGEM2-ES, CNRM-CM5, CanESM2, MIROC5
+#> Scenario(s): rcp45, rcp85
+#> Dates: 2040-01-01 to 2060-01-01
+#> Options: NA
+```
+
+To help you pass arguments for the various constructor functions, the
+following constants are built-in:
+
+``` r
+climvars
+#> [1] "tasmax" "tasmin" "pr"     "swe"
+
+gcms
+#>  [1] "HadGEM2-ES" "CNRM-CM5"   "CanESM2"    "MIROC5"     "ACCESS1-0" 
+#>  [6] "CCSM4"      "CESM1-BGC"  "CMCC-CMS"   "GFDL-CM3"   "HadGEM2-CC"
+#> [11] "ens32avg"   "ens32max"   "ens32min"
+
+scenarios
+#> [1] "rcp45"      "rcp85"      "historical"
+
+periods
+#> [1] "day"    "month"  "year"   "30yavg"
+```
+
+**Note**: Cal-Adapt has data for many but by no means all permutations
+of the above constants.
+
+Next, feed your API call into a function that fetches data, such as
+`ca_getvals()`.
+
+``` r
+cap1_vals_df <- ca_getvals(cap1, quiet = TRUE) %>% ca_vals2tbl()
+dim(cap1_vals_df)
+#> [1] 336   7
+head(cap1_vals_df)
+#> # A tibble: 6 x 7
+#>   feat_id cvar   period gcm        scenario dt              val
+#>   <fct>   <fct>  <fct>  <fct>      <fct>    <chr>           [K]
+#> 1 1       tasmax year   HadGEM2-ES rcp45    2040-01-01 298.7698
+#> 2 1       tasmax year   HadGEM2-ES rcp45    2041-01-01 298.7150
+#> 3 1       tasmax year   HadGEM2-ES rcp45    2042-01-01 298.5987
+#> 4 1       tasmax year   HadGEM2-ES rcp45    2043-01-01 299.6766
+#> 5 1       tasmax year   HadGEM2-ES rcp45    2044-01-01 299.5327
+#> 6 1       tasmax year   HadGEM2-ES rcp45    2045-01-01 298.2451
+```
+
+Note: values are returned with units, thanks to the
+[units](https://cran.r-project.org/package=units) package. No more
+guessing what the units are, or having to lookup unit conversion
+constants\!
+
+# Example \#2: Same as \#1, but with a Congressional District
+
+Cal-Adapt supports \~10 ‘preset’ Areas of Interest. `caladaptr` refers
+to these as "AOI Presets’, and you can use them to specify area(s) of
+interest in your API requests:
+
+``` r
+aoipreset_types
+#>  [1] "censustracts"      "counties"          "cdistricts"       
+#>  [4] "ccc4aregions"      "climregions"       "hydrounits"       
+#>  [7] "irwm"              "electricutilities" "wecc-load-area"   
+#> [10] "evtlocations"      "place"
+```
+
+Next, we’ll modify the first API call by simply “swapping out” the point
+location for a Congressional District location, using the
+`ca_loc_aoipreset()` function. For this example we’ll use California’s
+20th and 24th [Congressional
+Districts](https://en.wikipedia.org/wiki/California%27s_congressional_districts)
+(Carmel Valley and Santa Barbara).
+
+``` r
+cap2 <- cap1 %>% ca_loc_aoipreset(type = "cdistricts",
+                                  idfld = "geoid",
+                                  idval = c("0620", "0624"),
+                                  stat = "mean")
+
+cap2
+#> Cal-Adapt API Request
+#> Location(s): 
+#>   AOI Preset: cdistricts
+#>   geoid(s): 0620, 0624
+#>   Stat(s): mean
+#> Variable(s): tasmax, tasmin
+#> Temporal aggregration period(s): year
+#> GCM(s): HadGEM2-ES, CNRM-CM5, CanESM2, MIROC5
+#> Scenario(s): rcp45, rcp85
+#> Dates: 2040-01-01 to 2060-01-01
+#> Options: NA
+```
+
+Note when you query a polygon, you have to also specify a summary
+statistic that will be used to reduce the various pixels that fall
+within the polygon to one number. Your choices are `mean`, `max`,
+`median`, `min`, and `sum.` (If you want to retain the individual pixel
+values, use `ca_getrst()`.)
+
+``` r
+cap2_vals_df <- ca_getvals(cap2, quiet = TRUE) %>% ca_vals2tbl()
+
+dim(cap2_vals_df)
+#> [1] 672   7
+head(cap2_vals_df)
+#> # A tibble: 6 x 7
+#>   feat_id    cvar   period gcm        scenario dt              val
+#>   <fct>      <fct>  <fct>  <fct>      <fct>    <chr>           [K]
+#> 1 geoid_0620 tasmax year   HadGEM2-ES rcp45    2040-01-01 295.7161
+#> 2 geoid_0620 tasmax year   HadGEM2-ES rcp45    2041-01-01 296.1374
+#> 3 geoid_0620 tasmax year   HadGEM2-ES rcp45    2042-01-01 295.5295
+#> 4 geoid_0620 tasmax year   HadGEM2-ES rcp45    2043-01-01 297.1063
+#> 5 geoid_0620 tasmax year   HadGEM2-ES rcp45    2044-01-01 297.3475
+#> 6 geoid_0620 tasmax year   HadGEM2-ES rcp45    2045-01-01 295.8374
+```
+
+# Coming soon…
+
+Querying a sf object
+
+Examples of reshaping data
+
+Retrieving rasters

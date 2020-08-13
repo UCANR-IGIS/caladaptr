@@ -13,12 +13,13 @@
 #'
 #' @importFrom crayon bold yellow red
 #' @importFrom units set_units
+#' @importFrom tibble as_tibble
 #' @export
 
 ca_vals2tbl <- function(x, feat_id = TRUE, dt = TRUE, cvar = TRUE, period = TRUE, gcm = TRUE,
                         scenario = TRUE) {
 
-  if (!inherits(x, "ca_qryvals")) stop("x should be a ca_qryvals")
+  if (!inherits(x, "ca_qryvals_lst")) stop("x should be class ca_qryvals_lst")
 
   ## Create a blank object to append the individual data frames to
   res_df <- NULL
@@ -61,8 +62,8 @@ ca_vals2tbl <- function(x, feat_id = TRUE, dt = TRUE, cvar = TRUE, period = TRUE
 
   }
 
-  ## Return the resul
-  res_df
+  ## Return the result, flipping the column order
+  as_tibble(res_df[ , length(res_df):1])
 
 }
 

@@ -2,10 +2,33 @@
 % Please edit documentation in R/ca_apireq.R
 \name{ca_apireq}
 \alias{ca_apireq}
-\title{Creates a new blank API request object}
+\title{Creates a new API request object}
 \usage{
-ca_apireq()
+ca_apireq(
+  loc = NA,
+  dates = NA,
+  gcm = NA,
+  scenario = NA,
+  period = NA,
+  cvar = NA,
+  options = NA
+)
+}
+\arguments{
+\item{loc}{A location object (see Details)}
+
+\item{dates}{A dates object (see Details)}
+
+\item{gcm}{A vector of GCM abbreviations (see `gcms`)}
+
+\item{scenario}{A vector of scenario names (see `scenarios`)}
+
+\item{period}{A vector of period names (see periods)}
+
+\item{cvar}{A vector of climate variables (see `climvars`)}
+
+\item{options}{A list of options for querying the API}
 }
 \description{
-Creates a new blank API request object
+Creates a new API request object
 }

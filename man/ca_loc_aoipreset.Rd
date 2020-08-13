@@ -38,9 +38,9 @@ preset areas. For a list of fields you can use for each AOI preset, see the buil
 of values, see the built-in list \code{ca_aoipreset_idval}. If \code{idval = NULL}, all
 areas will be used.
 
-\code(stat) is the name(s) of summary statistic(s) to compute from the pixels that fall within the
-area of interest. Values can be \code{max}, \code{mean}, \code{median}, \code{min}, and \code{sum}.
-Defaults to \code{mean}. To get retrieve raw values for all pixels without a summary, use
+\code{stat} is the name(s) of summary statistic(s) to compute from the pixels that fall within the
+area of interest. Values can be \code{mean} (default), \code{max}, \code{median}, \code{min},
+and \code{sum}. To get retrieve the individual values for all pixels without a summary, use
 the \code{ca_getrst} function.
 }
 \seealso{
