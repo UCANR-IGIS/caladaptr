@@ -1,21 +1,30 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# caladaptr
+# caladaptR <img src="man/figures/caladaptr-beta_logo.svg" align="right" width="240" />
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
 `caladaptr` is an API client that makes it easier to work with data from
-Cal-Adapt.org in R.
+[Cal-Adapt.org](https://cal-adapt.org/) in R.
+
+‘Beta’ status means the package:
+
+1)  is still under development  
+2)  is being updated more often than usual  
+3)  has a slightly higher probability than average that updates will
+    *not* be backward compatible  
+4)  is actively seeking user feedback and input (interested? join the
+    [caladaptR betaR](#caladaptr-betar-club) club\!)
 
 ## Installation
 
 `caladaptr` is hosted on
 [GitHub](https://github.com/UCANR-IGIS/caladaptr). To install it, you
 need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/)
-installed.
+and the `devtools` package installed:
 
 ``` r
 library(devtools)
@@ -24,7 +33,9 @@ devtools::install_github("ucanr-igis/caladaptr")
 
 # Example 1: Get Annual Projected Temperature at a Point Location
 
-Load the package:
+1)  Load the package:
+
+<!-- end list -->
 
 ``` r
 library(caladaptr)
@@ -33,10 +44,12 @@ library(caladaptr)
 #> Bug reports: caladaptr@gmail.com
 ```
 
-First, create an API request object using a point location. This doesn’t
-actually fetch any data, it puts together the pieces pieces of an API
-request. There are a number of ‘constructor’ functions you can mix and
-match to create an API request object, for example:
+2)  Next, create an **API request object** for a point location. This
+    doesn’t actually fetch any data, it puts together the pieces pieces
+    of an API request. There are a number of ‘*constructor*’ functions
+    you can mix and match to create an API request object, for example:
+
+<!-- end list -->
 
 ``` r
 cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
@@ -59,8 +72,8 @@ cap1
 #> Options: NA
 ```
 
-To help you pass arguments for the various constructor functions, the
-following constants are built-in:
+To help you pass arguments for the various constructor functions,
+`caladpatr` provides the following constants:
 
 ``` r
 climvars
@@ -70,6 +83,8 @@ gcms
 #>  [1] "HadGEM2-ES" "CNRM-CM5"   "CanESM2"    "MIROC5"     "ACCESS1-0" 
 #>  [6] "CCSM4"      "CESM1-BGC"  "CMCC-CMS"   "GFDL-CM3"   "HadGEM2-CC"
 #> [11] "ens32avg"   "ens32max"   "ens32min"
+
+## Note the first four GCMs are the 'priority' models recommended under California's 4th Climate Change Assessment.
 
 scenarios
 #> [1] "rcp45"      "rcp85"      "historical"
@@ -81,8 +96,10 @@ periods
 **Note**: Cal-Adapt has data for many but by no means all permutations
 of the above constants.
 
-Next, feed your API call into a function that fetches data, such as
-`ca_getvals()`.
+3)  Next, feed your API call into a function that **fetches data**, such
+    as `ca_getvals()`.
+
+<!-- end list -->
 
 ``` r
 cap1_vals_df <- ca_getvals(cap1, quiet = TRUE) %>% ca_vals2tbl()
@@ -100,10 +117,14 @@ head(cap1_vals_df)
 #> 6 1       tasmax year   HadGEM2-ES rcp45    2045-01-01 298.2451
 ```
 
-Note: values are returned with units, thanks to the
+**Note \#1**. values are returned with units, thanks to the
 [units](https://cran.r-project.org/package=units) package. No more
 guessing what the units are, or having to lookup unit conversion
 constants\!
+
+**Note \#2**. See how the results from `ca_getvals` get fed into
+`ca_vals2tbl` to become a tibble? See `?ca_vals2tbl` for more options to
+specify which column(s) to return.
 
 # Example \#2: Same as \#1, but with a Congressional District
 
@@ -169,10 +190,26 @@ head(cap2_vals_df)
 #> 6 geoid_0620 tasmax year   HadGEM2-ES rcp45    2045-01-01 295.8374
 ```
 
+# caladaptR betaR club
+
+The **caladaptR betaR** club is **now accepting members\!** If you would
+like to be part of this elite cadre of `caladaptR` users, you should
+join our beta testing program. Benefits to joining the **caladaptR
+betaR** club include:
+
+  - early notification of **package updates**  
+  - 24/7 **priority support**  
+  - **exclusive invitations** to `caladaptr` tutorials and user feedback
+    sessions
+  - an **email forum** to bounce ideas around with other caladaptR users
+    and the package developer
+
+To join the **caladaptR betaR** club, please subscribe yourself to the
+[caladaptR email
+list](https://lists.ucdavis.edu/sympa/subscribe/caladaptr).
+
 # Coming soon…
 
-Querying a sf object
-
-Examples of reshaping data
-
-Retrieving rasters
+  - How to query a `sf` object  
+  - More examples of reshaping data  
+  - Retrieving rasters

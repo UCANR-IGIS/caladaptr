@@ -4,6 +4,7 @@
 #' @importFrom crayon yellow bold
 #' @importFrom sf st_geometry_type
 #' @export
+#' @method format ca_apireq
 
 format.ca_apireq <- function(x) {
 
@@ -74,6 +75,7 @@ format.ca_apireq <- function(x) {
 #'
 #' @param x Cal-Adapt API request
 #' @importFrom crayon yellow bold
+#' @method print ca_apireq
 #' @export
 
 print.ca_apireq <- function(x) {
