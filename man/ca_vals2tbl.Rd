@@ -11,7 +11,8 @@ ca_vals2tbl(
   cvar = TRUE,
   period = TRUE,
   gcm = TRUE,
-  scenario = TRUE
+  scenario = TRUE,
+  spatial_ag = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ ca_vals2tbl(
 \item{gcm}{Include gcm}
 
 \item{scenario}{Include scenario}
+
+\item{spatial_ag}{Include spatial aggregation function}
 }
 \description{
 Converts a Cal-Adapt values list to a data frame

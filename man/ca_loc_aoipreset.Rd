@@ -4,13 +4,7 @@
 \alias{ca_loc_aoipreset}
 \title{Adds a preset location to a Cal-Adapt API request}
 \usage{
-ca_loc_aoipreset(
-  x = ca_apireq(),
-  type,
-  idfld = "id",
-  idval = NULL,
-  stat = "mean"
-)
+ca_loc_aoipreset(x = ca_apireq(), type, idfld = "id", idval = NULL)
 }
 \arguments{
 \item{x}{A Cal-Adapt API request}
@@ -20,8 +14,6 @@ ca_loc_aoipreset(
 \item{idfld}{The name of the field that identifies the desired locations}
 
 \item{idval}{The value(s) of idfld}
-
-\item{stat}{The summary statistic(s) to retrieve for the pixels that call within the AOI}
 }
 \description{
 Adds a preset location to a Cal-Adapt API request
@@ -38,10 +30,9 @@ preset areas. For a list of fields you can use for each AOI preset, see the buil
 of values, see the built-in list \code{ca_aoipreset_idval}. If \code{idval = NULL}, all
 areas will be used.
 
-\code{stat} is the name(s) of summary statistic(s) to compute from the pixels that fall within the
-area of interest. Values can be \code{mean} (default), \code{max}, \code{median}, \code{min},
-and \code{sum}. To get retrieve the individual values for all pixels without a summary, use
-the \code{ca_getrst} function.
+Note all of the AOI Presets supported by the Cal-Adapt API are \emph{polygons}. This means
+in order to query values for these areas (i.e., with \code{\link{ca_getvals}}), you must also
+specify a spatial aggregation function using \code{\link{ca_options}}.
 }
 \seealso{
 \code{\link{ca_apireq}}

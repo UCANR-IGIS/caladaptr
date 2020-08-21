@@ -13,8 +13,6 @@
 #' @export
 #'
 
-### ADD SOME ARGUMENTS SO THIS CAN BE SPECIFIED FROM SCRATCH
-
 ca_apireq <- function(loc=NA, dates=NA, gcm=NA, scenario=NA, period=NA, cvar=NA, options=NA) {
   res <- list(loc = loc,
               dates = dates,

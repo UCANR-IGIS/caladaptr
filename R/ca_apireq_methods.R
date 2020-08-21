@@ -26,8 +26,7 @@ format.ca_apireq <- function(x) {
                              ifelse(nrow(x$loc$val$idval)>3, ", ...", ""))
       }
       loc2 <- paste0("\n  AOI Preset: ", x$loc$val$type,
-                     "\n  ", x$loc$val$idfld, "(s): ", idvals_str,
-                     "\n  Stat(s): ", paste(x$loc$val$stat, collapse = ", "))
+                     "\n  ", x$loc$val$idfld, "(s): ", idvals_str)
 
     } else if (x$loc$type == "zip") {
       loc2 <- paste0("\n  ", x$loc$val$type, "\n  ", x$loc$val$idfld, ": ",
@@ -50,22 +49,28 @@ format.ca_apireq <- function(x) {
   }
   loc_str <- paste0(loc1, loc2, "\n")
 
-  vars_str <- paste0(crayon::yellow("Variable(s): "), paste(x$cvar, collapse = ", "), "\n")
+  vars_str <- paste0(yellow("Variable(s): "), paste(x$cvar, collapse = ", "), "\n")
 
-  gcm_str <- paste0(crayon::yellow("GCM(s): "), paste(x$gcm, collapse = ", "), "\n")
+  gcm_str <- paste0(yellow("GCM(s): "), paste(x$gcm, collapse = ", "), "\n")
 
-  scen_str <- paste0(crayon::yellow("Scenario(s): "), paste(x$scenario, collapse = ", "), "\n")
+  scen_str <- paste0(yellow("Scenario(s): "), paste(x$scenario, collapse = ", "), "\n")
 
-  per_str <- paste0(crayon::yellow("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
+  per_str <- paste0(yellow("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
 
   if (identical(x$dates, NA)) {
     dates_val <- "NA"
   } else {
     dates_val <- paste(x$dates$start, "to", x$dates$end)
   }
-  dates_str <- paste0(crayon::yellow("Dates: "), dates_val, "\n")
+  dates_str <- paste0(yellow("Dates: "), dates_val, "\n")
 
-  options_str <- paste0(crayon::yellow("Options: "), x$options)
+  if (identical(x$options, NA)) {
+    opt_obj <- "NA"
+  } else {
+    opt_obj <- paste0("\n  spatial ag: ", paste(x$options$spatial_ag, collapse = ", "),
+                      "\n  temporal ag (add'l): ", x$options$temporal_ag)
+  }
+  options_str <- paste0(yellow("Options: "), opt_obj, "\n")
 
   invisible(paste0(loc_str, vars_str, per_str, gcm_str, scen_str, dates_str, options_str))
 
@@ -79,7 +84,7 @@ format.ca_apireq <- function(x) {
 #' @export
 
 print.ca_apireq <- function(x) {
-  cat(crayon::yellow$bold("Cal-Adapt API Request\n"))
+  cat(yellow$bold("Cal-Adapt API Request\n"))
   cat(format(x), "\n")
 }
 

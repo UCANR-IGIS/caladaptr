@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 `caladaptr` is an API client that makes it easier to work with data from
@@ -31,7 +33,7 @@ library(devtools)
 devtools::install_github("ucanr-igis/caladaptr")
 ```
 
-# Example 1: Get Annual Projected Temperature at a Point Location
+## Example 1: Get Annual Projected Temperature at a Point Location
 
 1)  Load the package:
 
@@ -39,7 +41,7 @@ devtools::install_github("ucanr-igis/caladaptr")
 
 ``` r
 library(caladaptr)
-#> Cal-Adapt R (version 0.2.4)
+#> Cal-Adapt R (version 0.2.5)
 #> URL: https://github.com/ucanr-igis/caladaptr
 #> Bug reports: caladaptr@gmail.com
 ```
@@ -52,12 +54,12 @@ library(caladaptr)
 <!-- end list -->
 
 ``` r
-cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
-  ca_gcm(gcms[1:4]) %>%
-  ca_scenario(scenarios[1:2]) %>%
-  ca_period("year") %>%
-  ca_years(start = 2040, end = 2060) %>%
-  ca_cvar(c("tasmax", "tasmin"))
+cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%  ## specify a location
+  ca_gcm(gcms[1:4]) %>%                                ## select GCM(s)
+  ca_scenario(scenarios[1:2]) %>%                      ## select emission scenarios(s)
+  ca_period("year") %>%                                ## select a precooked temporal aggregation period
+  ca_years(start = 2040, end = 2060) %>%               ## select start and end dates
+  ca_cvar(c("tasmax", "tasmin"))                       ## select climate variables
 
 cap1
 #> Cal-Adapt API Request
@@ -84,7 +86,8 @@ gcms
 #>  [6] "CCSM4"      "CESM1-BGC"  "CMCC-CMS"   "GFDL-CM3"   "HadGEM2-CC"
 #> [11] "ens32avg"   "ens32max"   "ens32min"
 
-## Note the first four GCMs are the 'priority' models recommended under California's 4th Climate Change Assessment.
+## Note the first four GCMs are the 'priority' models recommended under 
+## California's 4th Climate Change Assessment.
 
 scenarios
 #> [1] "rcp45"      "rcp85"      "historical"
@@ -126,7 +129,7 @@ constants\!
 `ca_vals2tbl` to become a tibble? See `?ca_vals2tbl` for more options to
 specify which column(s) to return.
 
-# Example \#2: Same as \#1, but with a Congressional District
+## Example \#2: Same query as \#1, but for a Congressional District
 
 Cal-Adapt supports \~10 ‘preset’ Areas of Interest. `caladaptr` refers
 to these as "AOI Presets’, and you can use them to specify area(s) of
@@ -193,9 +196,9 @@ head(cap2_vals_df)
 # caladaptR betaR club
 
 The **caladaptR betaR** club is **now accepting members\!** If you would
-like to be part of this elite cadre of `caladaptR` users, you should
-join our beta testing program. Benefits to joining the **caladaptR
-betaR** club include:
+like to be part of this elite cadre of `caladaptr` early adopters, you
+should join our beta testing program. Benefits of joining the
+**caladaptR betaR** club include:
 
   - early notification of **package updates**  
   - 24/7 **priority support**  

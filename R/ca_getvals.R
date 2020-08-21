@@ -2,15 +2,16 @@
 #'
 #' @param x A Cal-Adapt API request
 #' @param quiet Suppress messages
+#' @param debug Print additional output at the console
 #'
-#' @importFrom crayon bold yellow red
+#' @importFrom crayon bold yellow red silver
 #' @importFrom httr GET content content_type_json modify_url
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom sf st_as_text st_point
 #' @importFrom units set_units
 #' @export
 
-ca_getvals <- function(x, quiet = FALSE) {
+ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
@@ -46,20 +47,18 @@ ca_getvals <- function(x, quiet = FALSE) {
     g_qrylst <- list()
     ref_qrylst <- list()
 
-    ## not yet implemented. This it won't work because having data frame columns
-    ## with different names will cause problems with the ca_vals2tbl() function
-    ## Instead we need a another level to the tree for spatial aggregation
-    ## 'raw' (or 'none'), min, mean, max, etc.
-
-    ## vals_col_name <- "val"
-
     ## Construct the qry_geom
     if (x$loc$type == "pt") {
 
+      ## Create the g parameter list
       g_qrylst <- list(g = st_as_text(st_point(as.numeric(x$loc$val[myloc_idx, c(2,3)]))))
-      #g_qry_param <- st_as_text(st_point(as.numeric(x$loc$val[myloc_idx, c(2,3)])))
-      #ref_qry_param <- NULL
-      feat_id <- x$loc$val[myloc_idx, 1]
+
+      ## Need to create a feature ID as a character object because it will be used as a list element name
+      feat_id <- as.character(x$loc$val[myloc_idx, 1])
+
+      if (is.null(attr(res, "idfld"))) {
+        attr(res, "idfld") <- list(name = names(x$loc$val)[1], class = class(x$loc$val[, 1]))
+      }
 
       if (!quiet) message(yellow$bold("POINT #", myloc_idx, sep = ""))
 
@@ -69,20 +68,20 @@ ca_getvals <- function(x, quiet = FALSE) {
       preset <- x$loc$val$type
       idfld <- x$loc$val$idfld
       idval <- x$loc$val$idval[myloc_idx]
-      stat_fun <- x$loc$val$stat
 
       ## Find the row in the lookup table
-      feat_idx <- which (aoipreset_idval[[preset]][[idfld]]  == idval)
+      aoipreset_idx <- which (aoipreset_idval[[preset]][[idfld]]  == idval)
 
       ## Get the value of the 'id' column
-      api_featid <- aoipreset_idval[[preset]]$id[feat_idx]
+      api_featid <- aoipreset_idval[[preset]]$id[aoipreset_idx]
 
       ## Construct the ref query parameter
-      #ref_qry_param = paste0("/api/", preset, "/", api_featid, "/")
+      ref_qrylst <- list(ref = paste0("/api/", preset, "/", api_featid, "/"))
 
-      ref_qrylst <- list(ref = paste0("/api/", preset, "/", api_featid, "/"), stat = stat_fun)
+      #feat_id <- gsub(" ", "_", paste(idfld, idval, sep = "_"))
+      feat_id <- as.character(idval)
 
-      feat_id <- gsub(" ", "_", paste(idfld, idval, sep = "_"))
+      if (is.null(attr(res, "idfld"))) attr(res, "idfld") <- list(name = idfld, class = class(idval))
 
       if (!quiet) message(yellow$bold("\n", toupper(preset), ": ", idfld, " = ", idval, sep = ""))
 
@@ -96,7 +95,7 @@ ca_getvals <- function(x, quiet = FALSE) {
 
     }
 
-    if (call_api) res[[as.character(feat_id)]] <- list()
+    if (call_api) res[[feat_id]] <- list()
 
     for (mycvar in x$cvar) {
       if (call_api) res[[feat_id]][[mycvar]] <- list()
@@ -108,163 +107,233 @@ ca_getvals <- function(x, quiet = FALSE) {
           if (call_api) res[[feat_id]][[mycvar]][[myper]][[mygcm]] <- list()
 
           for (myscenario in x$scenario) {
+            if (call_api) res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]] <- list()
 
-            ## Initialize the data frame with a NULL
-            res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]] <- NULL
+            ## Prep the options
+            if (identical(x$options, NA)) {
+              spatial_ags <- "none"
+            } else {
+              spatial_ags <- x$options$spatial_ag
+            }
 
-            ## If everything is still ok, proceed
-            if (call_api) {
+            for (myspag in spatial_ags) {
 
-              ## Construct a slug
-              myslug <- paste(mycvar, myper, mygcm, myscenario, sep="_")
+              stat_qrylst <- list()
 
-              ## See if this slug is in the data catalog
-              slug_idx <-  which(tolower(myslug) == slugs_lc)
-
-              if (length(slug_idx) > 0) {
-
-                if (!quiet) message(yellow(paste0(rs_df[slug_idx, "name"])))
-
-                ## Construct the query parameters
-                qry_params <- c(g_qrylst, ref_qrylst, list(pagesize=10, format='json'))
-
-                if (identical(x$dates, NA)) {
-                  rasters_piece <- "rasters"
-
+              ## Need some compatibility checking right here
+              if (x$loc$type == "aoipreset") {    ## OR SF-POLYGON
+                if (myspag == "none" || is.na(myspag)) {
+                  if (!quiet) message(red("Spatial aggregation function required. See `ca_options`. "))
+                  call_api <- FALSE
                 } else {
-                  start_use <- x$dates$start
-                  end_use <- x$dates$end
-
-                  ## If period is month or year, use the first day of the month/year
-                  if (myper == "year") {
-                    if (substr(start_use, 6, 10) != "01-01") {
-                      start_use <- paste0(substr(start_use, 1, 5), "01-01")
-                      if (!quiet) message(red("Adjusting start date to", start_use))
-                    }
-                    if (substr(end_use, 6, 10) != "01-01") {
-                      end_use <- paste0(substr(end_use, 1, 5), "01-01")
-                      if (!quiet) message(red("Adjusting end date to", end_use))
-                    }
-                  }
-
-                  if (myper == "month") {
-                    if (substr(start_use, 9, 10) != "01") {
-                      start_use <- paste0(substr(start_use, 1, 8), "01")
-                      if (!quiet) message(red("Adjusting start date to", start_use))
-                    }
-                    if (substr(end_use, 9, 10) != "01") {
-                      end_use <- paste0(substr(end_use, 1, 8), "01")
-                      if (!quiet) message(red("Adjusting end date to", end_use))
-                    }
-                  }
-
-                  rasters_piece <- paste0(start_use, "/", end_use)
-
+                  stat_qrylst <- list(stat = myspag)
                 }
+              }  else {
+                ## Will not do any checking on spatial ag for point locations, just ignore them
+              }
 
-                ## Construct the URL
-                qry_url <- paste0(ca_baseurl, "series", "/", myslug, "/", rasters_piece, "/")
+              ## Initialize a new element, setting it to NULL (will become a data frame)
+              res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]] <- NULL
 
-                ## Make request
-                ## writeClipboard(httr::modify_url(qry_url, query=qry_params))
-                # browser()
+              ## If everything is still ok, proceed
+              if (call_api) {
 
-                qry_resp <- httr::GET(qry_url, query=qry_params, content_type_json())
-                ca_resp_check(qry_resp, "retrieve pixel values at a location")
+                ## Construct a slug
+                myslug <- paste(mycvar, myper, mygcm, myscenario, sep="_")
 
-                ## Convert response to a list
-                qry_content <- httr::content(qry_resp, type = "application/json")
+                ## See if this slug is in the data catalog
+                slug_idx <-  which(tolower(myslug) == slugs_lc)
 
-                ## View how many there are
-                count_vals <- qry_content$count
+                if (length(slug_idx) > 0) {
 
-                if (count_vals == 0) {
-                  if (!quiet) message(red(" - no values returned :-("))
-                  ## if (!quiet) message(red("   ", qry_url, sep=""))
-                  if (!quiet) message(red("   ", modify_url(qry_url, query=qry_params), sep=""))
-                } else {
+                  if (!quiet) message(yellow(paste0(rs_df[slug_idx, "name"])))
 
-                  ## Grab the units from the first one
-                  rstore_units <- qry_content$results[[1]]$units
-                  units_str <- switch(rstore_units,
-                                      K = 'K',
-                                      "mm/day" = "mm/d",
-                                      NULL)
-                  if (is.null(units_str)) message(red(paste0(" - weird units found: ", rstore_units, ". Units will not be saved in the values returned.")))
+                  if (use_events) {
 
-                  ## for temp it looks like 'K'
-                  ## for pr it looks like "mm/day"
+                    startend_qrylst <- list()
 
-                  ## View Pixel Values at this Point
-                  vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
-                                              units_str, mode = "standard")
+                    if (!identical(x$dates, NA)) {
+                      if (debug) message(silver(" - cross-check dates against per ??"))
+                      startend_qrylst <- list(start = x$dates$start, end = x$dates$end)
+                    }
+                      ## Construct the query parameters (empty lists will 'drop out')
+                    qry_params <- c(g_qrylst, ref_qrylst, stat_qrylst, startend_qrylst, list(format='json'))
 
-                  ## View dates
-                  dates_this_page <- sapply(qry_content$results, function(x) x$event)
+                    #&start=2040-01-01&end=2060-01-01
+                    #https://api.cal-adapt.org/api/series/tasmax_year_HadGEM2-ES_rcp45/events/?g=POINT%20%28-121.4687%2038.5938%29&start=2040-01-01&end=2060-01-01&format=json
 
-                  ## Store those somewhere, remember the units!
-                  res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]] <- rbind(
-                    res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]],
-                    data.frame(dt=dates_this_page, val=vals_this_page)
-                  )
+                    ## Construct the URL
+                    qry_url <- paste0(ca_baseurl, "series", "/", myslug, "/events/")
 
-                  ## For debugging purposes, show the 'next' URL
-                  ## cat(qry_content[['next']], "\n")
-
-                  ## If a progress bar is needed, set it up
-                  use_pb <- !quiet && (count_vals > page_size) && (count_vals > 10)
-                  if (use_pb) {
-                    # Setup progress bar
-                    total_pages <- ceiling(count_vals / page_size)
-                    pb <- txtProgressBar(min = 1, max = total_pages, style = 3)
-                    i <- 2
-                  }
-
-                  while (!is.null(qry_content[['next']])) {
-                    # Update progress bar
-                    if (use_pb) {setTxtProgressBar(pb, i)}
+                    ## writeClipboard(httr::modify_url(qry_url, query=qry_params))
+                    if (debug) message(silver(modify_url(qry_url, query=qry_params)))
 
                     ## Make request
-                    qry_resp <- httr::GET(qry_content[['next']], query=qry_params, content_type_json())
+                    qry_resp <- httr::GET(qry_url, query=qry_params, content_type_json())
+                    ca_resp_check(qry_resp, "retrieve pixel values at a location")
+
+                    ## Convert response to a list
+                    qry_content <- content(qry_resp, type = "application/json")
+
+                    ## Getting the units
+                    ## To get the units, I would need to grab the first raster in the series
+                    ## so query this
+                    ## https://api.cal-adapt.org/api/series/tasmax_year_HadGEM2-ES_rcp45/
+                    ## from the rasters list, get the first one, the URL for the raster store will look like:
+                    ## https://api.cal-adapt.org/api/rstores/tasmax_year_HadGEM2-ES_rcp45_2006/
+                    ## in this raster store you'll see the units
+
+                    res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]] <- data.frame(
+                      dt = substr(unlist(qry_content$index), 1, 10),
+                      val = unlist(qry_content$data))
+
+                  } else {
+
+                    ## Construct the query parameters (empty lists will 'drop out')
+                    qry_params <- c(g_qrylst, ref_qrylst, stat_qrylst, list(pagesize=10, format='json'))
+
+                    if (identical(x$dates, NA)) {
+                      rasters_piece <- "rasters"
+
+                    } else {
+                      start_use <- x$dates$start
+                      end_use <- x$dates$end
+
+                      ## If period is month or year, use the first day of the month/year
+                      if (myper == "year") {
+                        if (substr(start_use, 6, 10) != "01-01") {
+                          start_use <- paste0(substr(start_use, 1, 5), "01-01")
+                          if (!quiet) message(red("Adjusting start date to", start_use))
+                        }
+                        if (substr(end_use, 6, 10) != "01-01") {
+                          end_use <- paste0(substr(end_use, 1, 5), "01-01")
+                          if (!quiet) message(red("Adjusting end date to", end_use))
+                        }
+                      }
+
+                      if (myper == "month") {
+                        if (substr(start_use, 9, 10) != "01") {
+                          start_use <- paste0(substr(start_use, 1, 8), "01")
+                          if (!quiet) message(red("Adjusting start date to", start_use))
+                        }
+                        if (substr(end_use, 9, 10) != "01") {
+                          end_use <- paste0(substr(end_use, 1, 8), "01")
+                          if (!quiet) message(red("Adjusting end date to", end_use))
+                        }
+                      }
+
+                      rasters_piece <- paste0(start_use, "/", end_use)
+
+                    }
+
+                    ## Construct the URL
+                    qry_url <- paste0(ca_baseurl, "series", "/", myslug, "/", rasters_piece, "/")
+
+                    ## Make request
+                    ## writeClipboard(httr::modify_url(qry_url, query=qry_params))
+                    # browser()
+                    if (debug) message(silver(modify_url(qry_url, query=qry_params)))
+
+                    qry_resp <- httr::GET(qry_url, query=qry_params, content_type_json())
                     ca_resp_check(qry_resp, "retrieve pixel values at a location")
 
                     ## Convert response to a list
                     qry_content <- httr::content(qry_resp, type = "application/json")
 
-                    ## View Pixel Values at this Point
-                    vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
-                                                units_str, mode = "standard")
+                    ## View how many there are
+                    count_vals <- qry_content$count
 
-                    ## View dates
-                    dates_this_page <- sapply(qry_content$results, function(x) x$event)
+                    if (count_vals == 0) {
+                      if (!quiet) message(red(" - no values returned :-("))
+                      ## if (!quiet) message(red("   ", qry_url, sep=""))
+                      if (!quiet) message(red("   ", modify_url(qry_url, query=qry_params), sep=""))
+                    } else {
 
-                    ## Store those somewhere
-                    ## Store those somewhere, remember the units!
-                    res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]] <- rbind(
-                      res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]],
-                      data.frame(dt=dates_this_page, val=vals_this_page)
-                    )
+                      ## Grab the units from the first one
+                      rstore_units <- qry_content$results[[1]]$units
+                      units_str <- switch(rstore_units,
+                                          K = 'K',
+                                          "mm/day" = "mm/d",
+                                          NULL)
+                      if (is.null(units_str)) message(red(paste0(" - weird units found: ", rstore_units, ". Units will not be saved in the values returned.")))
 
-                    if (use_pb) i <- i + 1
+                      ## for temp it looks like 'K'
+                      ## for pr it looks like "mm/day"
+
+                      ## View Pixel Values at this Point
+                      vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
+                                                  units_str, mode = "standard")
+
+                      ## View dates
+                      dates_this_page <- sapply(qry_content$results, function(x) x$event)
+
+                      ## Store those somewhere, remember the units!
+                      res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]] <- rbind(
+                        res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]],
+                        data.frame(dt=dates_this_page, val=vals_this_page)
+                      )
+
+                      ## For debugging purposes, show the 'next' URL
+                      ## cat(qry_content[['next']], "\n")
+
+                      ## If a progress bar is needed, set it up
+                      use_pb <- !quiet && !debug && (count_vals > page_size) && (count_vals > 10)
+                      if (use_pb) {
+                        # Setup progress bar
+                        total_pages <- ceiling(count_vals / page_size)
+                        pb <- txtProgressBar(min = 1, max = total_pages, style = 3)
+                        i <- 2
+                      }
+
+                      while (!is.null(qry_content[['next']])) {
+                        # Update progress bar
+                        if (use_pb) {setTxtProgressBar(pb, i)}
+
+                        ## Make request
+                        qry_resp <- httr::GET(qry_content[['next']], query=qry_params, content_type_json())
+                        ca_resp_check(qry_resp, "retrieve pixel values at a location")
+
+                        ## Convert response to a list
+                        qry_content <- httr::content(qry_resp, type = "application/json")
+
+                        ## View Pixel Values at this Point
+                        vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
+                                                    units_str, mode = "standard")
+
+                        ## View dates
+                        dates_this_page <- sapply(qry_content$results, function(x) x$event)
+
+                        ## Store those somewhere
+                        ## Store those somewhere, remember the units!
+                        res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]] <- rbind(
+                          res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]],
+                          data.frame(dt=dates_this_page, val=vals_this_page)
+                        )
+
+                        if (use_pb) i <- i + 1
+                      }
+                      ## Close the progress bar
+                      if (use_pb) close(pb)
+
+                    }   ## if count > 0
+
+
                   }
-                  ## Close the progress bar
-                  if (use_pb) close(pb)
 
-                }   ## if count > 0
+                } else {   ## if (length(slug_idx) > 0) {
+                  if (!quiet) message(red("Sorry,", myslug, " does not seem to be available on Cal-Adapt"))
+                }
 
-              } else {   ## if (length(slug_idx) > 0) {
-                if (!quiet) message(red("Sorry,", myslug, " does not seem to be available on Cal-Adapt"))
               }
 
             }
 
-          }
 
+          }
         }
 
       }
     }
-
 
   }
 
