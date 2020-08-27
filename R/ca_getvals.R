@@ -3,12 +3,14 @@
 #' @param x A Cal-Adapt API request
 #' @param quiet Suppress messages
 #' @param debug Print additional output at the console
+#' @param use_events Use the events end point, logical
 #'
 #' @importFrom crayon bold yellow red silver
 #' @importFrom httr GET content content_type_json modify_url
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom sf st_as_text st_point
 #' @importFrom units set_units
+#' @importFrom dplyr select mutate
 #' @export
 
 ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
@@ -31,9 +33,12 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
 
   page_size <- 10
 
-  ## Get the raster series data catalog
-  rs_df <- ca_catalog_rs(quiet = TRUE)
-  slugs_lc <- tolower(rs_df$slug)
+  ## Get select fields from the raster series data catalog
+  rs_catinfo_df <- ca_catalog_rs(quiet = TRUE) %>%
+    mutate(slug_lower = tolower(slug)) %>%
+    select(slug_lower, name, units)
+
+  if (x$per == "day" && !use_events) stop("To query daily data, you must set use_events = TRUE")
 
   ## Note we need to support paging
   ## for (myloc_page_idx in 1:ceiling(num_loc / page_size)) {
@@ -142,18 +147,22 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
                 myslug <- paste(mycvar, myper, mygcm, myscenario, sep="_")
 
                 ## See if this slug is in the data catalog
-                slug_idx <-  which(tolower(myslug) == slugs_lc)
+                slug_idx <-  which(tolower(myslug) == rs_catinfo_df$slug_lower)
 
                 if (length(slug_idx) > 0) {
 
-                  if (!quiet) message(yellow(paste0(rs_df[slug_idx, "name"])))
+                  if (!quiet) message(yellow(paste0(rs_catinfo_df[slug_idx, "name", drop = TRUE])))
+
+                  ## Get the units for this raster series
+                  rs_units <- rs_catinfo_df[slug_idx, "units"]
+                  if (debug) message(silver(paste0(" - units for this raster series: ", rs_units)))
 
                   if (use_events) {
 
                     startend_qrylst <- list()
 
                     if (!identical(x$dates, NA)) {
-                      if (debug) message(silver(" - cross-check dates against per ??"))
+                      if (debug) message(silver(" - here I should cross-check dates against period"))
                       startend_qrylst <- list(start = x$dates$start, end = x$dates$end)
                     }
                       ## Construct the query parameters (empty lists will 'drop out')
@@ -166,7 +175,8 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
                     qry_url <- paste0(ca_baseurl, "series", "/", myslug, "/events/")
 
                     ## writeClipboard(httr::modify_url(qry_url, query=qry_params))
-                    if (debug) message(silver(modify_url(qry_url, query=qry_params)))
+                    #if (debug) message(silver(modify_url(qry_url, query=qry_params)))
+                    if (debug) message(silver(paste0(" - url: ", modify_url(qry_url, query=qry_params))))
 
                     ## Make request
                     qry_resp <- httr::GET(qry_url, query=qry_params, content_type_json())
@@ -183,11 +193,16 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
                     ## https://api.cal-adapt.org/api/rstores/tasmax_year_HadGEM2-ES_rcp45_2006/
                     ## in this raster store you'll see the units
 
+                    these_vals <- unlist(qry_content$data)
+                    if (!is.na(rs_units)) {
+                      these_vals <- set_units(these_vals, value = rs_units, mode = "standard")
+                    }
+
                     res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]] <- data.frame(
                       dt = substr(unlist(qry_content$index), 1, 10),
-                      val = unlist(qry_content$data))
+                      val = these_vals)
 
-                  } else {
+                  } else {      ## else use the rasters end point
 
                     ## Construct the query parameters (empty lists will 'drop out')
                     qry_params <- c(g_qrylst, ref_qrylst, stat_qrylst, list(pagesize=10, format='json'))
@@ -231,8 +246,8 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
 
                     ## Make request
                     ## writeClipboard(httr::modify_url(qry_url, query=qry_params))
-                    # browser()
-                    if (debug) message(silver(modify_url(qry_url, query=qry_params)))
+                    # if (debug) message(silver(modify_url(qry_url, query=qry_params)))
+                    if (debug) message(silver(paste0(" - url: ", modify_url(qry_url, query=qry_params))))
 
                     qry_resp <- httr::GET(qry_url, query=qry_params, content_type_json())
                     ca_resp_check(qry_resp, "retrieve pixel values at a location")
@@ -244,25 +259,29 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
                     count_vals <- qry_content$count
 
                     if (count_vals == 0) {
-                      if (!quiet) message(red(" - no values returned :-("))
+                      if (!quiet) message(red(" - no values returned"))
                       ## if (!quiet) message(red("   ", qry_url, sep=""))
-                      if (!quiet) message(red("   ", modify_url(qry_url, query=qry_params), sep=""))
+                      ## if (!quiet) message(red("   ", modify_url(qry_url, query=qry_params), sep=""))
                     } else {
 
-                      ## Grab the units from the first one
-                      rstore_units <- qry_content$results[[1]]$units
-                      units_str <- switch(rstore_units,
-                                          K = 'K',
-                                          "mm/day" = "mm/d",
-                                          NULL)
-                      if (is.null(units_str)) message(red(paste0(" - weird units found: ", rstore_units, ". Units will not be saved in the values returned.")))
-
+                      ## Grab the units from the first one   NO LONGER NEEDED BECAUSE UNITS ARE GRABBED FROM THE CATALOG
+                      # rstore_units <- qry_content$results[[1]]$units
+                      # units_str <- switch(rstore_units,
+                      #                     K = 'K',
+                      #                     "mm/day" = "mm/d",
+                      #                     NULL)
+                      # if (is.null(units_str)) message(red(paste0(" - weird units found: ", rstore_units, ". Units will not be saved in the values returned.")))
                       ## for temp it looks like 'K'
                       ## for pr it looks like "mm/day"
 
+                      vals_this_page <- sapply(qry_content$results, function(x) x$image)
+                      if (!is.na(rs_units)) {
+                        vals_this_page <- set_units(vals_this_page, value = rs_units, mode = "standard")
+                      }
+
                       ## View Pixel Values at this Point
-                      vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
-                                                  units_str, mode = "standard")
+                      # vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
+                      #                             units_str, mode = "standard")
 
                       ## View dates
                       dates_this_page <- sapply(qry_content$results, function(x) x$event)
@@ -297,14 +316,18 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
                         qry_content <- httr::content(qry_resp, type = "application/json")
 
                         ## View Pixel Values at this Point
-                        vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
-                                                    units_str, mode = "standard")
+                        vals_this_page <- sapply(qry_content$results, function(x) x$image)
+                        if (!is.na(rs_units)) {
+                          vals_this_page <- set_units(vals_this_page, value = rs_units, mode = "standard")
+                        }
+
+                        # vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
+                        #                             units_str, mode = "standard")
 
                         ## View dates
                         dates_this_page <- sapply(qry_content$results, function(x) x$event)
 
-                        ## Store those somewhere
-                        ## Store those somewhere, remember the units!
+                        ## Add these rows to the data frame
                         res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]] <- rbind(
                           res[[feat_id]][[mycvar]][[myper]][[mygcm]][[myscenario]][[myspag]],
                           data.frame(dt=dates_this_page, val=vals_this_page)

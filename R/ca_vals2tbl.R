@@ -47,7 +47,7 @@ ca_vals2tbl <- function(x, feat_id = TRUE, dt = TRUE, cvar = TRUE, period = TRUE
               per_str <- ifelse(period, paste0(", period = factor(\"", myper, "\")"), "")
               scenario_str <- ifelse(scenario, paste0(", scenario = factor(\"", myscenario, "\")"), "")
               gcm_str <- ifelse(gcm, paste0(", gcm = factor(\"", mygcm, "\")"), "")
-              dt_str <- ifelse(dt, paste0(", dt = this_df$dt"), "")
+              dt_str <- ifelse(dt, paste0(", dt = as.Date(this_df$dt)"), "")
               spag_str <- ifelse(spatial_ag, paste0(", spatial_ag = factor(\"", myspag, "\")"), "")
               makedf_str <- paste0("data.frame(val = this_df$val", spag_str, dt_str, scenario_str, gcm_str,
                                    per_str, cvar_str, feat_str, ")")
@@ -67,20 +67,26 @@ ca_vals2tbl <- function(x, feat_id = TRUE, dt = TRUE, cvar = TRUE, period = TRUE
 
   }
 
-  ## Restore the name and class of the feat_id column
-  if (feat_id && !is.null(attr(x, "idfld"))) {
-    featid_orig_prp <- attr(x, "idfld")
-    featid_colidx <- which(names(res_df) == "feat_id")
-    names(res_df)[featid_colidx] <- featid_orig_prp$name
-    if (class(res_df[[featid_colidx]]) !=  featid_orig_prp$class) {
-      ## Have to wrap the current feat_id values as character before as(x, "")
-      ## because they are likely to be factors
-      res_df[[featid_colidx]] <- as(as.character(res_df[[featid_colidx]]), featid_orig_prp$class)
-    }
-  }
+  ## Return the data frame
+  if (is.null(res_df)) {
+    NULL
 
-  ## Return the result, flipping the column order
-  as_tibble(res_df[ , length(res_df):1])
+  } else {
+    ## Restore the name and class of the feat_id column
+    if (feat_id && !is.null(attr(x, "idfld"))) {
+      featid_orig_prp <- attr(x, "idfld")
+      featid_colidx <- which(names(res_df) == "feat_id")
+      names(res_df)[featid_colidx] <- featid_orig_prp$name
+      if (class(res_df[[featid_colidx]]) !=  featid_orig_prp$class) {
+        ## Have to wrap the current feat_id values as character before as(x, "")
+        ## because they are likely to be factors
+        res_df[[featid_colidx]] <- as(as.character(res_df[[featid_colidx]]), featid_orig_prp$class)
+      }
+    }
+
+    ## Return the result, flipping the column order
+    as_tibble(res_df[ , length(res_df):1])
+  }
 
 }
 

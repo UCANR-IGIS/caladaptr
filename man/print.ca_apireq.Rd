@@ -4,10 +4,12 @@
 \alias{print.ca_apireq}
 \title{Print a ca_apireq object}
 \usage{
-\method{print}{ca_apireq}(x)
+\method{print}{ca_apireq}(x, ...)
 }
 \arguments{
 \item{x}{Cal-Adapt API request}
+
+\item{...}{Unused}
 }
 \description{
 Print a ca_apireq object

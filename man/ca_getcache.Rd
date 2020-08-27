@@ -7,16 +7,18 @@
 \usage{
 ca_getcache(default = TRUE, quiet = TRUE)
 
-ca_setcache(dir = "~/.R/caladaptr", write = TRUE, quiet = FALSE)
+ca_setcache(cache_dir, make_dir = FALSE, write = TRUE, quiet = FALSE)
 }
 \arguments{
 \item{default}{Use a default cache directory if no other has been set}
 
 \item{quiet}{Suppress messages}
 
-\item{dir}{The directory for  cached EXIF data (must exist)}
+\item{cache_dir}{The directory for cached data, can also be 'default' to use the default location}
 
-\item{write}{Write directory location to .Renviron}
+\item{make_dir}{Making the directory if needed, logical}
+
+\item{write}{Write directory location to .Renviron for persistence across R sessions}
 }
 \description{
 View and set the directory for the data catalog

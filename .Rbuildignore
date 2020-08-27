@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^aoipreset_geoms$
+^examples$
+^README_cache$

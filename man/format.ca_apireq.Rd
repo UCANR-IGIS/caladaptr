@@ -4,10 +4,12 @@
 \alias{format.ca_apireq}
 \title{Format a ca_apireq object}
 \usage{
-\method{format}{ca_apireq}(x)
+\method{format}{ca_apireq}(x, ...)
 }
 \arguments{
 \item{x}{Cal-Adapt API request}
+
+\item{...}{Unused}
 }
 \description{
 Format a ca_apireq object

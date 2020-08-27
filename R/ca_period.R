@@ -16,9 +16,11 @@ ca_period <- function(x = ca_apireq(), period) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
 
-  if (FALSE %in% (period %in% periods)) {
-    stop(paste0("Unknown value(s) in period: ",
-                paste0(period[!period %in% periods], collapse = ", " ), ". Run `periods` for valid values."))
+  if (!identical(period, NA)) {
+    if (FALSE %in% (period %in% periods)) {
+      stop(paste0("Unknown value(s) in period: ",
+                  paste0(period[!period %in% periods], collapse = ", " ), ". Run `periods` for valid values."))
+    }
   }
 
   x$period <- period

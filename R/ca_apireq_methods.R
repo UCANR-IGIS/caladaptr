@@ -1,12 +1,13 @@
 #' Format a ca_apireq object
 #'
 #' @param x Cal-Adapt API request
+#' @param ... Unused
 #' @importFrom crayon yellow bold
 #' @importFrom sf st_geometry_type
 #' @export
 #' @method format ca_apireq
 
-format.ca_apireq <- function(x) {
+format.ca_apireq <- function(x, ...) {
 
   loc1 <- yellow("Location(s): ")
   if (identical(x$loc, NA)) {
@@ -79,12 +80,80 @@ format.ca_apireq <- function(x) {
 #' Print a ca_apireq object
 #'
 #' @param x Cal-Adapt API request
+#' @param ... Unused
 #' @importFrom crayon yellow bold
 #' @method print ca_apireq
 #' @export
 
-print.ca_apireq <- function(x) {
+print.ca_apireq <- function(x, ...) {
   cat(yellow$bold("Cal-Adapt API Request\n"))
   cat(format(x), "\n")
 }
+
+
+#' Plot a ca_apireq object
+#'
+#' @param x Cal-Adapt API request
+#' @param basemap The name of a basemap tile layer (see tm_basemap)
+#' @param ... Unused
+#' @importFrom crayon yellow bold
+#' @importFrom tmap tm_shape tm_polygons tmap_mode tm_symbols tm_basemap
+#' @importFrom sf st_as_sf st_read st_geometry
+#' @importFrom dplyr slice filter select
+#' @method plot ca_apireq
+#' @export
+
+plot.ca_apireq <- function(x, basemap = "Esri.NatGeoWorldMap", ...) {
+
+  if (x$loc$type == "pt") {
+
+    # When type = "pt", val = a 3-column data frame with columns id, x, y
+    pts_sf <- st_as_sf(x$loc$val, coords = c("x", "y"), crs = 4326)
+    tmap_mode("view")
+    tm_shape(pts_sf) +
+      tm_basemap(basemap) +
+      tm_symbols(col = "red", alpha = 0.5, scale = 1.5)
+
+  } else if (x$loc$type == "aoipreset") {
+
+    ## Get the vector layer
+    preset_name <- x$loc$val$type
+    polyall_sf <- ca_aoipreset_geom(preset_name)
+
+    if (is.null(x$loc$val$idval)) {
+      polyuse_sf <- polyall_sf
+
+    } else {
+
+      ## Find the feature(s)
+      feat_idx <- which(polyall_sf[[x$loc$val$idfld]] %in% x$loc$val$idval)
+
+      if (length(feat_idx) == 0) {
+        warning("Feature(s) not found")
+        polyuse_sf <- NULL
+
+      } else {
+        polyuse_sf <- polyall_sf %>% slice(feat_idx)
+      }
+    }
+
+    ## Generate the plot
+    if (!is.null(polyuse_sf)) {
+      tmap_mode("view")
+      tm_shape(polyuse_sf) +
+        tm_basemap(basemap) +
+        tm_polygons(col = "red", alpha = 0.2)
+    }
+
+
+  } else if (x$loc$type == "sf") {
+    message(yellow("Sorry, plotting this location type is not yet supported"))
+
+  } else if (x$loc$type == "zip") {
+    message(yellow("Sorry, plotting this location type is not yet supported"))
+
+  }
+
+}
+
 

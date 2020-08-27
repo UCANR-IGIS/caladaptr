@@ -12,6 +12,8 @@ ca_getvals(x, quiet = FALSE, debug = FALSE, use_events = FALSE)
 \item{quiet}{Suppress messages}
 
 \item{debug}{Print additional output at the console}
+
+\item{use_events}{Use the events end point, logical}
 }
 \description{
 Get values from an API request object

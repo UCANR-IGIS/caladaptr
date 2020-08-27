@@ -21,5 +21,18 @@ ca_options(
 Specify processing options for a Cal-Adapt API call
 }
 \details{
+\code{spatial_ag} is the name(s) of summary statistic(s) that will be used when querying
+polygon locations to aggregate the values of pixel that fall within the
+area of interest. Values can be \code{mean}, \code{max}, \code{median}, \code{min},
+and \code{sum}. To get retrieve the individual values for all pixels without a summary, use
+the \code{ca_getrst} function.
 
+When querying point locations (e.g., \code{\link{ca_loc_pt}} or \code{ca_loc_zip}, \code{spatial_ag} should be set to
+\code{'none'}.
+
+\code{temporal_ag} allows you to apply an \emph{additional} temporal
+aggregation function, on top of any temporal aggregation the data are already summarized by
+(e.g., month or year). When querying climate layers that are already temporally aggregated,
+the unit of temporal aggregation must be a larger unit of time (e.g., you can't pull down annual average
+layers and then try to aggregate them by month).
 }

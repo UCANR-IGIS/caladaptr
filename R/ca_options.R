@@ -13,7 +13,7 @@
 #' and \code{sum}. To get retrieve the individual values for all pixels without a summary, use
 #' the \code{ca_getrst} function.
 #'
-#' When querying point locations (e.g., \code{\link{ca_loc_pt} or \code{ca_loc_zip}, \code{spatial_ag} should be set to
+#' When querying point locations (e.g., \code{\link{ca_loc_pt}} or \code{ca_loc_zip}, \code{spatial_ag} should be set to
 #' \code{'none'}.
 #'
 #' \code{temporal_ag} allows you to apply an \emph{additional} temporal

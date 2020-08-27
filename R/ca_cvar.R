@@ -23,9 +23,11 @@ ca_cvar <- function(x = ca_apireq(), cvar) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
 
-  if (FALSE %in% (cvar %in% climvars)) {
-    stop(paste0("Unknown value(s) in period: ",
-                paste0(cvar[!cvar %in% climvars], collapse = ", " ), ". Run `climvars` for valid values."))
+  if (!identical(cvar, NA)) {
+    if (FALSE %in% (cvar %in% climvars)) {
+      stop(paste0("Unknown value(s) in period: ",
+                  paste0(cvar[!cvar %in% climvars], collapse = ", " ), ". Run `climvars` for valid values."))
+    }
   }
 
   x$cvar <- cvar

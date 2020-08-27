@@ -14,9 +14,11 @@ ca_gcm <- function(x = ca_apireq(), gcm) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
 
-  if (FALSE %in% (gcm %in% gcms)) {
-    stop(paste0("Unknown value(s) in gcm: ",
-                paste0(gcm[!gcm %in% gcms], collapse = ", " ), ". Run `gcms` for valid values."))
+  if (!identical(gcm, NA)) {
+    if (FALSE %in% (gcm %in% gcms)) {
+      stop(paste0("Unknown value(s) in gcm: ",
+                  paste0(gcm[!gcm %in% gcms], collapse = ", " ), ". Run `gcms` for valid values."))
+    }
   }
 
   x$gcm <- gcm

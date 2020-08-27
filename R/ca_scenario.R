@@ -14,9 +14,11 @@ ca_scenario <- function(x = ca_apireq(), scenario) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
 
-  if (FALSE %in% (scenario %in% scenarios)) {
-    stop(paste0("Unknown value(s) in scenario: ",
-                paste0(scenario[!scenario %in% scenarios], collapse = ", " ), ". Run `scenarios` for valid values."))
+  if (!identical(scenario, NA)) {
+    if (FALSE %in% (scenario %in% scenarios)) {
+      stop(paste0("Unknown value(s) in scenario: ",
+                  paste0(scenario[!scenario %in% scenarios], collapse = ", " ), ". Run `scenarios` for valid values."))
+    }
   }
 
   x$scenario <- scenario

@@ -14,13 +14,18 @@ ca_catalog_rs(download = FALSE, cache = download, quiet = FALSE)
 \item{quiet}{Suppress messages}
 }
 \value{
-A data frame with raster series.
+A data frame (tibble) with columns of information about the raster series available through
+the Cal-Adapt API.
 }
 \description{
 Get the Cal-Adapt raster series data catalog
 }
 \details{
-This retrieves a copy of the raster series available through the Cal-Adapt API.
-To download a new copy, use \code{download = TRUE}. This is only needed when new
+This retrieves a 'catalog' of the raster series available through the Cal-Adapt API.
+Normally, you can use the copy which comes with caladaptr, but to force download a new copy,
+use \code{download = TRUE}. This is only needed when new
 datasets are added to the API (subscribe to the Cal-Adapt news letter for notifications).
+}
+\seealso{
+\code{\link{ca_getcache}}
 }

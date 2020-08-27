@@ -1,0 +1,57 @@
+---
+title: "Intro to caladaptR"
+output: html_notebook
+---
+
+# About this R Notebook
+
+R Notebooks are a 'flavor' of R markdown that combine plain text with R commands in code chunks. You can (and should!) edit them, and save it every few minutes like anything else!
+
+If you're in RStudio, go ahead and *minimize the console window*. You won't need it. When you run the R commands the *output appears below the code chunk*.
+
+Keyboard shortcuts:
+ - run the current line of R: *ctrl + enter*  
+ - run everything in the current code chunk: *ctrl + shift + enter*  
+ - insert a new code chunk: *ctrl + alt + i*  
+
+# Setup
+
+## Install any missing packages
+
+```{r}
+pkgs_req <- c("remotes", "ggplot2", "dplyr", "tmap", "conflicted", "leaflet", "tidyr")
+pkgs_missing <- pkgs_req[!(pkgs_req %in% installed.packages()[,"Package"])]
+if (length(pkgs_missing)) install.packages(pkgs_missing, dependencies=TRUE)
+```
+## Install caladaptr
+
+```{r}
+remotes::install_github("ucanr-igis/caladaptr")
+```
+
+## Load all packages
+
+Load other required libraries we'll use in the sample code below:
+
+```{r}
+library(caladaptr)
+library(units)
+library(ggplot2)
+library(dplyr)
+library(conflicted)
+library(tidyr)
+library(tmap)
+library(sf)
+```
+
+## Set preferences for common function names 
+
+Set conflict preferences to prevent errors with common `dplyr` functions:
+
+```{r}
+conflict_prefer("filter", "dplyr", quiet = TRUE)
+conflict_prefer("count", "dplyr", quiet = TRUE)
+conflict_prefer("select", "dplyr", quiet = TRUE)
+```
+
+
