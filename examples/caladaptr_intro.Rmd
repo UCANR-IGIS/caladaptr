@@ -7,7 +7,7 @@ output: html_notebook
 
 R Notebooks are a 'flavor' of R markdown that combine plain text with R commands in code chunks. You can (and should!) edit them, and save it every few minutes like anything else!
 
-If you're in RStudio, go ahead and *minimize the console window*. You won't need it. When you run the R commands the *output appears below the code chunk*.
+If you're in RStudio, go ahead and *minimize the console window* (and maybe close the right-hand panes as well). You won't need it. When you run the R commands the *output appears below the code chunk*.
 
 Keyboard shortcuts:
  - run the current line of R: *ctrl + enter*  
@@ -53,5 +53,139 @@ conflict_prefer("filter", "dplyr", quiet = TRUE)
 conflict_prefer("count", "dplyr", quiet = TRUE)
 conflict_prefer("select", "dplyr", quiet = TRUE)
 ```
+
+# Get Projected Temperature for a Point
+
+## Create the Cal-Adapt API Request
+
+The first step in getting climate variables back is to create the Cal-Adapt API request object. This involves stringing together a series of functions together that specify the pieces of the request. The following constants can help you specify pieces of the request:
+
+```{r}
+## Available global change models
+gcms
+
+## Available emissions scenarios
+scenarios
+
+## Available climate variables
+climvars
+
+## Available temporal aggregation periods
+periods
+```
+You can use these values as arguments to build up the API request:
+
+```{r}
+cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(c("rcp45", "rcp85")) %>%
+  ca_period("year") %>%
+  ca_years(start = 2030, end = 2080) %>%
+  ca_cvar(c("tasmax"))
+
+cap1
+```
+To verify the location in an API request, you can plot it. (Note we still haven't fetched any climate data yet, this just shows you the location the request will ask for.)
+
+```{r}
+plot(cap1)
+```
+
+Time to fetch data with `ca_getvals()`
+
+```{r}
+cap1_lst <- cap1 %>% ca_getvals()
+```
+
+The object returned by `ca_getvals()` is a really nasty list. 99% of the time you'll want to convert the results to a tibble (aka data frame) using `ca_vals2tbl()`. 
+
+Note in the example below we also i) pull out just RCP45, ii) convert degrees to F
+  
+```{r}
+cap1_rcp45_tbl <- cap1_lst %>% ca_vals2tbl(spatial_ag = FALSE) %>%
+  filter(scenario == "rcp45") %>%
+  mutate(temp_f = set_units(val, "degF"))
+
+cap1_rcp45_tbl
+```
+
+Plot these with ggplot:
+
+```{r}
+ggplot(data = cap1_rcp45_tbl, aes(x = dt, y = as.numeric(temp_f), group = gcm)) +
+  geom_line(aes(color=gcm)) +
+  labs(title = "Average Annual Maximum Temperature for RCP4.5", x = "year", y = "temp (F)")
+```
+YOUR TURN: CREATE A SIMILAR PLOT FOR RCP85:
+
+```{r}
+## Plot of RCP 8.5 goes here
+
+```
+
+# Reshape values into a 'wide' format:
+
+The tibble returned by `ca_vals2df()` is 'long'. Many R packages (including ggplot2) have arguments to 'group' rows together, so long formats are good. However sometimes you need to reshape the data into a 'wide' format. 
+
+This can be done using `pivot_wider` from the tidyr package (`pivot_longer` does the opposite).
+
+```{r}
+cap1_rcp45_wide_tbl <- cap1_rcp45_tbl %>%
+  select(id, dt, gcm, temp_f) %>%
+  pivot_wider(names_from = gcm, values_from = temp_f)
+
+cap1_rcp45_wide_tbl
+```
+
+# Retrieve Data for a County
+
+Cal-Adapt API has a number of 'preset' areas of interest you can use cookie-cutter style when retreiving climate data. The advantage of using the built-in Area of Interest Presets is that you don't need to import a GIS layer for these layers. You just need to know the name or ID number of the feature(s) you're interested in.
+
+The following AOI Presets are available:
+
+```{r}
+aoipreset_types
+```
+
+To use an AOI Preset, you need to provide the name(s) or id(s). You can view these for a layer with:
+
+```{r}
+aoipreset_idval$counties
+```
+
+## Create an API request
+
+Let's create an API request for Coluse County. 
+
+```{r}
+cap2 <- ca_loc_aoipreset(type="counties", idfld = "name", idval = "Colusa") %>%
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(c("rcp45", "rcp85")) %>%
+  ca_period("year") %>%
+  ca_years(start = 2030, end = 2080) %>%
+  ca_cvar(c("tasmin")) %>%
+  ca_options(spatial_ag = "mean")
+
+cap2
+```
+
+Note the API request includes the `ca_options()`, which specifies how the pixels within the area of interest should be summarized. This is requried because the location we're querying is a polygon which could include many pixels in the climate data, and we only want one number back:
+
+To double-check the area, as before we can plot the API request: 
+
+```{r}
+plot(cap2)
+```
+
+Then we fetch the data with `ca_getvals()`:
+
+```{r}
+cap2_tbl <- cap2 %>% ca_getvals() %>% 
+  ca_vals2tbl()
+cap2_tbl
+```
+
+
+
 
 
