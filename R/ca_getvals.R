@@ -13,7 +13,7 @@
 #' @importFrom dplyr select mutate
 #' @export
 
-ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = FALSE) {
+ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 

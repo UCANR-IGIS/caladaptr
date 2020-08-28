@@ -104,7 +104,7 @@ Note in the example below we also i) pull out just RCP45, ii) convert degrees to
 ```{r}
 cap1_rcp45_tbl <- cap1_lst %>% ca_vals2tbl(spatial_ag = FALSE) %>%
   filter(scenario == "rcp45") %>%
-  mutate(temp_f = set_units(val, "degF"))
+  mutate(temp_f = set_units(val, degF))
 
 cap1_rcp45_tbl
 ```
@@ -155,7 +155,7 @@ aoipreset_idval$counties
 
 ## Create an API request
 
-Let's create an API request for Coluse County. 
+Let's create an API request for Colusa County. 
 
 ```{r}
 cap2 <- ca_loc_aoipreset(type="counties", idfld = "name", idval = "Colusa") %>%
@@ -185,7 +185,133 @@ cap2_tbl <- cap2 %>% ca_getvals() %>%
 cap2_tbl
 ```
 
+Let's plot the difference between rcp85 and rcp45 over time for one of the counties. First we filter the rows to one county, compute the temp in Fahrenheit, and put the rcp85 and rcp45 values into separate columns:
+
+```{r}
+rcp85_minus_rcp45_tbl <- cap2_tbl %>% 
+  filter(name == "Colusa") %>% 
+  mutate(temp_f = set_units(val, degF)) %>% 
+  select(name, gcm, scenario, dt, temp_f) %>% 
+  pivot_wider(names_from = scenario, values_from = temp_f)
+
+rcp85_minus_rcp45_tbl
+```
+
+Now we're ready to make the plot:
+
+```{r}
+ggplot(data = rcp85_minus_rcp45_tbl, aes(x = dt, y = as.numeric(rcp85 - rcp45), group = gcm)) +
+  geom_line(aes(color=gcm)) +
+  labs(title = "Difference between RCP8.5 and RCP4.5 in the Annual Minimum \nTemperature for Colusa County", x = "year", y = "temp (F)")
+```
+
+# Get Daily Data
+
+## Construct the API Request object:
+
+Get all the census tracks in Imperial county. To make our lives a little easier, we'll identify the census tracts in Imperial using a spatial selection. First grab the boundary of Imperial County:
+
+```{r}
+counties_imperial_sf  <- ca_aoipreset_geom("counties") %>% filter(name == "Imperial")
+plot(counties_imperial_sf %>% st_geometry())
+```
+
+Next, import all the census tracts:
+
+```{r}
+census_all_sf <- ca_aoipreset_geom("censustracts")
+census_all_sf
+## Plotting all of the census tracts can take a few seconds:
+## plot(census_all_sf %>% st_geometry())
+```
+
+Find those census tracts in Imperial County:
+
+```{r}
+tract_in_imperial_yn <- st_within(census_all_sf, counties_imperial_sf, sparse = FALSE)
+table(tract_in_imperial_yn)
+
+tm_shape(census_all_sf %>% filter(tract_in_imperial_yn)) +
+  tm_polygons() +
+tm_shape(counties_imperial_sf) +
+  tm_borders(col = "red")
+```
+
+Here are the tract ids:
+
+```{r}
+tracts_vals <- census_all_sf$tract[tract_in_imperial_yn]
+tracts_vals
+```
 
 
+Census track id:
+
+```{r}
+cap3 <- ca_loc_aoipreset(type="censustracts", idfld = "tract", idval = tracts_vals) %>%
+  ca_gcm("MIROC5") %>%
+  ca_scenario(c("rcp85")) %>%
+  ca_period("day") %>%
+  ca_years(start = "2050-01-01", end = "2055-12-31") %>%
+  ca_cvar(c("tasmax")) %>% 
+  ca_options(spatial_ag = "max")
+
+cap3
+
+```
+
+Fetch data:
+
+```{r}
+cap3_tbl <- cap3 %>% ca_getvals() %>% ca_vals2tbl()
+cap3_tbl
+```
+Pull out just the values for March and April:
+
+```{r}
+library(lubridate)
+cap3_marchapril_tbl <- cap3_tbl %>% 
+  mutate(month_num = month(as.Date(dt))) %>% 
+  filter(month_num %in% c(3,4)) %>% 
+  select(tract, cvar, gcm, scenario, dt, month_num, val)
+
+cap3_marchapril_tbl
+```
+
+Select a single tract and add a field for temperature:
+
+```{r}
+cap3_degf_tbl <- cap3_tbl %>% 
+  filter(tract == 6025010101) %>% 
+  mutate(temp_f = set_units(val, degF)) %>% 
+  select(tract, cvar, gcm, scenario, dt, temp_f)
+
+cap3_degf_tbl
+```
+
+Plot a histogram of values:
+
+```{r}
+hist(cap3_degf_tbl$temp_f)
+```
+
+Identify those days above 110:
+
+```{r}
+super_hot_yn <- (cap3_degf_tbl$temp_f > as_units(110, "degF"))
+table(super_hot_yn)
+```
+
+Count the number of heat spells consisting of 3 or more consecutive days of >110.
+
+```{r}
+## Use rle to chop up the series of TRUE of FALSE into 'runs'
+tempruns <- rle(super_hot_yn)
+
+## Identify those runs where value is TRUE and thre are 3 or more values in the run 
+extreme_heat_runs <- which(tempruns$values & tempruns$lengths >= 3)
+
+length(extreme_heat_runs)
+```
 
 
