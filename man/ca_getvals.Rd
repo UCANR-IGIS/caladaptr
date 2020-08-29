@@ -4,7 +4,7 @@
 \alias{ca_getvals}
 \title{Get values from an API request object}
 \usage{
-ca_getvals(x, quiet = FALSE, debug = FALSE, use_events = FALSE)
+ca_getvals(x, quiet = FALSE, debug = FALSE, use_events = TRUE)
 }
 \arguments{
 \item{x}{A Cal-Adapt API request}

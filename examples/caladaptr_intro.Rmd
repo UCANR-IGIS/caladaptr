@@ -132,7 +132,8 @@ cap1_rcp45_tbl <- cap1_lst %>% ca_vals2tbl(spatial_ag = FALSE) %>%
   filter(scenario == "rcp45") %>%
   mutate(temp_f = set_units(val, degF))
 
-cap1_rcp45_tbl
+dim(cap1_rcp45_tbl)
+head(cap1_rcp45_tbl)
 ```
 
 Plot these with ggplot:
@@ -212,7 +213,9 @@ Then we fetch the data with `ca_getvals()`:
 
 ```{r cap2_fetch, cache = TRUE}
 cap2_tbl <- cap2 %>% ca_getvals(quiet = TRUE) %>% ca_vals2tbl()
-cap2_tbl %>% slice(1:500)
+
+dim(cap2_tbl)
+head(cap2_tbl)
 ```
 
 Let's plot the difference between rcp85 and rcp45 over time. First we'll convert the temp to degrees Fahrenheit, and split the rcp85 and rcp45 values into separate columns using `pivot_wider`:
@@ -224,7 +227,8 @@ rcp85_minus_rcp45_tbl <- cap2_tbl %>%
   select(name, gcm, scenario, dt, temp_f) %>% 
   pivot_wider(names_from = scenario, values_from = temp_f)
 
-rcp85_minus_rcp45_tbl
+dim(rcp85_minus_rcp45_tbl)
+head(rcp85_minus_rcp45_tbl)
 ```
 
 Now we're ready to make the plot:
@@ -237,7 +241,7 @@ ggplot(data = rcp85_minus_rcp45_tbl, aes(x = dt, y = as.numeric(rcp85 - rcp45), 
 
 # Example #3: Get Daily Data for census Tracts
 
-In this example, we'll grab 5 years of  daily 
+In this example, we'll grab 5 years of  daily temperature data for census tracts that fall within Imperial County. We'll then select one of the census tracts and count the number of extreme heat events in the 5-year time span, using a definition of extreme heat event as a number of consecutive days where the maximum temperature exceeds a threshhold.
 
 ## Construct the API Request object:
 
@@ -252,13 +256,13 @@ Next, import all the census tracts:
 
 ```{r census_tracts_all}
 tracts_all_sf <- ca_aoipreset_geom("censustracts")
-tracts_all_sf %>% slice(1:500)
+tracts_all_sf
 
 ## Plot census tracts (takes a few seconds):
 ## plot(tracts_all_sf %>% st_geometry())
 ```
 
-Find those census tracts in Imperial County:
+Identify those census tracts within Imperial County using `st_within`:
 
 ```{r imperial_tracts}
 tract_in_imperial_yn <- st_within(tracts_all_sf, counties_imperial_sf, sparse = FALSE)
@@ -270,7 +274,7 @@ tm_shape(counties_imperial_sf) +
   tm_borders(col = "red")
 ```
 
-Here are the tract ids:
+We can now pull out the tract 'names' (to feed into the API call):
 
 ```{r tracts_vals, cache = TRUE}
 tracts_vals <- tracts_all_sf$tract[tract_in_imperial_yn]
@@ -282,7 +286,7 @@ We put these into the `ca_loc_aoipreset` function in the API request:
 ```{r cap3_define, cache = TRUE}
 cap3 <- ca_loc_aoipreset(type="censustracts", idfld = "tract", idval = tracts_vals) %>%
   ca_gcm("MIROC5") %>%
-  ca_scenario(c("rcp85")) %>%
+  ca_scenario(c("rcp45", "rcp85")) %>%
   ca_period("day") %>%
   ca_years(start = "2050-01-01", end = "2055-12-31") %>%
   ca_cvar(c("tasmax")) %>% 
@@ -296,8 +300,12 @@ Now we're ready to fetch the data:
 
 ```{r cap3_fetch, cache = TRUE}
 cap3_tbl <- cap3 %>% ca_getvals(quiet = TRUE) %>% ca_vals2tbl()
-cap3_tbl %>% slice(1:500)
+
+dim(cap3_tbl)
+head(cap3_tbl)
 ```
+### Aside: Subset by Month
+
 If you wanted to pull out just the values for March and April, you could do something like:
 
 ```{r cap3_march_april, cache = TRUE}
@@ -309,7 +317,11 @@ cap3_marchapril_tbl <- cap3_tbl %>%
 cap3_marchapril_tbl
 ```
 
-Select a single tract and add a field for temperature:
+## Extreme heat analysis of a single tract
+
+In this section, we'll select a single census tract and count the number of extreme heat events during this five-year period. We'll define an extreme heat event to be 3 or more consecutive days where the maximum temperature is >110 &#176;F.
+
+First, select a single tract and add a field for temperature in &#176;F:
 
 ```{r cap3_tempf, cache=TRUE}
 cap3_degf_tbl <- cap3_tbl %>% 
@@ -317,19 +329,29 @@ cap3_degf_tbl <- cap3_tbl %>%
   mutate(temp_f = set_units(val, degF)) %>% 
   select(tract, cvar, gcm, scenario, dt, temp_f)
 
-cap3_degf_tbl
+dim(cap3_degf_tbl)
+head(cap3_degf_tbl)
 ```
 
-Plot a histogram of values:
+Plot a histogram of values for each rcp:
 
-```{r cap3_vals_hist, cache=TRUE}
-hist(cap3_degf_tbl$temp_f)
+```{r cap3_vals_hist1, cache=TRUE}
+hist(cap3_degf_tbl %>%  filter(scenario == "rcp45") %>% pull(temp_f),
+     main = "Maximum Daily Temp, 2050-2055 \n RCP4.5",
+     xlab = "temp (F)") 
+
+hist(cap3_degf_tbl %>%  filter(scenario == "rcp85") %>% pull(temp_f),
+     main = "Maximum Daily Temp, 2050-2055 \n RCP8.5",
+     xlab = "temp (F)") 
+
 ```
 
-Identify those days above 110 &#176;F:
+For RCP4.5, identify those days above 110 &#176;F:
 
 ```{r cap3_superhot, cache = TRUE}
-super_hot_yn <- (cap3_degf_tbl$temp_f > as_units(110, "degF"))
+super_hot_yn <- (cap3_degf_tbl %>% 
+                   filter(scenario == "rcp45") %>% 
+                   pull(temp_f) > as_units(110, "degF"))
 table(super_hot_yn)
 ```
 
@@ -346,4 +368,14 @@ extreme_heat_runs <- which(tempruns$values & tempruns$lengths >= 3)
 length(extreme_heat_runs)
 ```
 
+==> Under RCP4.5, the MIROC5 model predicts this census tract will experience 34 extreme heat events (defined as 3 ore more days above 110 &#176;F) during the 5 year period in question.
+
+## PRACTICE: HOW MANY EXTREME HEAT EVENTS WILL THERE BE UNDER RCP85?
+
+```{r}
+## Your answer goes here:
+
+```
+
+Ans. 42
 

@@ -24,7 +24,7 @@ format.ca_apireq <- function(x, ...) {
         idvals_str <- "all"
       } else {
         idvals_str <- paste0(paste(head(x$loc$val$idval, n=3), collapse=", "),
-                             ifelse(nrow(x$loc$val$idval)>3, ", ...", ""))
+                             ifelse(length(x$loc$val$idval) > 3, ", ...", ""))
       }
       loc2 <- paste0("\n  AOI Preset: ", x$loc$val$type,
                      "\n  ", x$loc$val$idfld, "(s): ", idvals_str)

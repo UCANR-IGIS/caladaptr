@@ -11,7 +11,6 @@
 #' @param options A list of options for querying the API
 #'
 #' @export
-#'
 
 ca_apireq <- function(loc=NA, dates=NA, gcm=NA, scenario=NA, period=NA, cvar=NA, options=NA) {
   res <- list(loc = loc,

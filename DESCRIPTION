@@ -1,13 +1,13 @@
 Package: caladaptr
 Type: Package
-Title: Import and Use Cal-Adapt Data in R via the API
-Version: 0.2.6
-Date: 2020-08-27
-Author: Andy Lyons
-Maintainer: Andy Lyons <caladaptr@gmail.com>
-BugReports: <mailto:caladaptr@gmail.com>
-Description: Provides base functions for importing data from 
-    Cal-Adapt.org through the API.
+Title: Tools for the Cal-Adapt API in R
+Version: 0.2.7
+Date: 2020-08-28
+Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
+BugReports: https://github.com/ucanr-igis/caladaptr/issues
+URL: https://github.com/ucanr-igis/caladaptr
+Description: Base functions for importing climate data using the 
+    Cal-Adapt API.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -28,4 +28,4 @@ RoxygenNote: 7.1.1
 Suggests: 
     testthat
 Depends: 
-    R (>= 2.10)
+    R (>= 3.0)

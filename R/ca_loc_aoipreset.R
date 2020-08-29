@@ -29,7 +29,8 @@ ca_loc_aoipreset <- function(x = ca_apireq(), type, idfld="id", idval=NULL) {
   if (!inherits(x, "ca_apireq")) stop("x should be an object of class ca_apireq")
 
   if (length(type) != 1) stop("type must be length 1")
-  #if (!type %in% aoipreset_types) stop("unknown value for type")
+  if (!type %in% aoipreset_types) stop("unknown value for type")
+
   if (FALSE %in% (idfld %in% aoipreset_idflds[[type]])) stop("invalid value for idfld. See aoipreset_idflds")
 
   if (!is.null(idval)) {

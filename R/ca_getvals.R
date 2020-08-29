@@ -168,6 +168,9 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
                       ## Construct the query parameters (empty lists will 'drop out')
                     qry_params <- c(g_qrylst, ref_qrylst, stat_qrylst, startend_qrylst, list(format='json'))
 
+                    ## adding list(freq='AS') fixes the issue with the starting date, however it screws
+                    ## up the values returned (makes each one an array)
+
                     #&start=2040-01-01&end=2060-01-01
                     #https://api.cal-adapt.org/api/series/tasmax_year_HadGEM2-ES_rcp45/events/?g=POINT%20%28-121.4687%2038.5938%29&start=2040-01-01&end=2060-01-01&format=json
 
