@@ -16,9 +16,9 @@ ca_setcache(cache_dir, make_dir = FALSE, write = TRUE, quiet = FALSE)
 
 \item{cache_dir}{The directory for cached data, can also be 'default' to use the default location}
 
-\item{make_dir}{Making the directory if needed, logical}
+\item{make_dir}{Make the directory if needed, logical}
 
-\item{write}{Write directory location to .Renviron for persistence across R sessions}
+\item{write}{Save the cache directory in the \code{.Renviron} file for persistence across R sessions}
 }
 \description{
 View and set the directory for the data catalog

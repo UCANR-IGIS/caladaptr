@@ -2,10 +2,21 @@
 % Please edit documentation in R/ca_loc_sf.R
 \name{ca_loc_sf}
 \alias{ca_loc_sf}
-\title{Specifies the location based on a sf object}
+\title{Use a sf data frame as the location for a Cal-Adapt API request}
 \usage{
-ca_loc_sf(x, loc)
+ca_loc_sf(x = ca_apireq(), loc)
+}
+\arguments{
+\item{x}{A Cal-Adapt API request}
+
+\item{loc}{A sf data frame}
 }
 \description{
-Specifies the location based on a sf object
+Specifies a sf data frame as the location for a Cal-Adapt API request
+}
+\details{
+Not yet enabled.
+
+The sf data frame must have a valid CRS (doesn't have to be
+geographic coords.)
 }

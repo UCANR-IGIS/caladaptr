@@ -1,13 +1,19 @@
 #' Get raster from an API request object
 #'
+#' @param x A Cal-Adapt API request
+#' @param quiet Suppress messages
+
 #' @export
 
-ca_getrst <- function(x) {
+ca_getrst <- function(x, quiet = TRUE) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
-  if (is.na(x$resource)) stop("dataset has not been specified in the api call")
 
-  if (x$resource$type == "scripps_loca") {
+  stop('ca_getrst is not yet supported')
+
+  #if (is.na(x$resource)) stop("dataset has not been specified in the api call")
+
+  #if (x$resource$type == "scripps_loca") {
 
     ## GET THE SLUG
 
@@ -29,8 +35,8 @@ ca_getrst <- function(x) {
 
 
 
-  } else {
-    stop("this dataset is not yet supported")
-  }
+  #} else {
+    #stop("this dataset is not yet supported")
+  #}
 
 }

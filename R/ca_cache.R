@@ -84,11 +84,12 @@ ca_getcache <- function(default=TRUE, quiet=TRUE) {
 #' @describeIn ca_getcache Set cache directory
 #' @title Set cache directory to a custom location
 #' @param cache_dir The directory for cached data, can also be 'default' to use the default location
-#' @param make_dir Making the directory if needed, logical
-#' @param write Write directory location to .Renviron for persistence across R sessions
+#' @param make_dir Make the directory if needed, logical
+#' @param write Save the cache directory in the \code{.Renviron} file for persistence across R sessions
+#' @param quiet Suppress messages
+#'
 #' @importFrom rappdirs user_cache_dir
 #' @importFrom crayon yellow
-#' @param quiet Suppress messages
 
 ca_setcache <- function(cache_dir, make_dir = FALSE, write = TRUE, quiet = FALSE) {
 

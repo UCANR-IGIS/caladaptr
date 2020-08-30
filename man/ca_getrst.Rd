@@ -4,7 +4,12 @@
 \alias{ca_getrst}
 \title{Get raster from an API request object}
 \usage{
-ca_getrst(x)
+ca_getrst(x, quiet = TRUE)
+}
+\arguments{
+\item{x}{A Cal-Adapt API request}
+
+\item{quiet}{Suppress messages}
 }
 \description{
 Get raster from an API request object

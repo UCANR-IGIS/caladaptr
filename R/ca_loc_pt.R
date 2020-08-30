@@ -34,8 +34,8 @@ ca_loc_pt <- function(x = ca_apireq(), coords, id=NULL) {
     if (anyDuplicated(id) != 0) stop("id must contain a unique value for each point")
   }
 
-  res <- x
-  res$loc <- list(type="pt", val = data.frame(id = id, x = coords[,1], y = coords[,2]))
-  invisible(res)
+  #res <- x
+  X$loc <- list(type="pt", val = data.frame(id = id, x = coords[,1], y = coords[,2]))
+  invisible(X)
 
 }

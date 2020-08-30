@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
 Title: Tools for the Cal-Adapt API in R
-Version: 0.2.7
-Date: 2020-08-28
+Version: 0.2.8
+Date: 2020-08-29
 Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
 URL: https://github.com/ucanr-igis/caladaptr

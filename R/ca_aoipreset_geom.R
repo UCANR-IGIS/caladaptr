@@ -6,12 +6,16 @@
 #' @param quiet Suppress messages
 #'
 #' @details This retrieves the geometry (i.e., boundaries) for one of Cal-Adapt's AOI Presets.
-#' If the spatial layer has not already been downloaded, it will be downloaded and saved in
-#' the local cache directory as a GeoPackage.
+#' If the spatial layer has not already been downloaded, it will be downloaded
+#' (from \url{https://github.com/ucanr-igis/caladaptr/tree/master/aoipreset_geoms}) and saved in
+#' the local cache directory as a GeoPackage. The default local cache directory is buried in
+#' the current user's 'AppData' folder. To put the GeoPackages in an easier-to-find location,
+#' use \code{\link{ca_setcache}}.
 #'
 #' @return A simple feature data frame
 #'
-#' @seealso \code{\link{ca_getcache}}
+#' @seealso \code{\link{aoipreset_types}}, \code{\link{ca_getcache}}
+#'
 #' @importFrom sf st_read
 #' @importFrom utils download.file unzip
 #' @export
