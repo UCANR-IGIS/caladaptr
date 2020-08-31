@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Format a ca_apireq object — format.ca_apireq • caladaptr</title>
+<title>Area-of-Interest Presets — aoipreset_types • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Format a ca_apireq object — format.ca_apireq" />
-<meta property="og:description" content="Format a ca_apireq object" />
+<meta property="og:title" content="Area-of-Interest Presets — aoipreset_types" />
+<meta property="og:description" content="Area of interest presets
+The field(s) each AOI Preset provides to identify features
+Values that can be used to identify features in AOI Preset" />
 
 
 
@@ -133,31 +135,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Format a ca_apireq object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_apireq_methods.R'><code>R/ca_apireq_methods.R</code></a></small>
-    <div class="hidden name"><code>format.ca_apireq.Rd</code></div>
+    <h1>Area-of-Interest Presets</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/aoipresets.R'><code>R/aoipresets.R</code></a></small>
+    <div class="hidden name"><code>aoipreset_types.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Format a ca_apireq object</p>
+    <p>Area of interest presets</p>
+<p>The field(s) each AOI Preset provides to identify features</p>
+<p>Values that can be used to identify features in AOI Preset</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for ca_apireq</span>
-<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>aoipreset_types</span>)
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>Cal-Adapt API request</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Unused</p></td>
-    </tr>
-    </table>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>aoipreset_idflds</span>)
 
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>aoipreset_idval</span>)</pre>
+
+
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>An character vector with the names of area-of-interest presets</p>
+<p>Named list with with one element per preset type</p>
+<p>Named list of dataframes, with with one element per preset type</p>
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    
+<ul>
+<li><p><code>aoipreset_idflds</code>: AOI Preset id fields</p></li>
+<li><p><code>aoipreset_idval</code>: Values that can be used to identify features</p></li>
+</ul>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

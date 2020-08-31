@@ -1,11 +1,11 @@
 Package: caladaptr
 Type: Package
-Title: Tools for the Cal-Adapt API in R
-Version: 0.2.8
-Date: 2020-08-29
+Title: Import Climate Data from Cal-Adapt through the API
+Version: 0.2.9
+Date: 2020-08-31
 Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
-URL: https://github.com/ucanr-igis/caladaptr
+URL: https://github.com/ucanr-igis/caladaptr, https://github.com/ucanr-igis/caladaptr
 Description: Base functions for importing climate data using the 
     Cal-Adapt API.
 License: GPL-3

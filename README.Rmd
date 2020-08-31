@@ -19,25 +19,49 @@ knitr::opts_chunk$set(
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-`caladaptr` is an API client that makes it easier to work with data from [Cal-Adapt.org](https://cal-adapt.org/) in R.
+See also: <https://ucanr-igis.github.io/caladaptr/>
 
-'Beta' status means the package:
+`caladaptr` is an API client that makes it easier to work with data from [Cal-Adapt.org](https://cal-adapt.org/) in R. The role of `caladaptr` is to bring data into R and provide low-level functions to get it into the shape and format you require:
 
-1) is still under development  
-2) is being updated more often than usual  
-3) has a slightly higher probability than average that updates will *not* be backward compatible  
-4) is actively seeking user feedback and input (interested? join the [caladaptR betaR](#caladaptr-betar-club) club!)
+<p align="center"><img src="man/figures/caladaptr_workflow_630x524x256.png" width="504" height="419"/></p>
+
+\
+
+**'Beta'** status means:
+
+1) the package is still under development  
+2) the package is being updated fairly often  
+3) there's a possibility that updates will *not* be backward compatible  
+4) user feedback and input is extremely welcome! (please join the [caladaptR betaR](#caladaptr-betar-club) club)
+
+*Development Status (Aug 2020)*
+
+- `caladaptr` only supports Cal-Adapt's raster data layers (which is most of them). There are no plans at present to support importing station data (i.e., sea level rise).  
+- Currently only temperature and precipitation rasters can be queried (both projected and historic modeled). Variables from the VIC datasets and others will be coming soon.  
+- Retrieving values currently works. Retrieving rasters is not yet supported.  
+- Currently you can query point locations and preset areas of interest. Querying a user-provided polygon will be coming soon.
 
 ## Installation
 
-`caladaptr` is hosted on [GitHub](https://github.com/UCANR-IGIS/caladaptr){target="_blank" rel="noopener"}. To install it, you need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} and the `devtools` package installed:
+`caladaptr` is hosted on [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. To install it, you need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} and the `devtools` (or `remotes`) package installed:
 
 ```{r install_caladaptr, eval = FALSE}
 library(devtools)
 devtools::install_github("ucanr-igis/caladaptr")
 ```
 
-## Example 1: Get Annual Projected Temperature at a Point Location
+## General Workflow 
+
+In general, there are three steps to getting data via the Cal-Adapt API:
+
+1) Create a 'Cal-Adapt API Request' object
+
+2) Feed the API Request object into a function that fetches data (either values or rasters*)
+
+3) Massage the data that comes back into the format you require (e.g., a data frame or clipped raster)
+
+
+## Sample Usage: Get Annual Projected Temperature at a Point Location
 
 1) Load the package:
 
@@ -84,39 +108,19 @@ dim(cap1_vals_df)
 head(cap1_vals_df)
 ```
 
-**Note #1**. values are returned with units, thanks to the [units](https://cran.r-project.org/package=units) package. No more guessing what the units are, or having to lookup unit conversion constants!
+For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the 'R Notebooks' menu on the [website](https://ucanr-igis.github.io/caladaptr/). 
 
-**Note #2**. See how the results from `ca_getvals` get fed into `ca_vals2tbl` to become a tibble? See `?ca_vals2tbl` for more options to specify which column(s) to return.
 
-## Example #2: Same query as #1, but for a Congressional District
+# Convenience Features and Functions
 
-Cal-Adapt supports ~10 'preset' Areas of Interest. `caladaptr` refers to these as "AOI Presets', and you can use them to specify area(s) of interest in your API requests:
+- All `caladaptr` functions are pipe friendly and tidyverse compliant.  
+- Spatial data formats use the `sf` and `raster` packages.  
+-Returned values have units (thanks to the [units](https://cran.r-project.org/package=units)) package. No more guessing what the units are or having to look up unit conversion constants!  
+- Plotting an API Request object shows the query's location.  
+- You can search the Cal-Adapt catalog of raster series from within R. Download a new version of the catalog with `ca_catalog_rs()`.  
+- Don't need every single column in your output dataframe? `ca_vals2tbl()` provides arguments to specify which column(s) to return.
 
-```{r}
-aoipreset_types
-```
-
-Next, we'll modify the first API call by simply "swapping out" the point location for a Congressional District location, using the `ca_loc_aoipreset()` function. For this example we'll use California's 20th and 24th [Congressional Districts](https://en.wikipedia.org/wiki/California%27s_congressional_districts) (Carmel Valley and Santa Barbara). 
-
-```{r cap2_define, cache=TRUE}
-cap2 <- cap1 %>% ca_loc_aoipreset(type = "cdistricts",
-                                  idfld = "geoid",
-                                  idval = c("0620", "0624"),
-                                  stat = "mean")
-
-cap2
-```
-
-Note when you query a polygon, you have to also specify a summary statistic that will be used to reduce the various pixels that fall within the polygon to one number. Your choices are `mean`, `max`, `median`, `min`, and `sum.` (If you want to retain the individual pixel values, use `ca_getrst()`.)
-
-```{r ca2_getvals, cache=TRUE}
-cap2_vals_df <- ca_getvals(cap2, quiet = TRUE) %>% ca_vals2tbl()
-
-dim(cap2_vals_df)
-head(cap2_vals_df)
-```
-
-# caladaptR betaR club
+# caladaptR betaR Club
 
 The **caladaptR betaR** club is **now accepting members!** If you would like to be part of this elite cadre of `caladaptr` early adopters, you should join our beta testing program. Benefits of joining the **caladaptR betaR** club include:
 
@@ -126,10 +130,4 @@ The **caladaptR betaR** club is **now accepting members!** If you would like to 
 - an **email forum** to bounce ideas around with other caladaptR users and the package developer
 
 To join the **caladaptR betaR** club, please subscribe yourself to the [caladaptR email list](https://lists.ucdavis.edu/sympa/subscribe/caladaptr).
-
-# Coming soon...
-
- - How to query a `sf` object  
- - More examples of reshaping data  
- - Retrieving rasters  
 

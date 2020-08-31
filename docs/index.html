@@ -5,23 +5,29 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tools for the Cal-Adapt API in R • caladaptr</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<title>Import Climate Data from Cal-Adapt through the API • caladaptr</title>
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Tools for the Cal-Adapt API in R">
+<script src="pkgdown.js"></script><meta property="og:title" content="Import Climate Data from Cal-Adapt through the API">
 <meta property="og:description" content="Base functions for importing climate data using the 
     Cal-Adapt API.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-81567502-3"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-81567502-3');
+</script>
 </head>
 <body data-spy="scroll" data-target="#toc">
     <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -32,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
       </span>
     </div>
 
@@ -46,6 +52,21 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="news/index.html">Changelog</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    R Notebooks
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -74,29 +95,53 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/">Cal-Adapt.org</a> in R.</p>
-<p>‘Beta’ status means the package:</p>
-<p>1) is still under development<br>
-2) is being updated more often than usual<br>
-3) has a slightly higher probability than average that updates will <em>not</em> be backward compatible<br>
-4) is actively seeking user feedback and input (interested? join the <a href="#caladaptr-betar-club">caladaptR betaR</a> club!)</p>
+<p>See also: <a href="https://ucanr-igis.github.io/caladaptr/" class="uri">https://ucanr-igis.github.io/caladaptr/</a></p>
+<p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/">Cal-Adapt.org</a> in R. The role of <code>caladaptr</code> is to bring data into R and provide low-level functions to get it into the shape and format you require:</p>
+<p align="center">
+</p>
+<p><img src="reference/figures/caladaptr_workflow_630x524x256.png" width="504" height="419"></p>
+
+<p><strong>‘Beta’</strong> status means:</p>
+<p>1) the package is still under development<br>
+2) the package is being updated fairly often<br>
+3) there’s a possibility that updates will <em>not</em> be backward compatible<br>
+4) user feedback and input is extremely welcome! (please join the <a href="#caladaptr-betar-club">caladaptR betaR</a> club)</p>
+<p><em>Development Status (Aug 2020)</em></p>
+<ul>
+<li>
+<code>caladaptr</code> only supports Cal-Adapt’s raster data layers (which is most of them). There are no plans at present to support importing station data (i.e., sea level rise).<br>
+</li>
+<li>Currently only temperature and precipitation rasters can be queried (both projected and historic modeled). Variables from the VIC datasets and others will be coming soon.<br>
+</li>
+<li>Retrieving values currently works. Retrieving rasters is not yet supported.<br>
+</li>
+<li>Currently you can query point locations and preset areas of interest. Querying a user-provided polygon will be coming soon.</li>
+</ul>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p><code>caladaptr</code> is hosted on <a href="https://github.com/UCANR-IGIS/caladaptr">GitHub</a>. To install it, you need to have <a href="https://cran.r-project.org/bin/windows/Rtools/">RTools</a> and the <code>devtools</code> package installed:</p>
+<p><code>caladaptr</code> is hosted on <a href="https://github.com/ucanr-igis/caladaptr">GitHub</a>. To install it, you need to have <a href="https://cran.r-project.org/bin/windows/Rtools/">RTools</a> and the <code>devtools</code> (or <code>remotes</code>) package installed:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://devtools.r-lib.org">devtools</a></span>)
 <span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"ucanr-igis/caladaptr"</span>)
 </pre></div>
 </div>
-<div id="example-1-get-annual-projected-temperature-at-a-point-location" class="section level2">
+<div id="general-workflow" class="section level2">
 <h2 class="hasAnchor">
-<a href="#example-1-get-annual-projected-temperature-at-a-point-location" class="anchor"></a>Example 1: Get Annual Projected Temperature at a Point Location</h2>
+<a href="#general-workflow" class="anchor"></a>General Workflow</h2>
+<p>In general, there are three steps to getting data via the Cal-Adapt API:</p>
+<p>1) Create a ‘Cal-Adapt API Request’ object</p>
+<p>2) Feed the API Request object into a function that fetches data (either values or rasters*)</p>
+<p>3) Massage the data that comes back into the format you require (e.g., a data frame or clipped raster)</p>
+</div>
+<div id="sample-usage-get-annual-projected-temperature-at-a-point-location" class="section level2">
+<h2 class="hasAnchor">
+<a href="#sample-usage-get-annual-projected-temperature-at-a-point-location" class="anchor"></a>Sample Usage: Get Annual Projected Temperature at a Point Location</h2>
 <p>1) Load the package:</p>
 <!-- end list -->
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/ucanr-igis/caladaptr">caladaptr</a></span>)
-<span class="co">#&gt; Cal-Adapt R (version 0.2.5)</span>
+<span class="co">#&gt; Cal-Adapt R (version 0.2.9)</span>
 <span class="co">#&gt; URL: https://github.com/ucanr-igis/caladaptr</span>
 <span class="co">#&gt; Bug reports: caladaptr@gmail.com</span>
 </pre></div>
@@ -159,58 +204,24 @@
 <span class="co">#&gt; 5 1       tasmax year   HadGEM2-ES rcp45    2044-01-01 299.5327</span>
 <span class="co">#&gt; 6 1       tasmax year   HadGEM2-ES rcp45    2045-01-01 298.2451</span>
 </pre></div>
-<p><strong>Note #1</strong>. values are returned with units, thanks to the <a href="https://cran.r-project.org/package=units">units</a> package. No more guessing what the units are, or having to lookup unit conversion constants!</p>
-<p><strong>Note #2</strong>. See how the results from <code>ca_getvals</code> get fed into <code>ca_vals2tbl</code> to become a tibble? See <code><a href="reference/ca_vals2tbl.html">?ca_vals2tbl</a></code> for more options to specify which column(s) to return.</p>
+<p>For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the ‘R Notebooks’ menu on the <a href="https://ucanr-igis.github.io/caladaptr/">website</a>.</p>
 </div>
-<div id="example-2-same-query-as-1-but-for-a-congressional-district" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example-2-same-query-as-1-but-for-a-congressional-district" class="anchor"></a>Example #2: Same query as #1, but for a Congressional District</h2>
-<p>Cal-Adapt supports ~10 ‘preset’ Areas of Interest. <code>caladaptr</code> refers to these as "AOI Presets’, and you can use them to specify area(s) of interest in your API requests:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw">aoipreset_types</span>
-<span class="co">#&gt;  [1] "censustracts"      "counties"          "cdistricts"       </span>
-<span class="co">#&gt;  [4] "ccc4aregions"      "climregions"       "hydrounits"       </span>
-<span class="co">#&gt;  [7] "irwm"              "electricutilities" "wecc-load-area"   </span>
-<span class="co">#&gt; [10] "evtlocations"      "place"</span>
-</pre></div>
-<p>Next, we’ll modify the first API call by simply “swapping out” the point location for a Congressional District location, using the <code><a href="reference/ca_loc_aoipreset.html">ca_loc_aoipreset()</a></code> function. For this example we’ll use California’s 20th and 24th <a href="https://en.wikipedia.org/wiki/California%27s_congressional_districts">Congressional Districts</a> (Carmel Valley and Santa Barbara).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="kw">cap2</span> <span class="op">&lt;-</span> <span class="kw">cap1</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_loc_aoipreset.html">ca_loc_aoipreset</a></span>(type = <span class="st">"cdistricts"</span>,
-                                  idfld = <span class="st">"geoid"</span>,
-                                  idval = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"0620"</span>, <span class="st">"0624"</span>),
-                                  stat = <span class="st">"mean"</span>)
-
-<span class="kw">cap2</span>
-<span class="co">#&gt; Cal-Adapt API Request</span>
-<span class="co">#&gt; Location(s): </span>
-<span class="co">#&gt;   AOI Preset: cdistricts</span>
-<span class="co">#&gt;   geoid(s): 0620, 0624</span>
-<span class="co">#&gt;   Stat(s): mean</span>
-<span class="co">#&gt; Variable(s): tasmax, tasmin</span>
-<span class="co">#&gt; Temporal aggregration period(s): year</span>
-<span class="co">#&gt; GCM(s): HadGEM2-ES, CNRM-CM5, CanESM2, MIROC5</span>
-<span class="co">#&gt; Scenario(s): rcp45, rcp85</span>
-<span class="co">#&gt; Dates: 2040-01-01 to 2060-01-01</span>
-<span class="co">#&gt; Options: NA</span>
-</pre></div>
-<p>Note when you query a polygon, you have to also specify a summary statistic that will be used to reduce the various pixels that fall within the polygon to one number. Your choices are <code>mean</code>, <code>max</code>, <code>median</code>, <code>min</code>, and <code>sum.</code> (If you want to retain the individual pixel values, use <code><a href="reference/ca_getrst.html">ca_getrst()</a></code>.)</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="kw">cap2_vals_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_getvals.html">ca_getvals</a></span>(<span class="kw">cap2</span>, quiet = <span class="fl">TRUE</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_vals2tbl.html">ca_vals2tbl</a></span>()
-
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="kw">cap2_vals_df</span>)
-<span class="co">#&gt; [1] 672   7</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">cap2_vals_df</span>)
-<span class="co">#&gt; # A tibble: 6 x 7</span>
-<span class="co">#&gt;   feat_id    cvar   period gcm        scenario dt              val</span>
-<span class="co">#&gt;   &lt;fct&gt;      &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;      &lt;fct&gt;    &lt;chr&gt;           [K]</span>
-<span class="co">#&gt; 1 geoid_0620 tasmax year   HadGEM2-ES rcp45    2040-01-01 295.7161</span>
-<span class="co">#&gt; 2 geoid_0620 tasmax year   HadGEM2-ES rcp45    2041-01-01 296.1374</span>
-<span class="co">#&gt; 3 geoid_0620 tasmax year   HadGEM2-ES rcp45    2042-01-01 295.5295</span>
-<span class="co">#&gt; 4 geoid_0620 tasmax year   HadGEM2-ES rcp45    2043-01-01 297.1063</span>
-<span class="co">#&gt; 5 geoid_0620 tasmax year   HadGEM2-ES rcp45    2044-01-01 297.3475</span>
-<span class="co">#&gt; 6 geoid_0620 tasmax year   HadGEM2-ES rcp45    2045-01-01 295.8374</span>
-</pre></div>
 </div>
+<div id="convenience-features-and-functions" class="section level1">
+<h1 class="hasAnchor">
+<a href="#convenience-features-and-functions" class="anchor"></a>Convenience Features and Functions</h1>
+<ul>
+<li>All <code>caladaptr</code> functions are pipe friendly and tidyverse compliant.<br>
+</li>
+<li>Spatial data formats use the <code>sf</code> and <code>raster</code> packages.<br>
+-Returned values have units (thanks to the <a href="https://cran.r-project.org/package=units">units</a>) package. No more guessing what the units are or having to look up unit conversion constants!<br>
+</li>
+<li>Plotting an API Request object shows the query’s location.<br>
+</li>
+<li>You can search the Cal-Adapt catalog of raster series from within R. Download a new version of the catalog with <code><a href="reference/ca_catalog_rs.html">ca_catalog_rs()</a></code>.<br>
+</li>
+<li>Don’t need every single column in your output dataframe? <code><a href="reference/ca_vals2tbl.html">ca_vals2tbl()</a></code> provides arguments to specify which column(s) to return.</li>
+</ul>
 </div>
 <div id="caladaptr-betar-club" class="section level1">
 <h1 class="hasAnchor">
@@ -226,17 +237,6 @@
 <li>an <strong>email forum</strong> to bounce ideas around with other caladaptR users and the package developer</li>
 </ul>
 <p>To join the <strong>caladaptR betaR</strong> club, please subscribe yourself to the <a href="https://lists.ucdavis.edu/sympa/subscribe/caladaptr">caladaptR email list</a>.</p>
-</div>
-<div id="coming-soon" class="section level1">
-<h1 class="hasAnchor">
-<a href="#coming-soon" class="anchor"></a>Coming soon…</h1>
-<ul>
-<li>How to query a <code>sf</code> object<br>
-</li>
-<li>More examples of reshaping data<br>
-</li>
-<li>Retrieving rasters</li>
-</ul>
 </div>
 
   </div>

@@ -35,7 +35,7 @@ ca_loc_pt <- function(x = ca_apireq(), coords, id=NULL) {
   }
 
   #res <- x
-  X$loc <- list(type="pt", val = data.frame(id = id, x = coords[,1], y = coords[,2]))
-  invisible(X)
+  x$loc <- list(type="pt", val = data.frame(id = id, x = coords[,1], y = coords[,2]))
+  invisible(x)
 
 }

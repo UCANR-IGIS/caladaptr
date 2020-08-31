@@ -3,6 +3,8 @@ title: "Intro and Examples"
 output:
   html_notebook:
     df_print: paged
+    toc: yes
+    toc_float: yes
 ---
 
 ```{css echo = FALSE}
@@ -102,6 +104,8 @@ climvars
 ## Available temporal aggregation periods
 periods
 ```
+**Note**: Cal-Adapt has data for many but by no means all combinations of the above constants.
+
 You can use these values as arguments to build up the API request:
 
 ```{r}
@@ -371,14 +375,14 @@ extreme_heat_runs <- which(tempruns$values & tempruns$lengths >= 3)
 length(extreme_heat_runs)
 ```
 
-==> Under RCP4.5, the MIROC5 model predicts this census tract will experience 34 extreme heat events (defined as 3 ore more days above 110 &#176;F) during the 5 year period in question.
+==> Under RCP4.5, the MIROC5 model predicts this census tract will experience 34 extreme heat events (defined as 3 or more days above 110 &#176;F) during the 5 year period in question.
 
-## PRACTICE: HOW MANY EXTREME HEAT EVENTS WILL THERE BE UNDER RCP85?
+## YOUR TURN: How many extreme heat events will there be under RCP8.5?
 
 ```{r}
 ## Your answer goes here:
-
 ```
+
 
 Ans. 42
 

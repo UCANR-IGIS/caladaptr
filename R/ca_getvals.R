@@ -3,7 +3,7 @@
 #' @param x A Cal-Adapt API request
 #' @param quiet Suppress messages
 #' @param debug Print additional output at the console
-#' @param use_events Use the events end point, logical
+#' @param use_events Use the Cal-Adapt API \href{https://berkeley-gif.github.io/caladapt-docs/series.html#time-series}{events end point}, logical#'
 #'
 #' @importFrom crayon bold yellow red silver
 #' @importFrom httr GET content content_type_json modify_url

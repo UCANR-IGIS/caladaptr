@@ -6,10 +6,14 @@
 #' @param quiet Show messages, logical
 #'
 #' @details \code{caladaptr} has the ability to store copies of objects downloaded
-#' from Cal-Adapt. An example of this would be the raster series data catalog.
+#' from Cal-Adapt. An example of this would be the raster series data catalog and the
+#' geometries of AOI Presets.
 #'
-#' If \code{default = TRUE}, a default directory for the cache (\emph{~/.R/caladaptr})
-#' will be used if another one has not already been set.
+#' NOTE: \code{caladaptr} does \emph{not} cache climate data fetched from Cal-Adapt. Every time
+#' you call a function that fetches data (e.g., \code{\link{ca_getvals}}), data is retrieved fresh.
+#'
+#' If \code{default = TRUE}, a default cache directory will be used (\link[rappdirs]{user_cache_dir})
+#' \emph{if} one hasn't already been set with \code{ca_setcache}.
 #'
 #' @seealso \code{\link{ca_catalog_rs}}
 #'

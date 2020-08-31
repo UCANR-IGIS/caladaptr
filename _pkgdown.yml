@@ -1,0 +1,90 @@
+title: caladaptr
+url: http://ucanr-igis.github.io/caladapt
+template:
+  params:
+    bootswatch: flatly
+    ganalytics: UA-81567502-3
+development:
+  mode: release
+repo:
+  url:
+    home: https://github.com/ucanr-igis/caladaptr/
+    source: https://github.com/ucanr-igis/caladaptr/blob/master/
+    issue: https://github.com/ucanr-igis/caladaptr/issues/
+    user: https://github.com/ucanr-igis/
+reference:
+  - title: API Request Constructors
+    desc: Functions that collectively construct a Cal-Adapt API Request object
+    contents:
+      - '`ca_loc_aoipreset`'
+      - '`ca_loc_pt`'
+      - '`ca_loc_sf`'
+      - '`ca_cvar`'
+      - '`ca_gcm`'
+      - '`ca_period`'
+      - '`ca_scenario`'
+      - '`ca_years`'
+      - '`ca_dates`'
+      - '`ca_options`'
+      - '`ca_apireq`'
+  - title: Fetching Data
+    desc: Functions that fetch data from the Cal-Adapt server and reformat the results
+    contents:
+      - ca_getvals
+      - ca_vals2tbl
+      - ca_getrst
+  - title: Finding and Specifying Data
+    desc: Functions and constants to help you identify and specify datasets when constructing an API Request object
+    contents:
+      - '`ca_catalog_rs`'
+      - '`climvars`'
+      - '`gcms`'
+      - '`periods`'
+      - '`scenarios`'
+  - title: Working with Area-of-Interest Presets
+    desc: Constants to help you specify a preset area-of-interest when constructing an API Request object, and get the geometry
+    contents:
+      - '`aoipreset_idflds`'
+      - '`aoipreset_idval`'
+      - '`aoipreset_types`'
+      - '`ca_aoipreset_geom`'
+  - title: Helper Functions
+    desc: Constants to help you specify a preset area-of-interest when constructing an API Request object, and get the geometry
+    contents:
+      - '`ca_baseurl`'
+  - title: Manage Package Options
+    desc: Manage package settings
+    contents:
+      - '`ca_getcache`'
+      - '`ca_setcache`'
+
+navbar:
+  type: inverse
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    - rnotebooks
+    right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/ucanr-igis/caladaptr/
+    rnotebooks:
+      text: R Notebooks
+      menu:
+       - text: "Intro and Examples"
+         href: notebooks/caladaptr_intro.nb.html

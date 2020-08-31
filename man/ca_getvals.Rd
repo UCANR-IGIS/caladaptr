@@ -13,7 +13,7 @@ ca_getvals(x, quiet = FALSE, debug = FALSE, use_events = TRUE)
 
 \item{debug}{Print additional output at the console}
 
-\item{use_events}{Use the events end point, logical}
+\item{use_events}{Use the Cal-Adapt API \href{https://berkeley-gif.github.io/caladapt-docs/series.html#time-series}{events end point}, logical#'}
 }
 \description{
 Get values from an API request object
