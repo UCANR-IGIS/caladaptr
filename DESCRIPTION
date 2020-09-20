@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt through the API
-Version: 0.2.9
-Date: 2020-08-31
+Version: 0.3.0
+Date: 2020-09-18
 Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
 URL: https://github.com/ucanr-igis/caladaptr, https://github.com/ucanr-igis/caladaptr

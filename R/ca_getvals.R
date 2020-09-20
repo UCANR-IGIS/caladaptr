@@ -24,6 +24,16 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
   if (identical(x$per, NA)) stop("A period must be specified")
   if (identical(x$cvar, NA)) stop("Climate variable must be provided")
 
+  ## If the location is an aoipreset, and idval = NULL, fill idval with all valid values
+  if (x$loc$type == "aoipreset") {
+    if (is.null(x$loc$val$idval)) {
+      ## idval is NULL --> *all* features should be used
+      ## Populate x$loc$val$idval with all valid values
+      x$loc$val$idval <- aoipreset_idval[[x$loc$val$type]][[x$loc$val$idfld]]
+    }
+
+  }
+
   num_loc <- switch(x$loc$type,
                     sf = nrow(x$loc$val),
                     aoipreset = length(x$loc$val$idval),
@@ -34,6 +44,7 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
   page_size <- 10
 
   ## Get select fields from the raster series data catalog
+  ## These will be used in the loop to look-up units and such
   rs_catinfo_df <- ca_catalog_rs(quiet = TRUE) %>%
     mutate(slug_lower = tolower(slug)) %>%
     select(slug_lower, name, units)
@@ -88,7 +99,8 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
 
       if (is.null(attr(res, "idfld"))) attr(res, "idfld") <- list(name = idfld, class = class(idval))
 
-      if (!quiet) message(yellow$bold("\n", toupper(preset), ": ", idfld, " = ", idval, sep = ""))
+      if (!quiet) message(yellow$bold("\n", toupper(preset), ": ", idfld, "=", idval,
+                                      ", (", myloc_idx, " of ", num_loc, ")", sep = ""))
 
     } else if (x$loc$type == "zip") {
       if (!quiet) message(red("Sorry, querying zip codes is not yet supported"))
@@ -154,7 +166,7 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
                   if (!quiet) message(yellow(paste0(rs_catinfo_df[slug_idx, "name", drop = TRUE])))
 
                   ## Get the units for this raster series
-                  rs_units <- rs_catinfo_df[slug_idx, "units"]
+                  rs_units <- as.character(rs_catinfo_df[slug_idx, "units"])
                   if (debug) message(silver(paste0(" - units for this raster series: ", rs_units)))
 
                   if (use_events) {
@@ -177,8 +189,6 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
                     ## Construct the URL
                     qry_url <- paste0(ca_baseurl, "series", "/", myslug, "/events/")
 
-                    ## writeClipboard(httr::modify_url(qry_url, query=qry_params))
-                    #if (debug) message(silver(modify_url(qry_url, query=qry_params)))
                     if (debug) message(silver(paste0(" - url: ", modify_url(qry_url, query=qry_params))))
 
                     ## Make request
@@ -187,14 +197,6 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
 
                     ## Convert response to a list
                     qry_content <- content(qry_resp, type = "application/json")
-
-                    ## Getting the units
-                    ## To get the units, I would need to grab the first raster in the series
-                    ## so query this
-                    ## https://api.cal-adapt.org/api/series/tasmax_year_HadGEM2-ES_rcp45/
-                    ## from the rasters list, get the first one, the URL for the raster store will look like:
-                    ## https://api.cal-adapt.org/api/rstores/tasmax_year_HadGEM2-ES_rcp45_2006/
-                    ## in this raster store you'll see the units
 
                     these_vals <- unlist(qry_content$data)
                     if (!is.na(rs_units)) {
@@ -249,7 +251,6 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
 
                     ## Make request
                     ## writeClipboard(httr::modify_url(qry_url, query=qry_params))
-                    # if (debug) message(silver(modify_url(qry_url, query=qry_params)))
                     if (debug) message(silver(paste0(" - url: ", modify_url(qry_url, query=qry_params))))
 
                     qry_resp <- httr::GET(qry_url, query=qry_params, content_type_json())
@@ -267,26 +268,12 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
                       ## if (!quiet) message(red("   ", modify_url(qry_url, query=qry_params), sep=""))
                     } else {
 
-                      ## Grab the units from the first one   NO LONGER NEEDED BECAUSE UNITS ARE GRABBED FROM THE CATALOG
-                      # rstore_units <- qry_content$results[[1]]$units
-                      # units_str <- switch(rstore_units,
-                      #                     K = 'K',
-                      #                     "mm/day" = "mm/d",
-                      #                     NULL)
-                      # if (is.null(units_str)) message(red(paste0(" - weird units found: ", rstore_units, ". Units will not be saved in the values returned.")))
-                      ## for temp it looks like 'K'
-                      ## for pr it looks like "mm/day"
-
                       vals_this_page <- sapply(qry_content$results, function(x) x$image)
                       if (!is.na(rs_units)) {
                         vals_this_page <- set_units(vals_this_page, value = rs_units, mode = "standard")
                       }
 
-                      ## View Pixel Values at this Point
-                      # vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
-                      #                             units_str, mode = "standard")
-
-                      ## View dates
+                      ## Grab date(s)
                       dates_this_page <- sapply(qry_content$results, function(x) x$event)
 
                       ## Store those somewhere, remember the units!
@@ -323,9 +310,6 @@ ca_getvals <- function(x, quiet = FALSE, debug = FALSE, use_events = TRUE) {
                         if (!is.na(rs_units)) {
                           vals_this_page <- set_units(vals_this_page, value = rs_units, mode = "standard")
                         }
-
-                        # vals_this_page <- set_units(sapply(qry_content$results, function(x) x$image),
-                        #                             units_str, mode = "standard")
 
                         ## View dates
                         dates_this_page <- sapply(qry_content$results, function(x) x$event)

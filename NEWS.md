@@ -1,3 +1,8 @@
+# caladaptr 0.3.0 (2020-09-18)
+
+* updated read.csv calls in `ca_catalog_rs()`  for consistent behavior between R3.x and R4.x.   
+* updated `ca_getvals()` to i) handle aoipreset locations where `idval = NULL`, and ii) display a progress bar for each location queried
+
 # caladaptr 0.2.9 (2020-08-31)
 
 * Fixed a capitalization bug in `ca_loc_pt()`  

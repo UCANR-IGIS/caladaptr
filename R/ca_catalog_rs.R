@@ -179,7 +179,7 @@ ca_catalog_rs <- function(download = FALSE, cache = download, quiet = FALSE) {
         rs_csv_pathfn <- file.path(cache_dir, rs_csv_fn)
         if (file.exists(rs_csv_pathfn)) {
           if (!quiet) message(yellow(" - using raster series catalog from cache"))
-          res <- read.csv(file = rs_csv_pathfn)
+          res <- read.csv(file = rs_csv_pathfn, stringsAsFactors = FALSE)
         }
       }
     }
@@ -187,7 +187,8 @@ ca_catalog_rs <- function(download = FALSE, cache = download, quiet = FALSE) {
     ## If that didn't work, use the one that comes with the package
     if (is.null(res)) {
       if (!quiet) message(yellow(" - using the raster series catalog bundled with caladaptr"))
-      res <- read.csv(system.file("extdata", rs_csv_fn, package = "caladaptr"))
+      res <- read.csv(system.file("extdata", rs_csv_fn, package = "caladaptr"),
+                      stringsAsFactors = FALSE)
     }
 
     ## Return the result

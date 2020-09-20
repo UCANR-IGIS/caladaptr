@@ -34,7 +34,7 @@ h3 {
 
 ```
 
-<p style="text-align:right;"><img src="reference/figures/caladaptr-beta_logo.svg" width="240" /></p>
+<p style="text-align:right;"><img src="https://ucanr-igis.github.io/caladaptr/reference/figures/caladaptr-beta_logo.svg" width="240" /></p>
 
 # About this R Notebook
 
