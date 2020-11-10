@@ -1,13 +1,17 @@
 ---
 title: "Using Cal-Adapt Data in ArcGIS and R"
 author: "Shane Feirer & Andy Lyons<br/>November 12, 2020"
-date: "<p style='margin:3em auto; border:none; text-align:center;'><img src='images/caladaptpy-logo.svg' style='height:60px;'><img src='images/caladaptr-logo.svg' style='height:60px; margin-left:100px;'></p><p style='text-align:center;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:120px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:120px;'/></p>"
+date: "<p style='margin:3em auto; border:none; text-align:center;'><img src='images/caladaptpy-logo.svg' style='height:60px;'><img src='images/caladaptr-logo.svg' style='height:60px; margin-left:100px;'></p><p style='text-align:center;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:120px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:120px;'/></p><p>"
 output: 
   slidy_presentation: 
     self_contained: no
     lib_dir: lib
     keep_md: no
 ---
+
+# Start with Zoom Poll or any other intro?
+
+
 
 # About Us...
 
@@ -18,6 +22,17 @@ h1 {
 h1.title {
   color:black;
   font-size:110%;
+}
+.indented1 {
+  margin-left:1em;
+}
+div.indented2 {
+  margin-left:2em;
+}
+
+div.indented2.ul.li {
+  line-height:0.7em; 
+  color:red;
 }
 
 ```
@@ -61,7 +76,7 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
  
 # Options for Getting Cal-Adapt Data
 
-```{r getting_data_options, echo=FALSE, results='asis', cache=TRUE}
+```{r getting_data_options, echo=FALSE, results='asis', cache=FALSE}
 library(kableExtra)
 library(magrittr)
 library(dplyr)
@@ -249,17 +264,17 @@ tbl_vec <- c("ca_loc_aoipreset()", "Query a preset location(s)",
              "ca_loc_pt()", "Question point location(s)",
              "ca_loc_sf()", "Query simple feature location(s)")
 
-knitr::kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
+kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
       format = "html", align = c("l", "l")) %>% 
-  kableExtra::column_spec(column = 1, monospace = TRUE, width = col1_width) %>%
-  kableExtra::kable_styling(full_width = FALSE, position = "left")
+  column_spec(column = 1, monospace = TRUE, width = col1_width) %>%
+  kable_styling(full_width = FALSE, position = "left", bootstrap_options = "bordered")
 ```
 
 \
 
 **2. Specify a Raster Series Dataset** (*required*)
 
-2a: Select one or more downscaled climate projection from Scripps using **all 4** of these:
+**Option 1**: Select one or more downscaled climate projection from Scripps using **all 4** of the following constructor functions:
 
 ```{r api_const_loca, echo=FALSE, results='asis', cache=FALSE}
 library(magrittr); library(kableExtra)
@@ -272,12 +287,12 @@ tbl_vec <- c("ca_cvar()", "Select the climate variable(s) (i.e., precip, tempera
 knitr::kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
       format = "html", align = c("l", "l")) %>% 
   kableExtra::column_spec(column = 1, monospace = TRUE, width = col1_width) %>% 
-  kableExtra::kable_styling(full_width = FALSE, position = "left")
+  kableExtra::kable_styling(full_width = FALSE, position = "left", bootstrap_options = "striped")
 ```
 
 \
 
-*Or* pick *any* of the 830 raster series datasets by their '**slug**':
+**Option 2**: Pick *any* of the 830 raster series datasets by their '**slug**':
 
 ```{r api_const_slug, echo=FALSE, results='asis', cache=FALSE}
 tbl_vec <- c("ca_slug()", "Select a dataset by its slug")
@@ -314,7 +329,7 @@ knitr::kable(matrix(tbl_vec, byrow=TRUE, ncol=2),
   kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```
 
-# Preset Areas of Interest
+# Preset areas-of-interest
 
 The Cal-Adapt API server has 11 preset **areas of interest** (boundary layers).
 
@@ -437,7 +452,6 @@ How do I know if there are actually data layers for my request?
 ca_testflight()
 print(x)
 
-
 # Fetch Data
 
 ```{r cap1_getvals, cache = TRUE, eval = FALSE}
@@ -448,58 +462,107 @@ cap1_tbl
 
 # Example 1: Plot Over Time
 
-number of consecutive days over a threshhold
-Retrive Average Max Temperature for Point for 4 Priority GCMs and RCP45, Plot over time
+```{r}
+cap2 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(c("rcp45", "rcp85")) %>%
+  ca_period("year") %>%
+  ca_years(start = 2030, end = 2080) %>%
+  ca_cvar(c("tasmax"))
+cap2
+```
 
-(mimic the climate snapshot tool)
+Plot the location:
+
+```{r}
+plot(cap2)
+```
+
+Fetch the values:
+
+```{r cap2_getvals, cache = TRUE}
+cap2_tbl <- cap2 %>% ca_getvals_tbl(quiet = TRUE)
+
+cap2_tbl
+```
+
+In the next statement, we do two things:
+
+1) Pull out just those values from RCP 4.5, and 
+
+2) Convert degrees to &#176;F
+
+```{r convert_units, results = 'hold', message= FALSE}
+library(dplyr); library(units)
+
+cap2_rcp45_tbl <- cap2_tbl %>% 
+  filter(scenario == "rcp45") %>%
+  mutate(temp_f = set_units(val, degF))
+
+cap2_rcp45_tbl
+
+```
 
 
-# Example 2: Grab from a Slug
+Plot these with `ggplot`:
 
-look at 
+```{r cap1_plot}
+library(ggplot2)
+ggplot(data = cap2_rcp45_tbl, aes(x = dt, y = as.numeric(temp_f), group = gcm)) +
+  geom_line(aes(color=gcm)) +
+  labs(title = "Average Annual Maximum Temperature for RCP4.5", x = "year", y = "temp (F)")
+```
+
+# Example 2: 
+
+Query AOI Preset Data from a Slug, use it to make a map
+
 Join with census data (using tidycensus)
 
-# Example 3: Map
+# Example 3: Interpolate hourly temperature
 
+Grab min-max for Lincove REC
 
-# Example 4: Interpolate hourly temperature
+# Example 4: Shiny app
 
+Select a point. Retrieve data for that point
 
-# Example 5: Shiny app
+# Need Large Data?
 
-Select a point. Retrieve annual 
+Beta version of `ca_getvals_tbl()` under development
 
-
-
-# Fetching Large Data
-
-Querying a lot of data? Use `ca_getvals_db()`.
-
-Requires passing a filename for a local SQLIte database.
-
-Progress bar shows how many calls remain
-
-Connection interrupted? Picks up where it left off
-
-Result is a R table linked to the SQLite database. Use same dplyr commands with some differences.
-
-
-# Learning More
-
-Attend the workshop **December 11, 2020, 10am**
-
-<div style="text-align:center;">
-<https://ucanr-igis.github.io/caladaptr/>
+<div class="indented2">
+ - caches downloaded values to a local SQLIte database  
+ - picks up where it left off if the connection interrupted  
+ - can manipulate the results using the same dplyr (few differences)  
 </div>
 
-Documentation / Vignettes
-sample R notebooks on 
-this and future presentations
+Raster download with local processing may be faster - *coming soon*
+ 
+Attend the workshop December workshop for more info
 
-Submit an Idea for a Code Recipe 
+ 
+# Learning More
 
-GitHub Issues
+Attend the workshop **December 11, 2020, 10am**!
 
-![](images/caladaptr-logo_beta.svg){style="width:400px; margin:1em auto;"}
+Visit **<https://ucanr-igis.github.io/caladaptr/>**
+
+<div class="indented2">
+ - documentation  
+ - getting started guide  
+ - R notebooks  
+ - presentations  
+ </div>
+
+Join the community
+
+<div class="indented2">
+ - join the [caladaptR betaR Club](https://ucanr-igis.github.io/caladaptr/#caladaptr-betar-club){target="_blank" rel="noopener"}  
+ - share an an idea for a code recipe  
+ - submit feature requests and bug reports via [GitHub Issues](https://github.com/ucanr-igis/caladaptr/issues)  
+ </div>
+
+![](images/caladaptr-logo_beta.svg){style="display:block; height:80px; margin:1em auto;"}
 
 
