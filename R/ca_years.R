@@ -11,16 +11,33 @@
 ca_years <- function(x = ca_apireq(), start, end) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
-  if (start < 1950) stop("Start year should be 1950 or later")
-  if (end > 2100) stop("The largest value of the end year is 2100")
 
-  start_dt <- as.Date(paste0(start, "-01-01"), optional = TRUE)
-  end_dt <- as.Date(paste0(end, "-01-01"), optional = TRUE)
+  if (length(start) != 1 || length(end) != 1) stop("start and end should each be of length 1")
 
-  if (is.na(start_dt) || is.na(end_dt)) stop("Unknown year format. Please enter year as a 4-digit number.")
-  if (start_dt >= end_dt) stop("The end date should come after the start date")
+  err_msg_format <- "Unknown year format. Please enter year as a 4-digit number."
 
-  x$dates <- list(start = start_dt, end = end_dt)
+  if (is.na(start)) {
+    start_dt <- NA
+  } else {
+    if (start < 1950) stop("Start year should be 1950 or later")
+    start_dt <- as.Date(paste0(start, "-01-01"), optional = TRUE)
+    if (is.na(start_dt)) stop(err_msg_format)
+  }
+
+  if (is.na(end)) {
+    end_dt <- NA
+  } else {
+    if (end > 2100) stop("The largest value of the end year is 2100")
+    end_dt <- as.Date(paste0(end, "-01-01"), optional = TRUE)
+    if (is.na(end_dt)) stop(err_msg_format)
+  }
+
+  if (!is.na(start_dt) && !is.na(end_dt)) {
+    if (start_dt >= end_dt) stop("The end date should come after the start date")
+    x$dates <- list(start = start_dt, end = end_dt)
+  } else {
+    x$dates <- NA
+  }
 
   invisible(x)
 

@@ -7,18 +7,26 @@
 \usage{
 ca_getcache(default = TRUE, quiet = TRUE)
 
-ca_setcache(cache_dir, make_dir = FALSE, write = TRUE, quiet = FALSE)
+ca_setcache(
+  cache_dir = NULL,
+  make_dir = FALSE,
+  write = TRUE,
+  reset = FALSE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{default}{Use a default cache directory if no other has been set}
 
 \item{quiet}{Suppress messages}
 
-\item{cache_dir}{The directory for cached data, can also be 'default' to use the default location}
+\item{cache_dir}{The directory for cached data}
 
 \item{make_dir}{Make the directory if needed, logical}
 
 \item{write}{Save the cache directory in the \code{.Renviron} file for persistence across R sessions}
+
+\item{reset}{Change to the default location}
 }
 \description{
 View and set the directory for the data catalog

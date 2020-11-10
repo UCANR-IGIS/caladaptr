@@ -1,11 +1,11 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt through the API
-Version: 0.3.0
-Date: 2020-09-18
+Version: 0.4.1
+Date: 2020-11-10
 Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
-URL: https://github.com/ucanr-igis/caladaptr, https://github.com/ucanr-igis/caladaptr
+URL: https://ucanr-igis.github.io/caladaptr
 Description: Base functions for importing climate data using the 
     Cal-Adapt API.
 License: GPL-3
@@ -21,9 +21,16 @@ Imports:
     dplyr,
     magrittr,
     crayon,
+    digest,
     jsonlite,
     rappdirs, 
-    tmap
+    utils,
+    tmap,
+    curl,
+    RSQLite,
+    DBI,
+    dbplyr,
+    fastmatch
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

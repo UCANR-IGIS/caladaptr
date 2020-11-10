@@ -16,47 +16,49 @@ reference:
   - title: API Request Constructors
     desc: Functions that collectively construct a Cal-Adapt API Request object
     contents:
-      - '`ca_loc_aoipreset`'
-      - '`ca_loc_pt`'
-      - '`ca_loc_sf`'
-      - '`ca_cvar`'
-      - '`ca_gcm`'
-      - '`ca_period`'
-      - '`ca_scenario`'
-      - '`ca_years`'
-      - '`ca_dates`'
-      - '`ca_options`'
-      - '`ca_apireq`'
+      - ca_loc_aoipreset
+      - ca_loc_pt
+      - ca_loc_sf
+      - ca_cvar
+      - ca_gcm
+      - ca_period
+      - ca_scenario
+      - ca_slug
+      - ca_years
+      - ca_dates
+      - ca_options
+      - ca_apireq
   - title: Fetching Data
     desc: Functions that fetch data from the Cal-Adapt server and reformat the results
     contents:
-      - ca_getvals
-      - ca_vals2tbl
+      - ca_getvals_tbl
+      - ca_getvals_db
       - ca_getrst
+      - ca_apicalls
   - title: Finding and Specifying Data
     desc: Functions and constants to help you identify and specify datasets when constructing an API Request object
     contents:
-      - '`ca_catalog_rs`'
-      - '`climvars`'
-      - '`gcms`'
-      - '`periods`'
-      - '`scenarios`'
+      - ca_catalog_rs
+      - cvars
+      - gcms
+      - periods
+      - scenarios
   - title: Working with Area-of-Interest Presets
     desc: Constants to help you specify a preset area-of-interest when constructing an API Request object, and get the geometry
     contents:
-      - '`aoipreset_idflds`'
-      - '`aoipreset_idval`'
-      - '`aoipreset_types`'
-      - '`ca_aoipreset_geom`'
+      - aoipreset_idflds
+      - aoipreset_idval
+      - aoipreset_types
+      - ca_aoipreset_geom
   - title: Helper Functions
     desc: Constants to help you specify a preset area-of-interest when constructing an API Request object, and get the geometry
     contents:
-      - '`ca_baseurl`'
+      - ca_baseurl
   - title: Manage Package Options
     desc: Manage package settings
     contents:
-      - '`ca_getcache`'
-      - '`ca_setcache`'
+      - ca_getcache
+      - ca_setcache
 
 navbar:
   type: inverse
@@ -88,3 +90,8 @@ navbar:
       menu:
        - text: "Intro and Examples"
          href: notebooks/caladaptr_intro.nb.html
+    presentations:
+      text: Presentations
+      menu:
+       - text: "Overview"
+         href: pres/overview.html

@@ -15,7 +15,7 @@ ca_cvar(x = ca_apireq(), cvar)
 Specifies climate variable(s) a Cal-Adapt API call should retrieve
 }
 \details{
-For valid options for \code{cvar}, see \code{\link{climvars}}.
+For valid options for \code{cvar}, see \code{\link{cvars}}.
 
 Notes:
 

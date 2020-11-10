@@ -7,12 +7,14 @@
 #' @param id Unique id values for each point
 #'
 #' @details
-#' \code{coords} should be a two-column matrix or data frame with x (longitude)
-#' and y (latitude) coordinates for the point(s) of interest.
+#' \code{coords} should be a two-column matrix or data frame with the first column
+#' containing the x (longitude) values of the points of interest, and the second column
+#' containing the y (latitude) values. Projected coordinates can not be used with this
+#' function (but see \code{\link{ca_loc_sf}}).
 #'
 #' \code{id} should be vector that uniquely identify the points. If omitted, row numbers will be used.
 #'
-#' @seealso \code{\link{ca_apireq}}
+#' @seealso \code{\link{ca_loc_sf}}, \code{\link{ca_apireq}}
 #' @export
 
 ca_loc_pt <- function(x = ca_apireq(), coords, id=NULL) {
@@ -34,7 +36,6 @@ ca_loc_pt <- function(x = ca_apireq(), coords, id=NULL) {
     if (anyDuplicated(id) != 0) stop("id must contain a unique value for each point")
   }
 
-  #res <- x
   x$loc <- list(type="pt", val = data.frame(id = id, x = coords[,1], y = coords[,2]))
   invisible(x)
 

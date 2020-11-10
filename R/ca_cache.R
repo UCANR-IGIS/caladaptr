@@ -41,7 +41,6 @@ ca_getcache <- function(default=TRUE, quiet=TRUE) {
         ifelse(file.exists(default_cache_dir), default_cache_dir, NA)
       }
 
-
       # DEPRECATED:
       #default_dir <- "~/.R/caladaptr"
       # if (file.exists(default_dir)) {
@@ -87,19 +86,22 @@ ca_getcache <- function(default=TRUE, quiet=TRUE) {
 
 #' @describeIn ca_getcache Set cache directory
 #' @title Set cache directory to a custom location
-#' @param cache_dir The directory for cached data, can also be 'default' to use the default location
+#' @param cache_dir The directory for cached data
 #' @param make_dir Make the directory if needed, logical
 #' @param write Save the cache directory in the \code{.Renviron} file for persistence across R sessions
+#' @param reset Change to the default location
 #' @param quiet Suppress messages
 #'
 #' @importFrom rappdirs user_cache_dir
 #' @importFrom crayon yellow
 
-ca_setcache <- function(cache_dir, make_dir = FALSE, write = TRUE, quiet = FALSE) {
+ca_setcache <- function(cache_dir = NULL, make_dir = FALSE, write = TRUE, reset = FALSE, quiet = FALSE) {
 
-  if (cache_dir == "default") {
+  if (reset) {
     cache_dir_use <- user_cache_dir("caladaptr", "ucanr-igis")
     if (!quiet) message(yellow(paste0(" - using default cache_dir: ", cache_dir_use)))
+  } else if (is.null(cache_dir)) {
+    stop("cache_dir is required")
   } else {
     cache_dir_use <- cache_dir
   }
@@ -127,6 +129,7 @@ ca_setcache <- function(cache_dir, make_dir = FALSE, write = TRUE, quiet = FALSE
   ## Save the cache directory as an environment variable (in memory)
   Sys.setenv(CALADAPTR_CACHE_DIR = cache_dir_use)
 
+  ## Save the cache directory to .Renviron
   if (write) {
     ## Grab the .Renviron file, creating it if needed
     environ_file <- file.path(Sys.getenv("HOME"), ".Renviron")

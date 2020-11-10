@@ -1,0 +1,188 @@
+---
+title: "Computing Cummulative Chill Hours with Cal-Adapt and chillR"
+output:
+  html_notebook:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{css echo = FALSE}
+h1 {
+  font-weight: bold;
+  font-size: 24px;
+  color: darkolivegreen;
+  border-top: 3px solid dimgrey;
+  margin-top: 1em;
+  padding-top: 0.5em;
+}
+h1.title {
+  color: black;
+  border: none;
+}
+h2 {
+  font-weight: bold;
+  font-size: 22px;
+  color: dimgray;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 18px;
+  color: black;
+}
+
+```
+
+<p style="text-align:right;"><img src="https://ucanr-igis.github.io/caladaptr/reference/figures/caladaptr-beta_logo.svg" width="240" /></p>
+
+# About this R Notebook
+
+R Notebooks are a 'flavor' of R markdown that combine plain text and R commands in code chunks. (You can download the Rmd file from the 'code' button at the top of the page.) You run code chunks in the document line-by-line, and the output appears immediately below the code chunk.
+
+If you're in RStudio, you can *minimize the console window* (and probably close the right-hand panes as well). You won't need it,  because when you run R commands in a R Notebook the *output appears below the code chunk* (not the console). This takes some getting used to.
+
+Keyboard shortcuts you can use within a R Notebook:  
+
+- run the current line of R: *ctrl + enter*  
+- run everything in the current code chunk: *ctrl + shift + enter*  
+- insert a new code chunk: *ctrl + alt + i*  
+
+# Setup
+
+The following chunk will install any packages you don't already have that will be needed below:
+
+```{r load_pkgs, cache = TRUE}
+pkgs_req <- c("remotes", "ggplot2", "dplyr", "tmap", "conflicted", "leaflet", "tidyr", "lubridate", "tibble", "chillR")
+pkgs_missing <- pkgs_req[!(pkgs_req %in% installed.packages()[,"Package"])]
+if (length(pkgs_missing)) install.packages(pkgs_missing, dependencies=TRUE)
+```
+
+Install `caladaptr` (if needed):
+
+```{r}
+# remotes::install_github("ucanr-igis/caladaptr")
+```
+
+Load all the required libraries:
+
+```{r library_all}
+library(caladaptr, quietly = TRUE)
+library(units, quietly = TRUE)
+library(ggplot2, quietly = TRUE)
+library(dplyr, quietly = TRUE)
+library(conflicted, quietly = TRUE)
+library(tidyr, quietly = TRUE)
+library(tmap, quietly = TRUE)
+library(lubridate, quietly = TRUE)
+library(tibble, quietly = TRUE)
+library(sf, quietly = TRUE)
+library(chillR, quietly = TRUE)
+```
+
+The last setup task is to define your preferences when you're forced to use an ambiguous function name (i.e., a function that exists in more than one package). This is particularly needed with a few common generic functions from `dplyr`:
+
+```{r set_conflicts}
+conflict_prefer("filter", "dplyr", quiet = TRUE)
+conflict_prefer("count", "dplyr", quiet = TRUE)
+conflict_prefer("select", "dplyr", quiet = TRUE)
+```
+
+# Chill Hours: Background
+
+['Chill hours'](https://en.wikipedia.org/wiki/Chilling_requirement) are commonly used to estimate when fruit-bearing tree will blossom. This in turn affects fruit productivity and the timing of a whole bunch of management actions (including harvest!). Many tree crops (e.g., nuts) require a certain number of hours at chilly temperatures in order for the tree to blossom and the fruit to ripen. 
+
+Computing chill hours essentially involves adding up the total amount of time during the cold season within a  temperature range (e.g., 32 - 45 &#176;F). 'Chill portions' is a similar calculation, however instead of simply adding up the number of hours within a certain temperature range, additional weights are assigned based on bands of temperature and/or warming periods periods between cold spells (which mimic tree physiology thus producing better predictions).
+
+Computing cumulative chill hours requires hourly temperature data. You may be lucky enough to have hourly temperature recordings from weather stations for historic and real-time analyses. However for projected climate scenarios, the smallest unit of time is daily ((at least for the CMIP5 family of climate models). This creates a conundrum if you want to explore how cumulative chill hours may change due to climate change.
+
+To deal with this, we can estimate hourly temperatures based on the daily minimum and maximum temperature, as well as the time of sunrise and sunset. The `chillR` package, developed and maintained by Eike Luedeling, has a [Vignette](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) and sample code for doing exactly this.
+
+In this example, we'll generate estimated hourly temperature readings for a time series of daily min/max data, then feed the hourly readings into `chillR`.
+
+# 1) Create the Cal-Adapt API Request
+
+The first step in getting climate variables back is to create the Cal-Adapt API request object. This involves stringing together a series of functions together that specify the pieces of the request. For illustration purposes, we'll create an API require to query a single point, single GCM, and a single scenario for a single season. This of course is not the recommended practice, and you should always look at 10-30 year time spans and take averages. 
+
+```{r}
+cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+  ca_gcm(gcms[1]) %>%
+  ca_scenario("rcp85") %>%
+  ca_period("day") %>%
+  ca_dates(start = "2079-11-01", end = "2080-06-30") %>%
+  ca_cvar(c("tasmax", "tasmin"))
+
+cap1
+```
+To verify the location in an API request, you can plot it. (Note we still haven't fetched any climate data yet, this just shows you the location the request will ask for.)
+
+```{r plot_cap1}
+plot(cap1)
+```
+
+# 2) Fetch Data from Cal-Adapt
+
+Next we fetch the temperature data with `ca_getvals()` followed by `ca_vals2tbl()` and `mutate()` to change the temperature values to Farenheit.
+
+```{r cap1_lst, cache = TRUE}
+cap1_df <- cap1 %>% ca_getvals(quiet = TRUE) %>% 
+  ca_vals2tbl() %>% mutate(temp_f = set_units(val, degF)) %>% 
+  select(id, cvar, period, gcm, scenario, dt, temp_f)
+cap1_df
+```
+
+# 3) Message Results into the Format Required by `chillR`
+
+From the [sample code](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html):
+
+```{r}
+weather_df <- make_all_day_table(KA_weather)
+as_tibble(head(weather_df))
+```
+
+This part is a work in progress. TODO:
+
+- The 'DATE' column in weather_df has the hour set to 12 noon. The code below sets the time to midnight. Verify if this is an issue.  
+- Double-check if the column names and/or order matters  
+- Double-check if the units for Tmax and Tmin need to be numeric (probably Celsius)  
+
+```{r}
+cap1_chillr_df <- cap1_df %>%
+  mutate(DATE = as.POSIXct(format(dt), tz="America/Los_Angeles")) %>%
+  mutate(Year = year(DATE), Month = as.integer(month(DATE)), Day = day(DATE)) %>% 
+  pivot_wider(names_from = cvar, values_from = temp_f) %>% 
+  rename(Tmax = tasmax, Tmin = tasmin) %>% 
+  select(DATE, Year, Month, Day, Tmax, Tmin)
+
+cap1_chillr_df
+```
+
+
+# Coming Soon
+
+reproduce the hourly graph in the Vignette.
+
+feed results into chillR and create the cummulative chill hour curve (when to start?)
+
+Add caveats about not looking at a single model, single-year.
+
+Present and/or discuss how to combine / average results from multiple models
+
+
+# Sandbox
+
+```{r}
+## daylength returns a list. It is NOT vectorized.
+daylength(latitude=50.4,JDay=c(15))
+
+## Compile a data frame of sunrise, sunset, and daylength for each Julian day 
+all_daylengths_df <- cbind(JDay=1:365, sapply(daylength(latitude=50.5, JDay=1:365), cbind))
+head(all_daylengths_df)
+
+
+
+```
+
+
+
+

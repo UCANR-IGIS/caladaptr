@@ -1,0 +1,195 @@
+---
+title: "Downloading Large Data Example"
+output: html_notebook
+---
+
+```{css echo = FALSE}
+h1 {
+  font-weight: bold;
+  font-size: 24px;
+  color: darkolivegreen;
+  border-top: 3px solid dimgrey;
+  margin-top: 1em;
+  padding-top: 0.5em;
+}
+h1.title {
+  color: black;
+  border: none;
+}
+h2 {
+  font-weight: bold;
+  font-size: 22px;
+  color: dimgray;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 18px;
+  color: black;
+}
+```
+
+
+This is an example of downloading a 'large' volume of data with caladaptR, using the save to database option in `ca_getvals()`. For this example, we'll download daily data for all of the census tracts in California for a 10 year period.
+
+Load libraries:
+
+```{r echo = TRUE}
+library(caladaptr)
+library(sf)
+library(dplyr)
+library(tictoc)   # used to time how long functions take
+```
+
+The first step is to figure out which of >8000 census tracts in Cal-Adapt are in California. We can grab the census tract boundaries using `ca_aoipreset_geom()`:
+
+
+```{r}
+tracts_fips_all  <- ca_aoipreset_geom("censustracts") %>%
+  st_drop_geometry() %>% 
+  select(tract)
+str(tracts_fips_all)
+```
+We can pull out the California tracts based on the first two numbers of the FIPS code (which represents the state).
+
+```{r}
+tracts_ca <- tracts_fips_all %>% 
+  mutate(tract_chr = as.character(tract)) %>% 
+  filter(grepl("^60", tract_chr)) %>% 
+  pull(tract)
+str(tracts_ca)
+```
+Next, we construct the API request:
+
+```{r}
+cap <- ca_loc_aoipreset(type="censustracts", idfld = "tract", idval = tracts_ca) %>%
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(c("rcp85")) %>%
+  ca_period("day") %>%
+  ca_years(start = "2035-01-01", end = "2039-12-31") %>%
+  ca_cvar("tasmax") %>%
+  ca_options(spatial_ag = "max")
+cap
+```
+
+Let's plot the API request object to verify we got the right areas:
+
+```{r}
+plot(cap, static = TRUE)
+```
+
+
+Next, we define a file name for a new SQLite database. SQLite databases are a single file. We can name it anything but by convention the extension is usually *.db* or *.sqlite*. 
+
+```{r}
+## my_sqlite <- "c:/temp/census-tracts_daily-taxmax_v3b.sqlite"   ## this works, has 112M recs !!!!
+my_sqlite <- "c:/temp/census-tracts_daily-taxmax_v4a.sqlite"
+
+cap <- cap %>% ca_loc_aoipreset(type="censustracts", idfld = "tract", idval = tracts_ca[1:3])
+cap
+
+```
+
+Now, we're ready to fetch the data.
+
+This will take a while (has to make >30,700 API calls). 
+
+Tip: Use `debug = TRUE` to show individual API calls instead of a progress bar (which in this case moves very slowly). This doesn't work terribly well in a R Notebook but works well when the command is run from a script or console.
+
+If the process is interrupted, you can just run the command again and it should pick-up where it left off.
+
+```{r message=TRUE}
+# This command took 4.8 hours (about 1 hr per year):
+tic("Getting daily records for all tracts WITH transactions")
+#tracts_daily_tasmax_tbl <- ca_getvals(cap, debug = TRUE, db_fn = my_sqlite, db_tbl = "tracts_day_tasmax") 
+toc()
+
+class(tracts_daily_tasmax_tbl)
+
+head(tracts_daily_tasmax_tbl) 
+
+```
+
+## Summary stats on what we just collected
+
+Total number of records:
+
+```{r}
+tracts_daily_tasmax_tbl %>% count() %>% pull(n) 
+# 56,094,720
+# 112,189,440
+```
+
+**Number of values per census tract (should be the same):**
+
+```{r}
+num_values_per_tract <- tracts_daily_tasmax_tbl %>% group_by(tract) %>% count() %>% collect()
+head(num_values_per_tract)
+table(num_values_per_tract$n)
+```
+
+
+**Number of values per census tract (should be the same):**
+
+```{r}
+tic("Count the number of values per census tract")
+num_values_per_tract <- tracts_daily_tasmax_tbl %>% group_by(tract) %>% count() %>% collect()
+head(num_values_per_tract)
+table(num_values_per_tract$n)
+toc()
+## Should be 7304 
+## 7680 
+```
+
+**Number of values per GCM (should be the same for all)**:
+
+```{r}
+tic("Count the number of values per GCM")
+num_values_per_gcm <- tracts_daily_tasmax_tbl %>% group_by(gcm) %>% count() %>% collect()
+head(num_values_per_gcm)
+table(num_values_per_gcm$n)
+toc()
+```
+
+# Indices
+
+Note the difference in how long it took to count the number of records per census tract (3.4 sec), versus how long it took to count the number of rows per GCM (27.5 sec). The main reason for this enormous difference is because the database has an index on the `tract` column (which is created by default because that's the location identifier), but does not have an index on the `gcm` column. 
+
+Creating indicies on the fields you use to *filter* or *join* table will speed up results quite a bit. The trade-off however is that it takes a bit of time to create indices, and increases the size of the database file. 
+
+# Filter
+
+```{r}
+thresh_k <- as_units(92, "degF") %>% set_units("K") %>% as.numeric()
+```
+
+Scratch Pad
+
+```{r eval = FALSE}
+#library(tictoc)
+#tracts_temp_tbl <- ca_getvals(cap, db_fn = my_sqlite, db_tbl = "tracts_temp")
+
+# #tic("Getting records for 100 tracts WITHOUT transactions")
+# time_without_trans <- system.time({
+#   my_sqlite <- "c:/temp/census-tracts_maxtemp6.sqlite"
+#   tracts_temp_tbl <- ca_getvals(cap, debug = TRUE, db_fn = my_sqlite, db_tbl = "tracts_temp", db_use_transactions = FALSE)  
+# })
+# 
+# time_with_trans <- system.time({
+#   my_sqlite <- "c:/temp/census-tracts_maxtemp11.sqlite"
+#   tracts_temp_tbl <- ca_getvals(cap, debug = TRUE, db_fn = my_sqlite, db_indices = c("feat_id"), db_tbl = "tracts_temp", db_use_transactions = TRUE)
+# })
+# round(time_with_trans / 60, 1)
+
+## with index on val: 4.0 minutes
+
+# round(time_without_trans / 60, 1)
+
+
+# without_toc <- toc()
+# without_toc
+#tictoc::tic("Getting records for 100 tracts WITH transactions")
+#tictoc::toc()
+#toc_without
+```
+

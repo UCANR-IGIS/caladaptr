@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -111,6 +111,18 @@
     </li>
   </ul>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Presentations
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../pres/overview.html">Overview</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -136,13 +148,53 @@
       <small>Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="caladaptr-041-2020-11-10" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.1">
+<a href="#caladaptr-041-2020-11-10" class="anchor"></a>caladaptr 0.4.1 (2020-11-10)</h1>
+<ul>
+<li>
+<code>ca_getvals()</code> split into <code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code> and <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>; user_agent added to headers; support for sf objects added</li>
+<li>
+<code>ca_lof_sf()</code>: overhauled</li>
+<li>
+<code><a href="../reference/ca_apicalls.html">ca_apicalls()</a></code>: new method for hashing API calls implemented; now returns a list object</li>
+<li>
+<code>aoipreset_idvals</code>: <code>name</code> removed as a field for uniquely identifying counties</li>
+<li>
+<code><a href="../reference/ca_loc_sf.html">ca_loc_sf()</a></code> overhauled</li>
+<li>package <code>digest</code> added to imports</li>
+<li>
+</li>
+</ul>
+</div>
+    <div id="caladaptr-040-2020-10-11" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.0">
+<a href="#caladaptr-040-2020-10-11" class="anchor"></a>caladaptr 0.4.0 (2020-10-11)</h1>
+<ul>
+<li>
+<code><a href="../reference/ca_slug.html">ca_slug()</a></code> added<br>
+</li>
+<li>
+<code>ca_getvals()</code> completely overhauled - returns a tibble</li>
+<li>
+<code><a href="../reference/ca_apicalls.html">ca_apicalls()</a></code> added</li>
+<li>
+<code>ca_vals2tbl()</code> deleted (no longer needed)<br>
+</li>
+<li>
+<code>aoipreset_idflds</code>: <code>name</code> removed as a field for uniquely identifying counties</li>
+<li>
+<code><a href="../reference/plot.ca_apireq.html">plot.ca_apireq()</a></code>: added <code>static</code> argument</li>
+<li>packages <code>curl</code>, <code>RSQLite</code>, <code>dbplyr</code>, and <code>fastmatch</code> added to imports (i.e., required)</li>
+</ul>
+</div>
     <div id="caladaptr-030-2020-09-18" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.0">
 <a href="#caladaptr-030-2020-09-18" class="anchor"></a>caladaptr 0.3.0 (2020-09-18)</h1>
 <ul>
 <li>updated read.csv calls in <code><a href="../reference/ca_catalog_rs.html">ca_catalog_rs()</a></code> for consistent behavior between R3.x and R4.x.<br>
 </li>
-<li>updated <code><a href="../reference/ca_getvals.html">ca_getvals()</a></code> to i) handle aoipreset locations where <code>idval = NULL</code>, and ii) display a progress bar for each location queried</li>
+<li>updated <code>ca_getvals()</code> to i) handle aoipreset locations where <code>idval = NULL</code>, and ii) display a progress bar for each location queried</li>
 </ul>
 </div>
     <div id="caladaptr-029-2020-08-31" class="section level1">
@@ -158,7 +210,7 @@
 <h1 class="page-header" data-toc-text="0.2.8">
 <a href="#caladaptr-028-2020-08-29" class="anchor"></a>caladaptr 0.2.8 (2020-08-29)</h1>
 <ul>
-<li>Added argument <code>force_day_one</code> to <code><a href="../reference/ca_vals2tbl.html">ca_vals2tbl()</a></code>
+<li>Added argument <code>force_day_one</code> to <code>ca_vals2tbl()</code>
 </li>
 <li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 </ul>

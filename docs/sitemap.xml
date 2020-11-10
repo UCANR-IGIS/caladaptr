@@ -10,6 +10,9 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_aoipreset_geom.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_apicalls.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_apireq.html</loc>
   </url>
   <url>
@@ -17,6 +20,9 @@
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_catalog_rs.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_check.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_cvar.html</loc>
@@ -34,7 +40,10 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getrst.html</loc>
   </url>
   <url>
-    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getvals.html</loc>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getvals_db.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getvals_tbl.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_loc_aoipreset.html</loc>
@@ -58,13 +67,13 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_scenario.html</loc>
   </url>
   <url>
-    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_vals2tbl.html</loc>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_slug.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_years.html</loc>
   </url>
   <url>
-    <loc>http://ucanr-igis.github.io/caladapt/reference/climvars.html</loc>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/cvars.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/format.ca_apireq.html</loc>

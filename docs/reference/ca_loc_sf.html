@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -109,6 +109,18 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Presentations
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../pres/overview.html">Overview</a>
     </li>
   </ul>
 </li>
@@ -142,7 +154,7 @@
     <p>Specifies a sf data frame as the location for a Cal-Adapt API request</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_loc_sf</span>(x = <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span>(), <span class='kw'>loc</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_loc_sf</span>(x = <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span>(), <span class='kw'>loc</span>, idfld = <span class='kw'>NULL</span>, idval = <span class='kw'>NULL</span>, dTolerance = <span class='fl'>0</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,15 +165,43 @@
     </tr>
     <tr>
       <th>loc</th>
-      <td><p>A sf data frame</p></td>
+      <td><p>A simple feature data frame</p></td>
+    </tr>
+    <tr>
+      <th>idfld</th>
+      <td><p>The name of a column in loc containing unique values, or the name</p></td>
+    </tr>
+    <tr>
+      <th>idval</th>
+      <td><p>A vector of unique values</p></td>
+    </tr>
+    <tr>
+      <th>dTolerance</th>
+      <td><p>A numeric value used to simplify polgyons, see Details.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Not yet enabled.</p>
-<p>The sf data frame must have a valid CRS (doesn't have to be
-geographic coords.)</p>
+    <p><code>loc</code> should be a simple feature data frame with point or polygon features.
+Both 'single' and 'multi' geometries can be used. <code>loc</code> should have a valid CRS
+(does not have to be geographic).</p>
+<p><code>idfld</code> should be the name of a column in <code>loc</code> containing unique values. When you
+fetch values from Cal-Adapt, this column will be returned in the results to help you
+join the values to other tables. Alternately, you can use <code>idfld</code> to pass the name of
+a new column, together with a vector of unique values in <code>idval</code> (one for each row
+in <code>loc</code>).</p>
+<p>Note you can not use <code>idval</code> as a filter. If you want to filter the features of <code>loc</code> to
+query, use a filter expression as part of the value of <code>loc</code> (e.g., with
+<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code> or <code><a href='https://dplyr.tidyverse.org/reference/slice.html'>slice</a></code>).</p>
+<p>If <code>loc</code> is a polygon layer, you'll also need to specify how to spatially aggregate the queried
+values if a feature overlaps more than one pixel. See <code><a href='ca_options.html'>ca_options</a></code>.</p>
+<p><code>dTolerance</code> is a value in decimal degrees used to simplify polygons. If <code>dTolerance &gt; 0</code>,
+<a href='https://rdrr.io/pkg/sf/man/geos_unary.html'>st_simplify</a> will be called to remove polygon nodes within <code>dTolerance</code> of another node,
+before fetching data. This can reduce the amount of spatial data that needs to be sent to the server,
+which can improve performance particularly when you have very fine grained polygons.
+Simplifying polygons can modify (generally reduce) the pixels that a polygon overlaps, so use with caution.
+<code>dTolerance =	0.001</code> represents &lt;100m on the ground within Cal-Adapt range of latitude.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

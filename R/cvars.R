@@ -4,9 +4,9 @@
 #'
 #' @docType data
 #'
-#' @usage data(climvars)
+#' @usage data(cvars)
 #'
-#' @format An character vector with three abbreviated names of carbon emissions scenarios
+#' @format A character vector with the names of climate variables
 #'
 #' @keywords datasets
 #'
@@ -19,5 +19,5 @@
 #' \code{pr}: Precipitation (historical values from UW Hydro and forecast values from LOCA downscaled climate projections)
 #'
 #' @source \url{https://berkeley-gif.github.io/caladapt-docs/data-catalog.html#climate-variables}
-"climvars"
+"cvars"
 

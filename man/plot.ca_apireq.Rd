@@ -4,12 +4,19 @@
 \alias{plot.ca_apireq}
 \title{Plot a ca_apireq object}
 \usage{
-\method{plot}{ca_apireq}(x, basemap = "Esri.NatGeoWorldMap", ...)
+\method{plot}{ca_apireq}(
+  x,
+  basemap = c("Esri.NatGeoWorldMap", "OpenStreetMap")[1],
+  static = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Cal-Adapt API request}
 
 \item{basemap}{The name of a basemap tile layer (see tm_basemap)}
+
+\item{static}{Plot a static map instead of a interactive leaflet map}
 
 \item{...}{Unused}
 }

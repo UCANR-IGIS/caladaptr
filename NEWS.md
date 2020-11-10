@@ -1,3 +1,23 @@
+# caladaptr 0.4.1 (2020-11-10)
+
+* `ca_getvals()` split into `ca_getvals_tbl()` and `ca_getvals_db()`; user_agent added to headers; support for sf objects added
+* `ca_lof_sf()`: overhauled
+* `ca_apicalls()`: new method for hashing API calls implemented; now returns a list object
+* `aoipreset_idvals`: `name` removed as a field for uniquely identifying counties 
+* `ca_loc_sf()` overhauled
+* package `digest` added to imports
+* 
+
+# caladaptr 0.4.0 (2020-10-11)
+
+* `ca_slug()` added   
+* `ca_getvals()` completely overhauled - returns a tibble
+* `ca_apicalls()` added
+* `ca_vals2tbl()` deleted (no longer needed)   
+* `aoipreset_idflds`: `name` removed as a field for uniquely identifying counties 
+* `plot.ca_apireq()`: added `static` argument
+* packages `curl`, `RSQLite`, `dbplyr`, and `fastmatch` added to imports (i.e., required)
+
 # caladaptr 0.3.0 (2020-09-18)
 
 * updated read.csv calls in `ca_catalog_rs()`  for consistent behavior between R3.x and R4.x.   

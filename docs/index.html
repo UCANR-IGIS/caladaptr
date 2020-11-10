@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -65,6 +65,18 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Presentations
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="pres/overview.html">Overview</a>
     </li>
   </ul>
 </li>
@@ -140,7 +152,7 @@
 <p>1) Load the package:</p>
 <!-- end list -->
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/ucanr-igis/caladaptr">caladaptr</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span>)
 <span class="co">#&gt; Cal-Adapt R (version 0.2.9)</span>
 <span class="co">#&gt; URL: https://github.com/ucanr-igis/caladaptr</span>
 <span class="co">#&gt; Bug reports: caladaptr@gmail.com</span>
@@ -187,10 +199,10 @@
 <span class="co">#&gt; [1] "day"    "month"  "year"   "30yavg"</span>
 </pre></div>
 <p><strong>Note</strong>: Cal-Adapt has data for many but by no means all permutations of the above constants.</p>
-<p>3) Next, feed your API call into a function that <strong>fetches data</strong>, such as <code><a href="reference/ca_getvals.html">ca_getvals()</a></code>.</p>
+<p>3) Next, feed your API call into a function that <strong>fetches data</strong>, such as <code>ca_getvals()</code>.</p>
 <!-- end list -->
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">cap1_vals_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_getvals.html">ca_getvals</a></span>(<span class="kw">cap1</span>, quiet = <span class="fl">TRUE</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_vals2tbl.html">ca_vals2tbl</a></span>()
+<span class="kw">cap1_vals_df</span> <span class="op">&lt;-</span> <span class="fu">ca_getvals</span>(<span class="kw">cap1</span>, quiet = <span class="fl">TRUE</span>) <span class="op">%&gt;%</span> <span class="fu">ca_vals2tbl</span>()
 <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="kw">cap1_vals_df</span>)
 <span class="co">#&gt; [1] 336   7</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">cap1_vals_df</span>)
@@ -220,7 +232,7 @@
 </li>
 <li>You can search the Cal-Adapt catalog of raster series from within R. Download a new version of the catalog with <code><a href="reference/ca_catalog_rs.html">ca_catalog_rs()</a></code>.<br>
 </li>
-<li>Don’t need every single column in your output dataframe? <code><a href="reference/ca_vals2tbl.html">ca_vals2tbl()</a></code> provides arguments to specify which column(s) to return.</li>
+<li>Don’t need every single column in your output dataframe? <code>ca_vals2tbl()</code> provides arguments to specify which column(s) to return.</li>
 </ul>
 </div>
 <div id="caladaptr-betar-club" class="section level1">

@@ -4,19 +4,44 @@
 \alias{ca_loc_sf}
 \title{Use a sf data frame as the location for a Cal-Adapt API request}
 \usage{
-ca_loc_sf(x = ca_apireq(), loc)
+ca_loc_sf(x = ca_apireq(), loc, idfld = NULL, idval = NULL, dTolerance = 0)
 }
 \arguments{
 \item{x}{A Cal-Adapt API request}
 
-\item{loc}{A sf data frame}
+\item{loc}{A simple feature data frame}
+
+\item{idfld}{The name of a column in loc containing unique values, or the name}
+
+\item{idval}{A vector of unique values}
+
+\item{dTolerance}{A numeric value used to simplify polgyons, see Details.}
 }
 \description{
 Specifies a sf data frame as the location for a Cal-Adapt API request
 }
 \details{
-Not yet enabled.
+\code{loc} should be a simple feature data frame with point or polygon features.
+Both 'single' and 'multi' geometries can be used. \code{loc} should have a valid CRS
+(does not have to be geographic).
 
-The sf data frame must have a valid CRS (doesn't have to be
-geographic coords.)
+\code{idfld} should be the name of a column in \code{loc} containing unique values. When you
+fetch values from Cal-Adapt, this column will be returned in the results to help you
+join the values to other tables. Alternately, you can use \code{idfld} to pass the name of
+a new column, together with a vector of unique values in \code{idval} (one for each row
+in \code{loc}).
+
+Note you can not use \code{idval} as a filter. If you want to filter the features of \code{loc} to
+query, use a filter expression as part of the value of \code{loc} (e.g., with
+\code{\link[dplyr]{filter}} or \code{\link[dplyr]{slice}}).
+
+If \code{loc} is a polygon layer, you'll also need to specify how to spatially aggregate the queried
+values if a feature overlaps more than one pixel. See \code{\link{ca_options}}.
+
+\code{dTolerance} is a value in decimal degrees used to simplify polygons. If \code{dTolerance > 0},
+\link[sf]{st_simplify} will be called to remove polygon nodes within \code{dTolerance} of another node,
+before fetching data. This can reduce the amount of spatial data that needs to be sent to the server,
+which can improve performance particularly when you have very fine grained polygons.
+Simplifying polygons can modify (generally reduce) the pixels that a polygon overlaps, so use with caution.
+\code{dTolerance =	0.001} represents <100m on the ground within Cal-Adapt range of latitude.
 }

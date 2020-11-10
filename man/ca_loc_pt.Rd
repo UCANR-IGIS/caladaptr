@@ -17,11 +17,13 @@ ca_loc_pt(x = ca_apireq(), coords, id = NULL)
 Specifies point location(s) a Cal-Adapt API call should retrieve
 }
 \details{
-\code{coords} should be a two-column matrix or data frame with x (longitude)
-and y (latitude) coordinates for the point(s) of interest.
+\code{coords} should be a two-column matrix or data frame with the first column
+containing the x (longitude) values of the points of interest, and the second column
+containing the y (latitude) values. Projected coordinates can not be used with this
+function (but see \code{\link{ca_loc_sf}}).
 
 \code{id} should be vector that uniquely identify the points. If omitted, row numbers will be used.
 }
 \seealso{
-\code{\link{ca_apireq}}
+\code{\link{ca_loc_sf}}, \code{\link{ca_apireq}}
 }

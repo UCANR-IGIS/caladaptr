@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -109,6 +109,18 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Presentations
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../pres/overview.html">Overview</a>
     </li>
   </ul>
 </li>
@@ -144,7 +156,13 @@
 
     <pre class="usage"><span class='fu'>ca_getcache</span>(default = <span class='fl'>TRUE</span>, quiet = <span class='fl'>TRUE</span>)
 
-<span class='fu'>ca_setcache</span>(<span class='kw'>cache_dir</span>, make_dir = <span class='fl'>FALSE</span>, write = <span class='fl'>TRUE</span>, quiet = <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>ca_setcache</span>(
+  cache_dir = <span class='kw'>NULL</span>,
+  make_dir = <span class='fl'>FALSE</span>,
+  write = <span class='fl'>TRUE</span>,
+  reset = <span class='fl'>FALSE</span>,
+  quiet = <span class='fl'>FALSE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,7 +177,7 @@
     </tr>
     <tr>
       <th>cache_dir</th>
-      <td><p>The directory for cached data, can also be 'default' to use the default location</p></td>
+      <td><p>The directory for cached data</p></td>
     </tr>
     <tr>
       <th>make_dir</th>
@@ -169,6 +187,10 @@
       <th>write</th>
       <td><p>Save the cache directory in the <code>.Renviron</code> file for persistence across R sessions</p></td>
     </tr>
+    <tr>
+      <th>reset</th>
+      <td><p>Change to the default location</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -177,7 +199,7 @@
 from Cal-Adapt. An example of this would be the raster series data catalog and the
 geometries of AOI Presets.</p>
 <p>NOTE: <code>caladaptr</code> does <em>not</em> cache climate data fetched from Cal-Adapt. Every time
-you call a function that fetches data (e.g., <code><a href='ca_getvals.html'>ca_getvals</a></code>), data is retrieved fresh.</p>
+you call a function that fetches data (e.g., <code>ca_getvals</code>), data is retrieved fresh.</p>
 <p>If <code>default = TRUE</code>, a default cache directory will be used (<a href='https://rdrr.io/pkg/rappdirs/man/user_cache_dir.html'>user_cache_dir</a>)
 <em>if</em> one hasn't already been set with <code>ca_setcache</code>.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>

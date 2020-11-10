@@ -11,6 +11,7 @@ ca_apireq(
   scenario = NA,
   period = NA,
   cvar = NA,
+  slug = NA,
   options = NA
 )
 }
@@ -23,9 +24,11 @@ ca_apireq(
 
 \item{scenario}{A vector of scenario names (see `scenarios`)}
 
-\item{period}{A vector of period names (see periods)}
+\item{period}{A vector of period names (see `periods`)}
 
 \item{cvar}{A vector of climate variables (see `climvars`)}
+
+\item{slug}{A vector of slugs}
 
 \item{options}{A list of options for querying the API}
 }
