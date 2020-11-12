@@ -1,19 +1,24 @@
 ---
 title: "Using Cal-Adapt Data in ArcGIS and R"
 author: "Shane Feirer & Andy Lyons<br/>November 12, 2020"
-date: "<p style='margin:3em auto; border:none; text-align:center;'><img src='images/caladaptpy-logo.svg' style='height:60px;'><img src='images/caladaptr-logo.svg' style='height:60px; margin-left:100px;'></p><p style='text-align:center;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:120px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:120px;'/></p><p>"
+date: "<p style='margin:3em auto; border:none; text-align:center;'><img src='images/caladaptpy-logo_beta.svg' style='height:60px;'><img src='images/caladaptr-logo_beta.svg' style='height:60px; margin-left:75px;'></p><p style='text-align:center;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:100px;'/><img src='images/cec_logo_400x354x256.png' style='height:100px; margin-left:100px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:100px;'/></p>"
 output: 
   slidy_presentation: 
     self_contained: no
     lib_dir: lib
     keep_md: no
+    smart: no
 ---
 
-# Start with Zoom Poll or any other intro?
-
-
-
 # About Us...
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(kableExtra)
+library(magrittr)
+library(dplyr)
+```
 
 ```{css echo = FALSE}
 h1 {
@@ -21,7 +26,11 @@ h1 {
 }
 h1.title {
   color:black;
-  font-size:110%;
+  font-size:130%;
+}
+h2 {
+  color:#444;
+  font-size: 1.2em;
 }
 .indented1 {
   margin-left:1em;
@@ -30,19 +39,33 @@ div.indented2 {
   margin-left:2em;
 }
 
-div.indented2.ul.li {
-  line-height:0.7em; 
-  color:red;
+table.borderme {
+  border:4px solid #246ABF;
+  border-collapse:collapse;
 }
 
+table.borderme td {
+  border: 1px solid #eee;
+}
+
+table.shademe td {
+  background:#eee;
+  padding:8px;
+}
+
+div.li-single li {
+  margin-bottom:0.1em;
+} 
+.test_delete {
+  line-height:0.7em;
+}
+pre {
+  font-weight:normal;
+  font-size:80%;
+}
 ```
 
 <script type="text/javascript">w3c_slidy.mouse_click_enabled = false;</script>
-
-```{r setwd_klippy, echo=FALSE, include=TRUE}
-klippy::klippy('')
-```
-
 
 ```{r color, echo = FALSE, results='asis'}
 # crayon needs to be explicitly activated in Rmd
@@ -52,11 +75,38 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
                                    which = c("output", "message", "error"))
 ```
 
-
-
 ![](images/anr_montage-wide_1120x520.png)
 
-# Cal-Adapt API
+# Session Overview
+
+## Outline
+
+<div class = "indented2 li-single">
+
+- Overview of **Accessing Data** from Cal-Adapt (~5 min, Andy)  
+- Working with Cal-Adapt Data in **Python & ArcGIS** (~20 min, Shane)  
+- Working with Cal-Adapt Data in **R** (~20 min, Andy)  
+- Q&A
+
+</div>
+
+\
+
+## Goals
+
+<div class = "indented2 li-single">
+
+- Introduce the new tools  
+- Invite to you try them out  
+- Entice you get involved in testing and feedback!
+
+</div>
+
+\
+
+<p style="text-align:center;">https://ucanr-igis.github.io/caladaptr/pres/overview.html</p>
+
+# Cal-Adapt Data
 
 ![](./images/caladapt_data_v2b_1080x570.png){style="display:block; margin:1em auto;"}
 
@@ -74,18 +124,16 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
  [ADD SCREEN SHOTS]
 
  
-# Options for Getting Cal-Adapt Data
+# Options for Accessing Cal-Adapt Data
 
 ```{r getting_data_options, echo=FALSE, results='asis', cache=FALSE}
-library(kableExtra)
-library(magrittr)
-library(dplyr)
-
-tbl_vec <- c("Feature", "Cal-Adapt website", "Cal-Adapt FTP", "CalAdapt.py / ArcGIS", "caladaptR",
+tbl_vec <- c("Feature", "Cal-Adapt website", "Cal-Adapt FTP", "![](images/caladaptpy-logo.svg){style='width:160px;'}",
+             "![](images/caladaptr-logo.svg){style='width:160px;'}",
              
              "Download rasters", "", "", "", "",
-             "Statewide", "", "x", "x", "",
+             "Statewide", "x", "x", "x", "",
              "User area-of-interest", "x", "", "planned", "planned",
+             "10 recommended GCMs", "x", "x", "x", "planned",
              "All 32 GCMs", "", "x", "x", "",
              
              "Query features", "", "", "", "",
@@ -99,36 +147,40 @@ tbl_vec <- c("Feature", "Cal-Adapt website", "Cal-Adapt FTP", "CalAdapt.py / Arc
 
 tbl_mat <- matrix(tbl_vec, byrow=TRUE, ncol=5)
 
-knitr::kable(tbl_mat, format = "html", align = c("l", "c", "c", "c", "c")) %>% 
-  row_spec(1, bold=TRUE, background = gray(0.25), color = "white", align = "c", extra_css = "padding:0.5em 1em;") %>% 
-  row_spec(c(2,6,11), bold=TRUE, background = gray(0.9), italic = TRUE) %>% 
+knitr::kable(tbl_mat, format = "html", align = c("l", "c", "c", "c", "c"), table.attr="class='borderme'") %>% 
+  column_spec(1, width = "15em") %>%
+  row_spec(1, bold=TRUE, background = gray(0.80), color = "black", align = "c", extra_css = "padding:0.5em 1em;") %>% 
+  row_spec(c(2,7,12), bold=TRUE, background = gray(0.9), italic = TRUE) %>% 
   kable_styling(full_width = FALSE)
 
 ```
 
-\* see also [*Accessing Climate Data through Cal-Adapt*](https://cal-adapt.org/blog/2019/webinar-june-2019){target="_blank" rel="noopener"}, Cal-Adapt Quarterly Webinar, June 2019
+More info:
 
+<div class="indented2">
+- [*Accessing Climate Data through Cal-Adapt*](https://cal-adapt.org/blog/2019/webinar-june-2019){target="_blank" rel="noopener"}, Cal-Adapt Quarterly Webinar, June 2019
+</div>
 
 ---
 
 ![](images/caladaptpy-logo_beta.svg){style="display:block; height:100px; margin:6em auto 4em;"}
 ![](images/arcgis-pro_313x100.png){style="display:block; height:100px; margin:0em auto;"}
 
-# caladaptR Outline
+---
 
+![](images/caladaptr-logo_beta.svg){style="height:80px;"}
+
+## Outline
+
+<div class="indented2 li-single">
 - Why R?  
 - `caladptR` features
-- Installation  
-- Workflow overview  
-- Code snippets  
+- Workflow Overview  
+- Code tour  
 - Examples  
-- How to learn more  
-
-\
-
-<div style="text-align:center; font-size:120%; line-height: 150%;">
-Slides: **<https://ucanr-igis.github.io/caladaptr/pres/overview.html>**
+- How to Learn More  
 </div>
+
 
 
 ---
@@ -138,65 +190,109 @@ Slides: **<https://ucanr-igis.github.io/caladaptr/pres/overview.html>**
 
 # Why R?
 
-![](./images/rlogo_120x120.png)
+<div style="float:left; width:250px;">
+<p style="margin:0;"><img src="./images/rlogo_120x120.png" style="width:120px;"/></p>
+</div>
 
-- free open source software for data science  
-- a programming language to write scripts  
-- inspired by 'S' (1976), first beta version ~2000  
+<div class="indented1 li-single" style="float:left; margin-bottom:2em;">
+- open source software for data science  
+- programming language to write scripts  
+- inspired by 'S' (1976); first beta version ~2000  
 - [*many*](https://rdrr.io/){target="_blank"} user-contributed packages:
     - *CRAN*: >18,400  
     - *Bioconductor*: >2,000  
     - *R-Forge*: >2,150  
-    - *GitHub*: >65,000  
+    - *GitHub*: >65,000
+</div>
 
-\
+<div style="clear:both;"></div>
 
-![](./images/rstudio-logo_300x100.png)
+<div style="float:left; width:250px;">
+<p style="margin:0;"><img src="./images/rstudio-logo_300x100.png" style="width:240px;"/></p>
+</div>
+
+<div class="indented1 li-single" style="float:left;">
+- very popular desktop environment; free
+- simplifies package management, plotting, etc.
+</div>
+
+<div style="clear:both;"></div>
 
 ![](./images/rstudio_1000x590.png){style="display:block; margin:1em auto; border:1px solid grey;"}
 
-# caladaptR Overview
+
+# caladaptR Features
 
 ![](./images/caladaptr_workflow_630x524x256.png){style="display:block; width:480px; margin:1em auto;"}
 
-- <tt>caladaptr</tt> is an **API client package** for R.
+## Key Features
 
-- Main job is to provide low-level functions for **querying** and **importing** Cal-Adapt data through the API.
+<div class = "indented2 li-single">
 
-- Utility functions  might be common data munging tasks (e.g., clipping, format conversion, reshaping, spatial/temporal aggregation, etc.) 
+- `caladaptr` is an **API client** package  
+- main job is to provide low-level functions for **querying** and **importing** Cal-Adapt data via the API  
+- intended audience is **experienced R users**  
+- uses modern R programming standards:  
 
-- The intended audience is **experienced R users** (not necessarily climate scientists).
+<div class = "indented1">
+- pipe friendly functions  
+- accepts and returns standard data classes (e.g., tibble, sf, raster)
+- units encoded in the results
+- follows development guidelines from [rOpenSci](https://devguide.ropensci.org/){target="_blank"}  
+</div>
 
-- Uses modern R programming standards
+</div>
 
-pipe and tidyverse standards
+## Functions - *current*
 
-accepts and returns standard data classes (e.g., sf)
+<div class = "indented2 li-single">
+- Retrieve values from any Cal-Adapt raster series  
+- Query with user-provided points, lines, and polygons  
+- Query built-in preset areas-of-interest  
+</div>
 
-Built using guidelines from [rOpenSci](https://devguide.ropensci.org/){target="_blank"} with plans to submit the package for peer review. 
+## Functions - *planned*
 
-- Enable light-weight decision support tools through RShiny that present Cal-Adapt data in user friendly terminology, combine with other datasets, produce user friendly output, etc. 
+<div class = "indented2 li-single">
+- import rasters  
+- cache results locally 
+- improved error trapping
+- code recipe 'cookbook' 
+</div>
 
-- Companion 'cookbook' of code recipes
+## Beta status
 
-# Development Status and Timeline
+<div class = "indented2 li-single">
+- under development  
+- frequent updates  
+- some changes may not be backward compatible  
+- user feedback and input is extremely welcome
+</div>
 
-*Development Status (Aug 2020)*
+# caladaptR workflow
 
-- `caladaptr` only supports Cal-Adapt's raster data layers (which is most of them). There are no plans at present to support importing station data (i.e., sea level rise).  
-- Currently only temperature and precipitation rasters can be queried (both projected and historic modeled). Variables from the VIC datasets and others will be coming soon.  
-- Retrieving values currently works. Retrieving rasters is not yet supported.  
-- Currently you can query point locations and preset areas of interest. Querying a user-provided polygon will be coming soon.
+In general, there are **five** steps to using caladaptR:
 
+```{r echo = FALSE}
+library(DiagrammeR)
+grViz("digraph flowchart {
+  node [fontname = Helvetica, shape = rectangle]
+  tab1 [label = '@@1']
+  tab2 [label = '@@2']
+  tab3 [label = '@@3']
+  tab4 [label = '@@4']
+  tab5 [label = '@@5']
 
-**'Beta'** status means:
+  # edge definitions with the node IDs
+  tab1 -> tab2 -> tab3 -> tab4 -> tab5;
+  }
 
-1) the package is still under development  
-2) the package is being updated fairly often  
-3) there's a possibility that updates will *not* be backward compatible  
-4) user feedback and input is extremely welcome! (please join the [caladaptR betaR](#caladaptr-betar-club) club)
-
-
+  [1]: '1) Determine your location(s) of interest\\nand assemble the required values/objects\\n\\n(e.g., points, preset area-of-interest, own polygon)'
+  [2]: '2) Create an API Request object'
+  [3]: '3) Feed the API Request into a function that fetches data'
+  [4]: '4) Munge the results into the format you require\\n\\n(e.g., filtering, sorting, joining, reshaping,\\nadd calculated columns, etc.)'
+  [5]: '5) Continue on with your analysis or visualization'")
+```
 
 # Installation
 
@@ -204,58 +300,56 @@ Built using guidelines from [rOpenSci](https://devguide.ropensci.org/){target="_
 
 Prerequisites:
 
-- [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} installed
+<div class="indented2 li-single">
+- [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} has to be installed  
+- `devtools` package installed
+</div>
 
-- `devtools` (or `remotes`) package
-
-\
-
-Install the package:
+Install the package using `install_github()`:
 
 ```{r install_caladaptr, eval = FALSE}
 library(devtools)
 devtools::install_github("ucanr-igis/caladaptr")
 ```
 
-# Workflow
+# Quick Example
 
-In general, there are three steps to getting data via the Cal-Adapt API:
-
-1) Create a ‘Cal-Adapt API Request’ object
-
-2) Feed the API Request object into a function that fetches data
-
-3) Massage the data that comes back into the format you require
-
-
-# Creating an API Request
-
-Load the package:
+1. Load the package:
 
 ```{r load_package, cache = FALSE}
 library(caladaptr)
 ```
 
-Create a request object:
+2. Create an API request object:
 
-```{r cap1, cache = TRUE}
+```{r cap1_make, cache = TRUE}
 cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%  ## specify a location
-  ca_gcm(gcms[1:4]) %>%                                ## select GCM(s)
-  ca_scenario(scenarios[1:2]) %>%                      ## select emission scenarios(s)
-  ca_period("year") %>%                                ## select a precooked temporal aggregation period
-  ca_years(start = 2040, end = 2060) %>%               ## select start and end dates
-  ca_cvar(c("tasmax", "tasmin"))                       ## select climate variables
+  ca_cvar(c("tasmax", "tasmin")) %>%                   ## climate variables
+  ca_gcm(gcms[1:4]) %>%                                ## GCM(s)
+  ca_scenario(scenarios[1:2]) %>%                      ## emission scenarios(s)
+  ca_period("year") %>%                                ## temporal aggregation period
+  ca_years(start = 2040, end = 2060)                   ## start and end dates
 
 cap1
 ```
 
-# API Request Components
+3. Fetch data:
 
-An API Request object consists of between 2 and 4 pieces:
+```{r cap1_fetch, cache = TRUE}
+cap1_tbl <- ca_getvals_tbl(cap1, quiet = TRUE)
+```
 
-\
+4. View the results
 
-**1. Specify a Location** (*required, pick one*)
+```{r}
+cap1_tbl
+```
+
+# Building an API Request
+
+An API Request object consists of between 2 and 4 components:
+
+**1. Location** (*required, pick one*)
 
 ```{r api_constructors_loc, echo=FALSE, results='asis', cache=TRUE}
 col1_width <- "12em"
@@ -265,16 +359,18 @@ tbl_vec <- c("ca_loc_aoipreset()", "Query a preset location(s)",
              "ca_loc_sf()", "Query simple feature location(s)")
 
 kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
-      format = "html", align = c("l", "l")) %>% 
+      format = "html", align = c("l", "l"), table.attr="class='shademe'") %>% 
   column_spec(column = 1, monospace = TRUE, width = col1_width) %>%
-  kable_styling(full_width = FALSE, position = "left", bootstrap_options = "bordered")
+  kable_styling(full_width = FALSE, position = "left")
 ```
 
 \
 
-**2. Specify a Raster Series Dataset** (*required*)
+**2. Raster series dataset**
 
-**Option 1**: Select one or more downscaled climate projection from Scripps using **all 4** of the following constructor functions:
+<div class="indented1">
+
+**Option 1**: Choose downscaled climate projection(s) from Scripps using **all 4** of the following constructor functions:
 
 ```{r api_const_loca, echo=FALSE, results='asis', cache=FALSE}
 library(magrittr); library(kableExtra)
@@ -282,132 +378,252 @@ library(magrittr); library(kableExtra)
 tbl_vec <- c("ca_cvar()", "Select the climate variable(s) (i.e., precip, temperature)",
              "ca_gcm()", "Pick or more of the 10 Global Climate Models",
              "ca_period()", "Select temporal aggregation period (year, month, day)",
-             "ca_scenario()", "Pick one of two emissions scenarios")
+             "ca_scenario()", "Choose your emission scenario(s)")
 
 knitr::kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
-      format = "html", align = c("l", "l")) %>% 
+      format = "html", align = c("l", "l"), table.attr="class='shademe'") %>% 
   kableExtra::column_spec(column = 1, monospace = TRUE, width = col1_width) %>% 
-  kableExtra::kable_styling(full_width = FALSE, position = "left", bootstrap_options = "striped")
+  kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```
-
-\
 
 **Option 2**: Pick *any* of the 830 raster series datasets by their '**slug**':
 
 ```{r api_const_slug, echo=FALSE, results='asis', cache=FALSE}
 tbl_vec <- c("ca_slug()", "Select a dataset by its slug")
 knitr::kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
-      format = "html", align = c("l", "l")) %>% 
+      format = "html", align = c("l", "l"), table.attr="class='shademe'") %>% 
   kableExtra::column_spec(column = 1, monospace = TRUE, width = col1_width) %>% 
   kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```
 
+</div>
+
 \
 
-**3. Specify Start & End dates** (*optional*)
+**3. Start & end dates** (*optional, pick one*)
 
 ```{r api_const_start_end, echo=FALSE, results='asis', cache=FALSE}
 library(magrittr)
 tbl_vec <- c("ca_years()", "Specify start & end by **year**",
              "ca_dates()", "Specify start & end by **date**")
 knitr::kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
-      format = "html", align = c("l", "l")) %>% 
+      format = "html", align = c("l", "l"), table.attr="class='shademe'") %>% 
   kableExtra::column_spec(column = 1, monospace = TRUE, width = col1_width) %>% 
   kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```
 
 \
 
-**4. Specify Options** (*required for polygons*)
+**4. Options** (*only required for polygons*)
 
 ```{r api_options, echo=FALSE, results='asis', cache=FALSE}
 library(magrittr)
-tbl_vec <- c("ca_options()", "Spatial aggregreation option(s)")
+tbl_vec <- c("ca_options()", "Spatial aggregation function(s)")
 knitr::kable(matrix(tbl_vec, byrow=TRUE, ncol=2), 
-      format = "html", align = c("l", "l")) %>% 
+      format = "html", align = c("l", "l"), table.attr="class='shademe'") %>% 
   kableExtra::column_spec(column = 1, monospace = TRUE, width = col1_width) %>% 
   kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```
 
-# Preset areas-of-interest
+# API Call Location: Preset Areas-of-Interest
 
-The Cal-Adapt API server has 11 preset **areas of interest** (boundary layers).
+The Cal-Adapt API server has 11 preset **areas of interest** (aka boundary layers).
 
-If you query a dataset using features in one of these layers, you don't need to pass a spatial object. You can just pass a name or id number.
+<div class="li-single" style="float:left; width=450px; margin-left:2em;">
+- Census Tracts
+- Counties
+- Congressional Districts
+- Climatic Regions
+- Watersheds
+- Irrigated Water Management Districts
+</div>
 
-View the AOI preset types: 
+<div class="li-single" style="float:left; width=450px;">
+- 4th Climate Change Assessment Regions
+- Electrical Utilities
+- WECC Load Areas
+- Event Locations
+- Places  
+</div>
 
-```{r aoipreset_types, cache=TRUE}
-aoipreset_types
-```
+<div style="clear:both;"></div>
 
-To use one of these in your query, you have to also pass the name of a field which uniquely identifies each feature, and the values of the features you interest. Example:
+You can query these features **without passing a spatial object**!
+
+Example:
 
 ```{r cap2, cache=TRUE}
-library(caladaptr)
 cap2 <- ca_loc_aoipreset(type = "counties", 
                          idfld = "fips", 
-                         idval = c("06037", "16047", "06049", "06095", "16053")) %>% 
+                         idval = c("06105", "06049", "06089", "06015")) %>% 
   ca_gcm(gcms[1:4]) %>%
   ca_scenario(scenarios[1:2]) %>%
   ca_period("year") %>%
   ca_years(start = 2040, end = 2060) %>%
   ca_cvar("pr") %>% 
   ca_options(spatial_ag = "max")
-
-cap2
-
 ```
 
-Tip: To identify specific features, you can use `aoipreset_idflds` and `aoipreset_idval`
+Plot an API request to verify the location:
 
-```{r plot_cap2, cache=FALSE}
+```{r plot_cap2, message = FALSE, warning = FALSE}
 plot(cap2)
 ```
 
+## Further details
 
-Download & plot:
+To query a preset area-of-interest, use **`ca_loc_aoipreset()`** when you build your API request
 
-```{r plot_counties, cache = TRUE, eval = FALSE}
-library(sf)
+`ca_loc_aoipreset()` requires these arguments:  
 
-counties_sf <- ca_aoipreset_geom("counties")
-
-plot(counties_sf %>% st_drop_geometry(), col = "gray")
-```
-
-# Built-in Constants for the Scripps Downscaled Climate Projections 
-
-To help you pass arguments for the various constructor functions, `caladpatr` provides the following constants:
-
-```{r constants, cache = TRUE}
-cvars
-
-gcms
-
-## Note the first four GCMs are the 'priority' models recommended under 
-## California's 4th Climate Change Assessment.
-
-scenarios
-
-periods
-
-```
-
-**Note**: Cal-Adapt has data for many but by no means all permutations of the above constants.
-
-# Slug Finder
-
-<div style="float:right; width:210; padding:5px; border:1px solid red;">
-<img src="./images/cyber-slug_200x254.png" style="width:200;"/><br/>
-Source: UCSC
+<div class="indented2 li-single">
+- **`type`** - the preset you want 
+- **`idfld`** - a field in the attribute table you'll use to speficy which feature(s) to query
+- **`idval`** - the value(s) of the features you want to query 
 </div>
 
-**"Slug"** = a unqiue part of a URL
+You don't have to memorize preset types or field names! `caladaptr` provides the following constants:
 
-Every Cal-Adapt raster series has a unique slug
+```{r aoipreset_types, results = 'hold'}
+##View the AOI preset types 
+aoipreset_types
 
-To find the slug, you can run:
+## For AOI preset, what field(s) can you use to identify features? 
+aoipreset_idflds
+
+## For a given field, which values can you use to identify features?
+aoipreset_idval$counties$fips
+```
+
+# Downloading AOI Preset Geometry
+
+**`ca_aoipreset_geom()`** downloads an AOI Preset as a simple feature data frame (sf).
+
+```{r download_irwm, cache = TRUE}
+irwm_sf <- ca_aoipreset_geom("irwm")
+
+irwm_sf
+```
+
+You can manipulate and visualize AOI presets the same as you would any sf vector layer. 
+
+Plot with `tmap`:
+
+```{r plot_irwm, message = FALSE}
+library(tmap)
+tmap_mode("plot")
+tm_shape(irwm_sf) + tm_polygons(col = "MAP_COLORS", palette = "Pastel1")
+```
+
+# API Call Location: Points and Polygons
+
+To query a **single point**, pass the longitude & latitude coordinates to **`ca_loc_pt()`**:
+
+```{r}
+cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>% 
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(scenarios[1:2]) %>%
+  ca_period("year") %>%
+  ca_years(start = 2040, end = 2060) %>%
+  ca_cvar("tasmin")
+
+cap
+```
+
+To query **multiple points**, prepare a matrix or data frame with the longitude & latitude coordinates. 
+
+If you want to join the results back to the data frame, also pass a column of unique id numbers.
+
+```{r}
+my_pts_df <- data.frame(lon = c(-120.7635, -120.4285, -120.3873, -120.7377),
+                     lat = c(38.90920, 38.91321, 38.66819, 38.66015))
+
+cap <- ca_loc_pt(coords = my_pts_df, id = 21:24) %>% 
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(scenarios[1:2]) %>%
+  ca_period("year") %>%
+  ca_years(start = 2040, end = 2060) %>%
+  ca_cvar("tasmin")
+
+cap
+```
+
+To query points or polygons in a sf object, use **`ca_loc_sf()`** in your API request:
+
+```{r}
+library(sf)
+yosemite_bnd_sf <- st_read("yosemite_bnd.geojson")
+
+cap <- ca_loc_sf(loc = yosemite_bnd_sf, idfld = "UNIT_CODE") %>% 
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario(scenarios[1:2]) %>%
+  ca_period("year") %>%
+  ca_years(start = 2040, end = 2060) %>%
+  ca_cvar("tasmax") %>% 
+  ca_options(spatial_ag = "mean")
+
+cap
+```
+
+Note: when querying polygons, you must specify a spatial aggregation function in `ca_options()`.
+
+As always, you can plot an API request to see the query location:
+
+```{r}
+plot(cap)
+```
+
+# Specifying Datasets: Downscaled Climate Projections
+
+One of the most popular datasets on Cal-Adapt are the downscaled climate projections from Scripps.
+
+You can specify one or more downscaled climate projections by using all four of the following functions:
+
+```{r}
+cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>% 
+  
+  ca_gcm(c("HadGEM2-ES", "CNRM-CM5", "CanESM2", "MIROC5")) %>%
+  ca_scenario(c("rcp45", "rcp85")) %>%
+  ca_period("year") %>%
+  ca_cvar("tasmin")
+
+cap
+```
+
+## Helper Constants
+
+You don't have to memorize strange GCM acronyms! `caladpatr` provides the following constants which you can use to help specify downscaled climate projection data:
+
+```{r constants, cache = TRUE}
+## Climate variables
+cvars
+
+## Global Climate Models
+## Note the first four GCMs are the 'priority' models recommended under 
+## California's 4th Climate Change Assessment.
+gcms
+
+## Emission scenarios
+scenarios
+
+## Temporal resolution
+periods
+```
+
+# Specifying Datasets: Slugs
+
+<div style="float:right; width:90; padding:5px; margin-top:-20px;">
+<img src="./images/cyber-slug_200x254.png" width = "80px" style="width:80px;"/><br/>
+<span style="font-size:80%; font-style:italic;">Source: UCSC</span>
+</div>
+
+**"Slug"** = a unique part of a URL
+
+Every Cal-Adapt raster series has a unique slug.
+
+To see all the raster series and their slugs, you can run:
+
+<div style="clear:both;"></div>
 
 ```{r eval = FALSE}
 View(ca_catalog_rs())
@@ -415,55 +631,55 @@ View(ca_catalog_rs())
 
 ```{r show_catalog, echo = FALSE}
 rs_cat_tbl <- caladaptr::ca_catalog_rs(quiet = TRUE) %>% 
-  dplyr::slice(1:200) %>% 
   dplyr::select(name, slug, url) %>% 
   tibble::as_tibble()
 
 DT::datatable(rs_cat_tbl, 
           class = 'row-border stripe hover compact', 
           rownames = F, 
-          autoHideNavigation = T, escape =FALSE)
+          autoHideNavigation = T, 
+          escape =FALSE)
 ```
 
-Verify you have a good slug:
+To specify a dataset by slug, use **`ca_slug()`** when creating your API request:
 
-Enter it here:
+```{r}
+cap_et <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+  ca_slug("ET_month_MIROC5_rcp45") %>%
+  ca_years(start = 2040, end = 2060)
 
-ca_slug()
-
-Note: ca_slug is incompatible with ca_gcm + ca_scenario + ca_cvar + ca_period.
-
-
-# Inspecting a API Request
-
-Type the name of the object at the console:
-
-```{r cap1_print, cache = TRUE}
-cap1
+cap_et
 ```
 
-Plot it:
-
-```{r plot_cap1, cache = TRUE, eval = FALSE}
-plot(cap1)
-```
-
-How do I know if there are actually data layers for my request?
-ca_testflight()
-print(x)
+Note: `ca_slug()` is incompatible with `ca_gcm()`, `ca_scenario()`, `ca_cvar()`, and `ca_period()`.
 
 # Fetch Data
 
-```{r cap1_getvals, cache = TRUE, eval = FALSE}
-cap1_tbl <- ca_getvals_tbl(cap1, quiet = TRUE)
-cap1_tbl
+To fetch data from Cal-Adapt, feed your API request object into **`ca_getvals_tbl()`**:
+
+```{r cap1_getvals, cache = TRUE, eval = TRUE}
+cap_tbl <- ca_getvals_tbl(cap, quiet = TRUE)
+
+cap_tbl
 ```
 
+Notes:
 
-# Example 1: Plot Over Time
+<div class="indented2 li-single">
+- `ca_getvals_tbl()`returns a **tibble**  
+- the first column is the location id
+</div>
+
+# Example 1: Plot Projected Temperature for a Point Location
+
+Our goal in this example is to plot the projected maximum annual temperature for a specific point.
+
+## 1\. Create the API Request
+
+We begin by creating an API request for the maximum annual temperature for a single point, 50 year time span, projected by 4 GCMs and 2 RCPs:
 
 ```{r}
-cap2 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+cap2 <- ca_loc_pt(coords = c(-118.955, 35.488)) %>%
   ca_gcm(gcms[1:4]) %>%
   ca_scenario(c("rcp45", "rcp85")) %>%
   ca_period("year") %>%
@@ -472,13 +688,13 @@ cap2 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
 cap2
 ```
 
-Plot the location:
+To see where this is we can plot the location:
 
 ```{r}
 plot(cap2)
 ```
 
-Fetch the values:
+## 2\. Fetch the data
 
 ```{r cap2_getvals, cache = TRUE}
 cap2_tbl <- cap2 %>% ca_getvals_tbl(quiet = TRUE)
@@ -486,11 +702,13 @@ cap2_tbl <- cap2 %>% ca_getvals_tbl(quiet = TRUE)
 cap2_tbl
 ```
 
-In the next statement, we do two things:
+## 3\. Munge the results
+
+To make our plot, we need to do two things:
 
 1) Pull out just those values from RCP 4.5, and 
 
-2) Convert degrees to &#176;F
+2) Convert units from Kelvin to &#176;F
 
 ```{r convert_units, results = 'hold', message= FALSE}
 library(dplyr); library(units)
@@ -503,66 +721,64 @@ cap2_rcp45_tbl
 
 ```
 
+## 4\. Plot the results
 
 Plot these with `ggplot`:
 
-```{r cap1_plot}
+```{r cap1_plot, message = FALSE}
 library(ggplot2)
 ggplot(data = cap2_rcp45_tbl, aes(x = dt, y = as.numeric(temp_f), group = gcm)) +
   geom_line(aes(color=gcm)) +
   labs(title = "Average Annual Maximum Temperature for RCP4.5", x = "year", y = "temp (F)")
 ```
 
-# Example 2: 
-
-Query AOI Preset Data from a Slug, use it to make a map
-
-Join with census data (using tidycensus)
-
-# Example 3: Interpolate hourly temperature
+# Example 2: Interpolate hourly temperature
 
 Grab min-max for Lincove REC
 
-# Example 4: Shiny app
-
-Select a point. Retrieve data for that point
-
 # Need Large Data?
 
-Beta version of `ca_getvals_tbl()` under development
+R tries to load everything in memory. ![](images/grimmace_256x256.png){style="width:40px; margin-left:0.5em;"}
 
-<div class="indented2">
- - caches downloaded values to a local SQLIte database  
+Querying large amounts of data (i.e., >1 million values) requires special handling.
+
+A big-data alternative to `ca_getvals_tbl()` is under development:
+
+<div class="indented2 li-single">
+ - caches downloaded values to a local SQLite database  
  - picks up where it left off if the connection interrupted  
- - can manipulate the results using the same dplyr (few differences)  
+ - results can be manipulated using the same dplyr functions (with a few differences)  
 </div>
 
 Raster download with local processing may be faster - *coming soon*
  
-Attend the workshop December workshop for more info
+Attend the December 2020 workshop for more info.
 
- 
 # Learning More
 
-Attend the workshop **December 11, 2020, 10am**!
+Website: <https://ucanr-igis.github.io/caladaptr/>
 
-Visit **<https://ucanr-igis.github.io/caladaptr/>**
-
-<div class="indented2">
+<div class="indented2 li-single">
  - documentation  
  - getting started guide  
  - R notebooks  
  - presentations  
  </div>
 
+Attend a caladaptR workshop **December 11, 2020, 10am**!
+
 Join the community
 
-<div class="indented2">
+<div class="indented2 li-single">
  - join the [caladaptR betaR Club](https://ucanr-igis.github.io/caladaptr/#caladaptr-betar-club){target="_blank" rel="noopener"}  
- - share an an idea for a code recipe  
+ - share an idea for a code recipe  
  - submit feature requests and bug reports via [GitHub Issues](https://github.com/ucanr-igis/caladaptr/issues)  
+ - Mac and Linux users particularly welcome!
  </div>
 
-![](images/caladaptr-logo_beta.svg){style="display:block; height:80px; margin:1em auto;"}
+![](images/caladaptr-logo_beta.svg){style="display:block; height:80px; margin:3em auto 0;"}
+
+# Q&A
+
 
 

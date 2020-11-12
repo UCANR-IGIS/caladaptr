@@ -33,6 +33,7 @@ Imports:
     fastmatch
 RoxygenNote: 7.1.1
 Suggests: 
-    testthat
+    testthat,
+    DiagrammeR
 Depends: 
     R (>= 3.0)

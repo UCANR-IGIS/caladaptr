@@ -38,7 +38,7 @@ h3 {
 
 # About this R Notebook
 
-R Notebooks are a 'flavor' of R markdown that combine plain text and R commands in code chunks. (You can download the Rmd file from the 'code' button at the top of the page.) You run code chunks in the document line-by-line, and the output appears immediately below the code chunk.
+R Notebooks are a 'flavor' of R markdown that combine plain text and R commands in code chunks. You can download the Rmd file from the 'code' button at the top of the page, then open it in RStudio. You run code chunks in the document line-by-line, and the output appears immediately below the code chunk. When you save the Rmd file, it automatically creates a HTML file showing results from all the code that has been run so far.
 
 If you're in RStudio, you can *minimize the console window* (and probably close the right-hand panes as well). You won't need it,  because when you run R commands in a R Notebook the *output appears below the code chunk* (not the console). This takes some getting used to.
 
@@ -49,35 +49,35 @@ Keyboard shortcuts:
 
 # Setup
 
-The following commands will install any packages you don't already have that will be needed below:
-
-```{r load_pkgs, cache = TRUE}
-pkgs_req <- c("remotes", "ggplot2", "dplyr", "tmap", "conflicted", "leaflet", "tidyr")
-pkgs_missing <- pkgs_req[!(pkgs_req %in% installed.packages()[,"Package"])]
-if (length(pkgs_missing)) install.packages(pkgs_missing, dependencies=TRUE)
-```
-
-Install caladaptr:
+Install `caladaptr`:
 
 ```{r}
-# remotes::install_github("ucanr-igis/caladaptr")
+if (!require(devtools)) {install.packages("devtools"); library(devtools)}
+# 
+# devtools::install_github("ucanr-igis/caladaptr")
+library(caladaptr)
+## Make sure you have version 0.4.1 caladaptr or later. 
+packageVersion("caladaptr")
 ```
 
-Now we can load all the required libraries:
+Now we can load the other packages we'll be using below:
 
-```{r library_all}
-library(caladaptr, quietly = TRUE)
-library(units, quietly = TRUE)
-library(ggplot2, quietly = TRUE)
-library(dplyr, quietly = TRUE)
-library(conflicted, quietly = TRUE)
-library(tidyr, quietly = TRUE)
-library(tmap, quietly = TRUE)
-library(lubridate, quietly = TRUE)
-library(sf, quietly = TRUE)
+```{r library_all, message = FALSE}
+pkgs_req <- c("ggplot2", "dplyr", "tidyr", "lubridate", "conflicted")
+pkgs_missing <- pkgs_req[!(pkgs_req %in% installed.packages()[,"Package"])]
+if (length(pkgs_missing)) install.packages(pkgs_missing, dependencies=TRUE)
+
+library(units)
+library(ggplot2)
+library(dplyr)
+library(conflicted)
+library(tidyr)
+library(tmap)
+library(lubridate)
+library(sf)
 ```
 
-The last setup task is to define your preferences when you're forced to use an ambiguous function name (i.e., a function that exists in more than one package). This is particularly needed with a few common generic functions from `dplyr`:
+The last setup task is to define your preferences when you use an ambiguous function name (i.e., a function that exists in more than one package). This is particularly needed with a few common generic functions from `dplyr`:
 
 ```{r set_conflicts}
 conflict_prefer("filter", "dplyr", quiet = TRUE)
@@ -87,61 +87,81 @@ conflict_prefer("select", "dplyr", quiet = TRUE)
 
 # Example #1: Get Projected Temperature for a Point
 
-## Create the Cal-Adapt API Request
+**Goal**: Make a **time series plot** of projected maximum annual temperature for a **single point**, using the **four recommended GCMs** for California under RCP 4.5.
 
-The first step in getting climate variables back is to create the Cal-Adapt API request object. This involves stringing together a series of functions together that specify the pieces of the request. The following constants can help you specify pieces of the request:
+## 1\. Create the API Request 
 
-```{r view_constants, cache = TRUE}
+The first step in getting climate variables back is to create a Cal-Adapt API request object. This involves stringing together a series of functions that specify the pieces of the request. The following constants can help you specify pieces of the request:
+
+```{r}
+cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+  ca_gcm(gcms[1:4]) %>%                                 
+  ca_scenario(c("rcp45", "rcp85")) %>%
+  ca_period("year") %>%
+  ca_years(start = 2030, end = 2080) %>%
+  ca_cvar(c("tasmax"))
+```
+
+Entering the name of an API request object at the console will display its components:
+
+```{r}
+cap1
+```
+
+
+*Tip*: You don't have to memorize a bunch of keywords. caladaptr provides several constants that contain the values you can pass to API construction functions, including `gcms`, `scenarios`, `cvars`, and `periods`.
+
+```{r view_constants}
 ## Available global change models
+## Note, the first 4 GCMs are the recommended priority models for California
 gcms
 
 ## Available emissions scenarios
 scenarios
 
 ## Available climate variables
-climvars
+cvars
 
 ## Available temporal aggregation periods
 periods
 ```
+
 **Note**: Cal-Adapt has data for many but by no means all combinations of the above constants.
 
 You can use these values as arguments to build up the API request:
 
-```{r}
-cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
-  ca_gcm(gcms[1:4]) %>%
-  ca_scenario(c("rcp45", "rcp85")) %>%
-  ca_period("year") %>%
-  ca_years(start = 2030, end = 2080) %>%
-  ca_cvar(c("tasmax"))
 
-cap1
-```
+
 To verify the location in an API request, you can plot it. (Note we still haven't fetched any climate data yet, this just shows you the location the request will ask for.)
 
 ```{r plot_cap1}
 plot(cap1)
 ```
 
-Time to fetch data with `ca_getvals()`
+## 2\. Fetch Data
 
-```{r cap1_lst, cache = TRUE}
-cap1_lst <- cap1 %>% ca_getvals(quiet = TRUE)
+Now it's time to fetch data with `ca_getvals_tbl()`. The object returned by `ca_getvals_tbl()` is tibble (data frame):  
+
+```{r cap1_fetch, cache = TRUE}
+cap1_tbl <- cap1 %>% 
+  ca_getvals_tbl(quiet = TRUE)
+
+cap1_tbl
 ```
 
-The object returned by `ca_getvals()` is a really nasty list. 99% of the time you'll want to convert the results to a tibble (aka data frame) using `ca_vals2tbl()`. 
+## 3\. Munge the Results
 
-Note in the example below we also i) pull out just RCP45, ii) convert degrees to &#176;F using the handy `set_units` function from the `units` package.
-  
-```{r}
-cap1_rcp45_tbl <- cap1_lst %>% ca_vals2tbl(spatial_ag = FALSE) %>%
+To produce the desired time series plot, we need to i) pull out just values for RCP 4.5, and ii) convert degrees to &#176;F. For the unit conversion, we can use the handy `set_units` function from the `units` package.
+
+```{r cap1_munge}
+cap1_rcp45_tbl <- cap1_tbl %>%
   filter(scenario == "rcp45") %>%
   mutate(temp_f = set_units(val, degF))
 
-dim(cap1_rcp45_tbl)
-head(cap1_rcp45_tbl)
+cap1_rcp45_tbl
 ```
+
+## Plot the Time Series
 
 Plot these with ggplot:
 
@@ -151,238 +171,255 @@ ggplot(data = cap1_rcp45_tbl, aes(x = dt, y = as.numeric(temp_f), group = gcm)) 
   labs(title = "Average Annual Maximum Temperature for RCP4.5", x = "year", y = "temp (F)")
 ```
 
-## Your Turn
+## YOUR TURN
 
-Modify the above to create a similar plot for RCP8.5.
+Modify the above to create a similar plot for RCP 8.5.
 
 ```{r}
 ## Plot of RCP 8.5 goes here
 
 ```
 
-# Reshape values into a 'wide' format:
+# Example #2: Retrieve County Data 
 
-The tibble returned by `ca_vals2df()` is 'long'. Many R packages (including ggplot2) have arguments to 'group' rows together, so long formats are good. However sometimes you need to reshape the data into a 'wide' format. 
+*Goal*: produce a **time series plot** showing the **difference between RCP85 and RCP45** on maximum annual temperature for a **single county**.
 
-This can be done using `pivot_wider` from the `tidyr` package. Here we make each GCM a separate column:
-
-```{r reshape_cap1, cache = TRUE}
-cap1_rcp45_wide_tbl <- cap1_rcp45_tbl %>%
-  select(id, dt, gcm, temp_f) %>%
-  pivot_wider(names_from = gcm, values_from = temp_f)
-
-cap1_rcp45_wide_tbl
-```
-
-# Example #2: Retrieve Data for a County
-
-Cal-Adapt API has a number of 'preset' areas of interest you can use cookie-cutter style when retreiving climate data. The advantage of using an AOI Preset is that you don't need to import a GIS layer to query according to these common features. You just need to know the name or ID number of the feature(s) you're interested in.
+The Cal-Adapt API has a number of 'preset' areas-of-interest (also called boundary layers) that you can use cookie-cutter style when retrieving climate data. The advantage of using an AOI Preset is that you don't need to import a GIS layer to query according to these common features. You just need to know the name or ID number of the feature(s) you're interested in.
 
 The following AOI Presets are available:
 
-```{r preset_types, cache = TRUE}
+```{r preset_types, cache = FALSE}
 aoipreset_types
 ```
 
-## Verify the name (or id) of the desired feature(s) in the AOI Preset 
+## 1\. Find the FIPS code for your county of interest
 
-To use an AOI Preset, you need to provide the name(s) or id(s) of the feature(s) you want to query. The specific columns available for identifying features vary by each preset. You can view the columns and values for an AOI Preset using the built-in `aoipreset_idval` constant. For example the counties layer allows you to specify a county by name, fips code, or id. Remember that everything in R is case-sensitive!
+To use an AOI Preset, you need to specify which feature(s) you're interested in by providing the value(s) for one of the id fields. The specific columns available for identifying features vary according to preset. You can view the id columns and their values for an AOI Preset using the built-in `aoipreset_idval` constant. For example the counties layer allows you to specify a county by name, fips code, or id. Remember that everything in R is case-sensitive!
 
 ```{r idval_counties, cache = TRUE}
 aoipreset_idval$counties
 ```
 
-## Create the API Request
+You can find county fips codes on Google - just be sure to use the 6-character version which includes the state. Alternately, you can plot the county preset layer and click on your county of interest: 
 
-Let's create an API request for Colusa County. 
+```{r plot_counties, message = FALSE}
+counties_sf <- ca_aoipreset_geom("counties")
+tmap_mode("view")
+tm_shape(counties_sf) + tm_polygons()
+```
+
+For this example, we'll look at **Kings County** (FIPS = `06031`).
+
+## 2\. Create the API Request
+
+Let's create an API request for Kings County. Note below the inclusion of `ca_options()` to specify how we want to aggregate the pixels that fall within the country. This is required whenever you query polygon features.
 
 ```{r cap2_define, cache = TRUE}
-cap2 <- ca_loc_aoipreset(type="counties", idfld = "name", idval = "Colusa") %>%
+cap2 <- ca_loc_aoipreset(type="counties", idfld = "fips", idval = "06031") %>%
   ca_gcm(gcms[1:4]) %>%
   ca_scenario(c("rcp45", "rcp85")) %>%
   ca_period("year") %>%
   ca_years(start = 2030, end = 2080) %>%
   ca_cvar(c("tasmin")) %>%
-  ca_options(spatial_ag = "mean")
+  ca_options(spatial_ag = "max")
 
 cap2
 ```
 
-Note the API request includes the `ca_options()`, which specifies how the pixels within the area of interest should be summarized. This is requried because the location we're querying is a polygon which could include many pixels in the climate data, and we only want one number back.
-
-To double-check the area, as before we can plot the API request: 
+As before, we can plot the API request to double-check we got the right location: 
 
 ```{r plot_cap2, cache = TRUE}
 plot(cap2)
 ```
 
-Then we fetch the data with `ca_getvals()`:
+## 3\. Fetch Data
+
+Fetch data with `ca_getvals_tbl()`:
 
 ```{r cap2_fetch, cache = TRUE}
-cap2_tbl <- cap2 %>% ca_getvals(quiet = TRUE) %>% ca_vals2tbl()
+cap2_tbl <- cap2 %>% 
+  ca_getvals_tbl(quiet = TRUE) 
 
-dim(cap2_tbl)
-head(cap2_tbl)
+cap2_tbl
 ```
 
-Let's plot the difference between rcp85 and rcp45 over time. First we'll convert the temp to degrees Fahrenheit, and split the rcp85 and rcp45 values into separate columns using `pivot_wider`:
+## 4\. Munge Results
+
+To compute the difference between RCP 8.5 and RCP 4.5, we need to split them into separate columns. This is an example of going from a 'long' format to a 'wide' format. Fortunately, the tidyr package has a function called `pivot_wider` that can do this in single command. While we're at it we'll convert the temp to degrees Fahrenheit:
 
 ```{r cap2_wider, cache = TRUE}
 rcp85_minus_rcp45_tbl <- cap2_tbl %>% 
-  filter(name == "Colusa") %>% 
   mutate(temp_f = set_units(val, degF)) %>% 
-  select(name, gcm, scenario, dt, temp_f) %>% 
+  select(fips, gcm, scenario, dt, temp_f) %>% 
   pivot_wider(names_from = scenario, values_from = temp_f)
 
-dim(rcp85_minus_rcp45_tbl)
 head(rcp85_minus_rcp45_tbl)
 ```
+
+## 5\. Plot 
 
 Now we're ready to make the plot:
 
 ```{r cap2_ggplot, cache = TRUE}
 ggplot(data = rcp85_minus_rcp45_tbl, aes(x = dt, y = as.numeric(rcp85 - rcp45), group = gcm)) +
   geom_line(aes(color=gcm)) +
-  labs(title = "Difference between RCP8.5 and RCP4.5 in the Annual Minimum \nTemperature for Colusa County", x = "year", y = "temp (F)")
+  labs(title = "Difference between RCP8.5 and RCP4.5 in the Maximum Annual Minimum \nTemperature for Kings County", x = "year", y = "temp (F)")
 ```
 
-# Example #3: Get Daily Data for census Tracts
+# Example #3: Analyze Extreme Heat in a Census Tract
 
-In this example, we'll grab 5 years of  daily temperature data for census tracts that fall within Imperial County. We'll then select one of the census tracts and count the number of extreme heat events in the 5-year time span, using a definition of extreme heat event as a number of consecutive days where the maximum temperature exceeds a threshhold.
+*Goal*: Compare extreme heat occurrence under RCP 4.5 and RCP 8.5 for a single census tract over a 20-year time span. We'll measure 'extreme heat' in two ways, i) the proportion of total days when the max temp exceeds a certain threshold, and ii) the number of 'heat spells' defined as a period of *n* or more consecutive days when the temperature exceeds a threshold.
 
-## Construct the API Request object:
+## 1\. Find the GEOID of a Census Tract in Kings County
 
-Get all the census tracks in Imperial county. To make our lives a little easier, we'll identify the census tracts in Imperial using a spatial selection. First grab the boundary of Imperial County:
+Census tracts have 10-digit GEOID numbers rather than 6-digit FIPS codes [more info](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html){target="_blank" rel="noopener"}. To find the GEOID for a census tract in Kings County, we could:
 
-```{r imperial_cty, cache = TRUE}
-counties_imperial_sf  <- ca_aoipreset_geom("counties") %>% filter(name == "Imperial")
-plot(counties_imperial_sf %>% st_geometry())
+1) Ask Google.  
+2) Plot all the census tracts (as we did above with counties), and click on the one we're interested in.  
+3) Look it up using the `tidycensus` package.  
+4) Take advantage of the fact that the GEOID of census tracts in Kings County all start with its FIPS code (6031).  
+
+We'll use method #4, and grab the census tracts GEOIDs from `aoipreset_idval`:
+
+```{r}
+tracts_kings <- grep(pattern = "^6031", aoipreset_idval$censustracts$tract, value = TRUE)
+tracts_kings
 ```
 
-Next, import all the census tracts:
+To plot just these tracts we can feed these GEOID values into `filter()`:
 
-```{r census_tracts_all}
-tracts_all_sf <- ca_aoipreset_geom("censustracts")
-tracts_all_sf
-
-## Plot census tracts (takes a few seconds):
-## plot(tracts_all_sf %>% st_geometry())
+```{r plot_kings, message = FALSE}
+census_tracts_sf <- ca_aoipreset_geom("censustracts")
+tmap_mode("view")
+tm_shape(census_tracts_sf %>% filter(tract %in% tracts_kings)) + tm_polygons()
 ```
 
-Identify those census tracts within Imperial County using `st_within`:
+For the rest of this exercise we'll use **6031001701**.
 
-```{r imperial_tracts}
-tract_in_imperial_yn <- st_within(tracts_all_sf, counties_imperial_sf, sparse = FALSE)
-table(tract_in_imperial_yn)
+## 2\. Construct the API Request
 
-tm_shape(tracts_all_sf %>% filter(tract_in_imperial_yn)) +
-  tm_polygons() +
-tm_shape(counties_imperial_sf) +
-  tm_borders(col = "red")
-```
-
-We can now pull out the tract 'names' (to feed into the API call):
-
-```{r tracts_vals, cache = TRUE}
-tracts_vals <- tracts_all_sf$tract[tract_in_imperial_yn]
-tracts_vals
-```
-
-We put these into the `ca_loc_aoipreset` function in the API request:
+The following will give us 20 years of daily maximum temperature for our census tract. To keep it simple we'll just use one GCM.
 
 ```{r cap3_define, cache = TRUE}
-cap3 <- ca_loc_aoipreset(type="censustracts", idfld = "tract", idval = tracts_vals) %>%
+cap3 <- ca_loc_aoipreset(type="censustracts", idfld = "tract", idval = 6031001701) %>%
   ca_gcm("MIROC5") %>%
   ca_scenario(c("rcp45", "rcp85")) %>%
   ca_period("day") %>%
-  ca_years(start = "2050-01-01", end = "2055-12-31") %>%
-  ca_cvar(c("tasmax")) %>% 
+  ca_years(start = "2070-01-01", end = "2089-12-31") %>%
+  ca_cvar("tasmax") %>% 
   ca_options(spatial_ag = "max")
 
 cap3
 
 ```
 
-Now we're ready to fetch the data:
+```{r}
+plot(cap3)
+```
+
+## 3\. Fetch Data
+
+Now we're ready to fetch data:
 
 ```{r cap3_fetch, cache = TRUE}
-cap3_tbl <- cap3 %>% ca_getvals(quiet = TRUE) %>% ca_vals2tbl()
+cap3_tbl <- cap3 %>% 
+  ca_getvals_tbl(quiet = TRUE)
 
 dim(cap3_tbl)
 head(cap3_tbl)
 ```
-### Aside: Subset by Month
 
-If you wanted to pull out just the values for March and April, you could do something like:
+## 4\. Munge the Results
 
-```{r cap3_march_april, cache = TRUE}
-cap3_marchapril_tbl <- cap3_tbl %>% 
-  mutate(month_num = month(as.Date(dt))) %>% 
-  filter(month_num %in% c(3,4)) %>% 
-  select(tract, cvar, gcm, scenario, dt, month_num, val)
+The only 'munging' we need to do is to add a column for the temperature in Farenheit.
 
-cap3_marchapril_tbl
-```
+```{r}
+cap3_degf_tbl <- cap3_tbl %>% mutate(temp_f = set_units(val, degF))
 
-## Extreme heat analysis of a single tract
-
-In this section, we'll select a single census tract and count the number of extreme heat events during this five-year period. We'll define an extreme heat event to be 3 or more consecutive days where the maximum temperature is >110 &#176;F.
-
-First, select a single tract and add a field for temperature in &#176;F:
-
-```{r cap3_tempf, cache=TRUE}
-cap3_degf_tbl <- cap3_tbl %>% 
-  filter(tract == 6025010101) %>% 
-  mutate(temp_f = set_units(val, degF)) %>% 
-  select(tract, cvar, gcm, scenario, dt, temp_f)
-
-dim(cap3_degf_tbl)
 head(cap3_degf_tbl)
 ```
 
-Plot a histogram of values for each rcp:
+## 5\. Compare the Distribution of Maximum Daily Temp
+
+Plot a histogram of maximum temperature over this 20-year period for each emission scenario:
 
 ```{r cap3_vals_hist1, cache=TRUE}
 hist(cap3_degf_tbl %>%  filter(scenario == "rcp45") %>% pull(temp_f),
-     main = "Maximum Daily Temp, 2050-2055 \n RCP4.5",
+     main = "RCP 4.5: Maximum Daily Temp, 2070-2089",
      xlab = "temp (F)") 
 
 hist(cap3_degf_tbl %>%  filter(scenario == "rcp85") %>% pull(temp_f),
-     main = "Maximum Daily Temp, 2050-2055 \n RCP8.5",
+     main = "RCP 8.5: Maximum Daily Temp, 2070-2089",
      xlab = "temp (F)") 
 
 ```
 
-For RCP4.5, identify those days above 110 &#176;F:
+## 6\. Count the Number of Days over 110&#176;F Projected Under each RCP
 
-```{r cap3_superhot, cache = TRUE}
-super_hot_yn <- (cap3_degf_tbl %>% 
-                   filter(scenario == "rcp45") %>% 
-                   pull(temp_f) > as_units(110, "degF"))
-table(super_hot_yn)
+```{r}
+cap3_degf_tbl %>% 
+  mutate(really_hot_tf = temp_f >= set_units(110, degF)) %>%
+  group_by(scenario, really_hot_tf) %>% 
+  count() %>% 
+  pivot_wider(names_from = scenario, values_from = n)
 ```
 
-Count the number of heat spells consisting of **3 or more** consecutive days of >110 &#176;F.
+## 7\. Count the Number of Heat Spells Projected Under each RCP
 
-```{r tempruns, cache = TRUE}
-## Use rle to chop up the series of TRUE of FALSE into 'runs'
-tempruns <- rle(super_hot_yn)
-tempruns
+A simple definition of 'heat spell' is *consecutive hot days*. Let's count Count the number of heat spells consisting of **4 or more consecutive days** of >110&#176;F.
 
-## Identify those runs where value is TRUE and thre are 3 or more values in the run 
-extreme_heat_runs <- which(tempruns$values & tempruns$lengths >= 3)
+The first step is to pull out the values for just one RCP, sort them by date, add a logical column if the maximum temp that day exceeded our treshhold. We'll then feed those values into `rle()`, which breaks up the time series into 'runs' of TRUE and FALSE.
 
-length(extreme_heat_runs)
+```{r rcp45_runs, cache = TRUE}
+## Use rle() to chop up a time series of TRUE of FALSE into 'runs'
+rcp45_heat_runs <- cap3_degf_tbl %>% 
+  filter(scenario == "rcp45") %>% 
+  arrange(dt) %>% 
+  mutate(really_hot_tf = temp_f >= set_units(110, degF)) %>% 
+  pull(really_hot_tf) %>% 
+  rle()
+
+rcp45_heat_runs
 ```
 
-==> Under RCP4.5, the MIROC5 model predicts this census tract will experience 34 extreme heat events (defined as 3 or more days above 110 &#176;F) during the 5 year period in question.
+Next, we find the runs where two conditions are met: run length is >= 4 days, and the run value = TRUE (meaning its a run of really hot days).
 
-## YOUR TURN: How many extreme heat events will there be under RCP8.5?
+```{r}
+sum(rcp45_heat_runs$values & rcp45_heat_runs$lengths >= 4)
+```
+
+We can do the same for RCP 8.5:
+
+```{r rcp85_runs, cache = TRUE}
+rcp85_heat_runs <- cap3_degf_tbl %>% 
+  filter(scenario == "rcp85") %>% 
+  arrange(dt) %>% 
+  mutate(really_hot_tf = temp_f >= set_units(110, degF)) %>% 
+  pull(really_hot_tf) %>% 
+  rle()
+
+sum(rcp85_heat_runs$values & rcp85_heat_runs$lengths >= 4)
+```
+
+## Conclusion
+
+Under RCP 4.5, the MIROC5 model predicts this census tract will experience **36 extreme heat spells** (defined as 4 or more days where the temperature hit 110&#176;F) during this 20 year period. In comparison, MIROC5 predicts **45 extreme heat spells** under RCP 8.5.
+
+
+## YOUR TURN
+
+How many heat spells will there be under each RCP if we define a heat spell to be at least **7 days** over **100 &#176;F**?
 
 ```{r}
 ## Your answer goes here:
+
 ```
 
+Plot the distribution of the number of consecutive days over 100 &#176;F (i.e., heat spell duration).
 
-Ans. 42
+```{r}
+## Your answer goes here:
+
+```
+
 
