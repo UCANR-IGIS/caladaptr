@@ -18,6 +18,8 @@ library(knitr)
 library(kableExtra)
 library(magrittr)
 library(dplyr)
+library(tidyr)
+library(lubridate)
 ```
 
 ```{css echo = FALSE}
@@ -114,14 +116,19 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
 # Why you might want to use Cal-Adapt data in GIS or R
 
  - Custom Visualization 
+ 
+ ![](images/voxel_694x540.jpg){style="display:block; margin:1em auto; border:1px solid grey;"}
 
- - Joining with other data
+ - Join with other data
+ 
  
  - Research
  
+ 
+ 
  - Custom decision support
  
- [ADD SCREEN SHOTS]
+ 
 
  
 # Options for Accessing Cal-Adapt Data
@@ -223,7 +230,7 @@ More info:
 
 # caladaptR Features
 
-![](./images/caladaptr_workflow_630x524x256.png){style="display:block; width:480px; margin:1em auto;"}
+![](./images/caladaptr_role_680x520.png){style="display:block; width:680px; margin:1em auto;"}
 
 ## Key Features
 
@@ -243,7 +250,7 @@ More info:
 
 </div>
 
-## Functions - *current*
+## Functions 
 
 <div class = "indented2 li-single">
 - Retrieve values from any Cal-Adapt raster series  
@@ -251,23 +258,24 @@ More info:
 - Query built-in preset areas-of-interest  
 </div>
 
-## Functions - *planned*
+## Still in "Beta" status
+
+<div class = "indented2 li-single">
+- actively under development with frequent updates  
+- some updates may not be backward compatible  
+- user feedback and input is extremely welcome
+</div>
+
+## In development
 
 <div class = "indented2 li-single">
 - import rasters  
 - cache results locally 
 - improved error trapping
 - code recipe 'cookbook' 
+- CRAN submission in early 2021
 </div>
 
-## Beta status
-
-<div class = "indented2 li-single">
-- under development  
-- frequent updates  
-- some changes may not be backward compatible  
-- user feedback and input is extremely welcome
-</div>
 
 # caladaptR workflow
 
@@ -732,9 +740,131 @@ ggplot(data = cap2_rcp45_tbl, aes(x = dt, y = as.numeric(temp_f), group = gcm)) 
   labs(title = "Average Annual Maximum Temperature for RCP4.5", x = "year", y = "temp (F)")
 ```
 
-# Example 2: Interpolate hourly temperature
+# Example 2: Model hourly temperature from daily min / max
 
-Grab min-max for Lincove REC
+In this example, we'll interpolate hourly temperature values from daily min-max. 
+
+
+## 1\. Import the boundary of the study area
+
+Our study area is [Lindcove Research and Extension Center](http://lrec.ucanr.edu/){target="_blank" rel="noopener"}, one of nine [field stations](http://recs.ucanr.edu/){target="_blank" rel="noopener"} maintained by UC ANR.
+
+```{r}
+lrec_sf <- st_read("lrec_bnd.geojson") %>% slice(1)
+```
+
+## 2\. Construct the API Request
+
+For simplicty, we'll grab daily data for a single GCM and emission scenario. 
+
+```{r}
+cap_lrec <- ca_loc_sf(loc = lrec_sf) %>%
+  ca_gcm(gcms[1]) %>%
+  ca_scenario("rcp45") %>%
+  ca_period("day") %>%
+  ca_dates(start = "2079-12-01", end = "2080-04-30") %>%
+  ca_cvar(c("tasmax", "tasmin")) %>% 
+  ca_options(spatial_ag = "mean")
+
+cap_lrec
+```
+
+```{r}
+plot(cap_lrec)
+```
+
+## 3\. Fetch data
+
+
+```{r cap_lrec_tbl, cache = TRUE}
+cap_lrec_tbl <- cap_lrec %>% ca_getvals_tbl(quiet = TRUE)
+```
+
+## 4\. Munge the results
+
+First we'll add a column of the temperature in Farenheit:
+
+```{r cap_lrec_tbl_munge, cache = TRUE}
+lrec_tempf_tbl <- cap_lrec_tbl %>%
+  mutate(temp_f = set_units(val, degF))
+head(lrec_tempf_tbl)
+```
+
+Next, we'll add additional columns required by the `make_hourly_temps()` in `chillR`.
+
+```{r}
+library(tidyr); library(lubridate)
+
+lrec_tempf_dyr_tbl <- lrec_tempf_tbl %>%
+  mutate(DATE = as.POSIXct(format(dt), tz="America/Los_Angeles")) %>%
+  mutate(Year = as.integer(year(DATE)), Month = as.integer(month(DATE)), Day = day(DATE)) %>%
+  mutate(temp_f = as.numeric(temp_f)) %>%
+  select(cvar, temp_f, DATE, Year, Month, Day) %>%
+  pivot_wider(names_from = cvar, values_from = temp_f) %>%
+  rename(Tmax = tasmax, Tmin = tasmin)
+
+head(lrec_tempf_dyr_tbl)
+```
+
+
+## 5\. Analysis - Compute Hourly Temp
+
+The `chillR` package has a function `make_hourly_temps()` that models hourly temperature based on sunrise and sunset times (which in turn are determined by date and latitude). Following the excellent  [guide](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) by author Eike Luedeling, we can model hourly temp in just a few step.
+
+Start by loading the `chillR` package:
+
+```{r message = FALSE}
+library(chillR)
+```
+
+The first thing we need is the latitude of the study area (which chillR uses to compute sunrise and sunset):
+
+```{r compute_lat, cache = TRUE, warning = FALSE}
+aoi_lat <- (lrec_sf %>% st_centroid() %>% st_coordinates() %>% as.numeric())[2]
+aoi_lat
+```
+
+Now we're ready to compute the hourly temps:
+
+```{r compute_hourly, cache = TRUE}
+lrec_hrtmp_wide <- make_hourly_temps(latitude = aoi_lat,
+                                year_file = lrec_tempf_dyr_tbl,
+                                keep_sunrise_sunset = FALSE)
+head(lrec_hrtmp_wide)
+```
+
+To plot these, we need to convert the wide format to long:
+
+```{r}
+lrec_dthr_tmp_tbl <- lrec_hrtmp_wide %>%
+  pivot_longer(cols = starts_with("Hour_"),
+               names_to = "Hour",
+               names_prefix = "Hour_",
+               names_transform = list(hour = as.integer),
+               values_to = "temp_f") %>%
+  mutate(date_hour = ISOdatetime(Year, Month, Day, Hour, 0, 0, tz = "America/Los_Angeles")) %>%
+  select(date_hour, temp_f) %>%
+  arrange(date_hour)
+
+head(lrec_dthr_tmp_tbl)
+```
+
+Finally we can plot a subset of the data:
+
+```{r}
+ts_start <- as.Date("2080-02-01")
+ts_end <- as.Date("2080-02-07")
+
+lrec_dthr_onewk_tbl <- lrec_dthr_tmp_tbl %>% 
+  filter(date_hour >= ts_start, date_hour <= ts_end)
+
+ggplot(data = lrec_dthr_onewk_tbl,
+       aes(x = date_hour, y = temp_f)) +
+  geom_line(aes(color="red"), show.legend = FALSE) +
+  labs(title = "Modelled Hourly Temperature for Lindcove REC, 2080", x = "date", y = "temp (F)")
+
+```
+
 
 # Need Large Data?
 
@@ -778,7 +908,11 @@ Join the community
 
 ![](images/caladaptr-logo_beta.svg){style="display:block; height:80px; margin:3em auto 0;"}
 
-# Q&A
+# Thanks!
+
+![](images/q-and-a_400x256.png){style="display:block; margin:1em auto; margin-top:3em;"}
+
+<p style='text-align:center; margin-top:5em;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:100px;'/><img src='images/cec_logo_400x354x256.png' style='height:100px; margin-left:100px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:100px;'/></p>
 
 
 
