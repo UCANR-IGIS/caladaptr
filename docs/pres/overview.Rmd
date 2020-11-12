@@ -115,21 +115,26 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
 
 # Why you might want to use Cal-Adapt data in GIS or R
 
- - Custom Visualization 
+## Custom Visualization 
  
- ![](images/voxel_694x540.jpg){style="display:block; margin:1em auto; border:1px solid grey;"}
+ ![](images/voxel_694x540.jpg){style="display:block; margin:1em auto; width:560px; border:1px solid grey;"}
 
- - Join with other data
- 
- 
- - Research
- 
- 
- 
- - Custom decision support
- 
- 
 
+## Join results to other data
+ 
+ <div class="indented2 li-single">
+ - census data  
+ - biodiversity / habitat  
+ - economic data
+ </div>
+ 
+## Research
+ 
+![](images/hourly_temps_plot_600x449.png){style="display:block; margin:1em auto; border:1px solid grey;"}
+ 
+## Custom decision support
+ 
+![](images/mike-crimmins_spi-tool_1386x926.png){style="display:block; margin:1em auto; width:1000px; border:1px solid grey;"}
  
 # Options for Accessing Cal-Adapt Data
 
@@ -675,7 +680,7 @@ Notes:
 
 <div class="indented2 li-single">
 - `ca_getvals_tbl()`returns a **tibble**  
-- the first column is the location id
+- the first column is the **location id**
 </div>
 
 # Example 1: Plot Projected Temperature for a Point Location
@@ -851,7 +856,7 @@ head(lrec_dthr_tmp_tbl)
 
 Finally we can plot a subset of the data:
 
-```{r}
+```{r plot_hourly_temp, cache = TRUE}
 ts_start <- as.Date("2080-02-01")
 ts_end <- as.Date("2080-02-07")
 
