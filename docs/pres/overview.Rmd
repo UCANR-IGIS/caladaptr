@@ -117,7 +117,7 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
 
 ## Custom Visualization 
  
- ![](images/voxel_694x540.jpg){style="display:block; margin:1em auto; width:560px; border:1px solid grey;"}
+ ![](images/voxel_694x540.jpg){style="width:560px;"}
 
 
 ## Join results to other data
@@ -130,12 +130,13 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
  
 ## Research
  
-![](images/hourly_temps_plot_600x449.png){style="display:block; margin:1em auto; border:1px solid grey;"}
+![](images/hourly_temps_plot_600x449.png)
  
 ## Custom decision support
- 
-![](images/mike-crimmins_spi-tool_1386x926.png){style="display:block; margin:1em auto; width:1000px; border:1px solid grey;"}
- 
+
+<p style="font-size:90%; font-style:italic;"><a href="https://uaclimateextension.shinyapps.io/SPItool/" target="_blank"><img src="./images/mike-crimmins_spi-tool_1386x926.png" style="width:1000px; border:1px solid grey;"/><br/>
+https://uaclimateextension.shinyapps.io/SPItool/</a></p>
+
 # Options for Accessing Cal-Adapt Data
 
 ```{r getting_data_options, echo=FALSE, results='asis', cache=FALSE}
@@ -719,9 +720,10 @@ cap2_tbl
 
 To make our plot, we need to do two things:
 
-1) Pull out just those values from RCP 4.5, and 
-
-2) Convert units from Kelvin to &#176;F
+<div class="indented1 li-single">
+1. Pull out just those values from RCP 4.5  
+1. Convert units from Kelvin to &#176;F  
+</div>
 
 ```{r convert_units, results = 'hold', message= FALSE}
 library(dplyr); library(units)
@@ -747,15 +749,15 @@ ggplot(data = cap2_rcp45_tbl, aes(x = dt, y = as.numeric(temp_f), group = gcm)) 
 
 # Example 2: Model hourly temperature from daily min / max
 
-In this example, we'll interpolate hourly temperature values from daily min-max. 
+In this example, we'll model hourly temperature values from daily min-max using a function from the `chillR` package.
 
 
 ## 1\. Import the boundary of the study area
 
-Our study area is [Lindcove Research and Extension Center](http://lrec.ucanr.edu/){target="_blank" rel="noopener"}, one of nine [field stations](http://recs.ucanr.edu/){target="_blank" rel="noopener"} maintained by UC ANR.
+Our study area is [Lindcove Research and Extension Center](http://lrec.ucanr.edu/){target="_blank" rel="noopener"}, one of nine [field stations](http://recs.ucanr.edu/){target="_blank" rel="noopener"} maintained by UC ANR. The first step is to import the boundary which is available as a geojson file:
 
 ```{r}
-lrec_sf <- st_read("lrec_bnd.geojson") %>% slice(1)
+lrec_sf <- st_read("https://raw.githubusercontent.com/UCANR-IGIS/caladaptr/master/docs/pres/lrec_bnd.geojson")
 ```
 
 ## 2\. Construct the API Request
@@ -790,21 +792,23 @@ cap_lrec_tbl <- cap_lrec %>% ca_getvals_tbl(quiet = TRUE)
 First we'll add a column of the temperature in Farenheit:
 
 ```{r cap_lrec_tbl_munge, cache = TRUE}
-lrec_tempf_tbl <- cap_lrec_tbl %>%
-  mutate(temp_f = set_units(val, degF))
+lrec_tempf_tbl <- cap_lrec_tbl %>% mutate(temp_f = set_units(val, degF))
+
 head(lrec_tempf_tbl)
 ```
 
-Next, we'll add additional columns required by the `make_hourly_temps()` in `chillR`.
+Next, we'll add additional columns and convert from a long to wide format, in preparation for passing the data to `make_hourly_temps()` in `chillR`.
 
 ```{r}
 library(tidyr); library(lubridate)
 
 lrec_tempf_dyr_tbl <- lrec_tempf_tbl %>%
   mutate(DATE = as.POSIXct(format(dt), tz="America/Los_Angeles")) %>%
-  mutate(Year = as.integer(year(DATE)), Month = as.integer(month(DATE)), Day = day(DATE)) %>%
-  mutate(temp_f = as.numeric(temp_f)) %>%
-  select(cvar, temp_f, DATE, Year, Month, Day) %>%
+  mutate(Year = as.integer(year(DATE)), 
+         Month = as.integer(month(DATE)), 
+         Day = day(DATE),
+         temp_f = as.numeric(temp_f)) %>%
+  select(cvar, temp_f, Year, Month, Day) %>%
   pivot_wider(names_from = cvar, values_from = temp_f) %>%
   rename(Tmax = tasmax, Tmin = tasmin)
 
@@ -812,9 +816,9 @@ head(lrec_tempf_dyr_tbl)
 ```
 
 
-## 5\. Analysis - Compute Hourly Temp
+## 5\. Compute Hourly Temp
 
-The `chillR` package has a function `make_hourly_temps()` that models hourly temperature based on sunrise and sunset times (which in turn are determined by date and latitude). Following the excellent  [guide](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) by author Eike Luedeling, we can model hourly temp in just a few step.
+The `chillR` package has a function `make_hourly_temps()` that models hourly temperature based on sunrise and sunset times (which in turn are determined by date and latitude). Following the excellent  [guide](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) by author Eike Luedeling, we can model hourly temp in just a few steps.
 
 Start by loading the `chillR` package:
 
@@ -822,7 +826,7 @@ Start by loading the `chillR` package:
 library(chillR)
 ```
 
-The first thing we need is the latitude of the study area (which chillR uses to compute sunrise and sunset):
+We need to grab the latitude of the study area (which chillR uses to compute sunrise and sunset), which we can easily do using functions from `sf`:
 
 ```{r compute_lat, cache = TRUE, warning = FALSE}
 aoi_lat <- (lrec_sf %>% st_centroid() %>% st_coordinates() %>% as.numeric())[2]
@@ -838,7 +842,7 @@ lrec_hrtmp_wide <- make_hourly_temps(latitude = aoi_lat,
 head(lrec_hrtmp_wide)
 ```
 
-To plot these, we need to convert the wide format to long:
+To plot these, we need to convert the wide format to long. Fortunately `tidyr` has everything you need to [pivot between long and wide](https://tidyr.tidyverse.org/articles/pivot.html){target="_blank" rel="noopener"} formats: 
 
 ```{r}
 lrec_dthr_tmp_tbl <- lrec_hrtmp_wide %>%
@@ -915,9 +919,22 @@ Join the community
 
 # Thanks!
 
-![](images/q-and-a_400x256.png){style="display:block; margin:1em auto; margin-top:3em;"}
+![](images/q-and-a_400x256.png){style="display:block; width:320px; margin:1em auto; margin-top:1em;"}
 
-<p style='text-align:center; margin-top:5em;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:100px;'/><img src='images/cec_logo_400x354x256.png' style='height:100px; margin-left:100px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:100px;'/></p>
+<div style="text-align:center; margin-top:2em;">
+<div style="display:inline-block; width:18em; text-align:center;">
+<img src='images/caladaptpy-logo_beta.svg' style='height:60px;'><br/>
+Shane Feirer<br/><stfeirer@ucanr.edu>
+</div>
+
+<div style="display:inline-block; width:18em; text-align:center; margin-left:5em;">
+<img src='images/caladaptr-logo_beta.svg' style='height:60px;'><br/>
+Andy Lyons<br/><andlyons@ucanr.edu>
+</div>
+</div>
+
+
+<p style='text-align:center; margin-top:2em;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:100px;'/><img src='images/cec_logo_400x354x256.png' style='height:100px; margin-left:100px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:100px;'/></p>
 
 
 
