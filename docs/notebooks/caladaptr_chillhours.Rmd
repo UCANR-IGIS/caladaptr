@@ -1,5 +1,5 @@
 ---
-title: "Computing Cummulative Chill Hours with Cal-Adapt and chillR"
+title: "Modeling Chill Accumulation Under Climate Change with Cal-Adapt Data"
 output:
   html_notebook:
     df_print: paged
@@ -34,19 +34,37 @@ h3 {
 
 ```
 
-<p style="text-align:right;"><img src="https://ucanr-igis.github.io/caladaptr/reference/figures/caladaptr-beta_logo.svg" width="240" /></p>
+<p><img src="https://ucanr-igis.github.io/caladaptr/reference/figures/caladaptr-beta_logo.svg" width="240" /></p>
 
 # About this R Notebook
 
 R Notebooks are a 'flavor' of R markdown that combine plain text and R commands in code chunks. (You can download the Rmd file from the 'code' button at the top of the page.) You run code chunks in the document line-by-line, and the output appears immediately below the code chunk.
 
-If you're in RStudio, you can *minimize the console window* (and probably close the right-hand panes as well). You won't need it,  because when you run R commands in a R Notebook the *output appears below the code chunk* (not the console). This takes some getting used to.
+If you're in RStudio, you can *minimize the console window* (and probably close the right-hand panes as well). You won't need it,  because when you run R commands in a R Notebook the *output appears below the code chunk* (not the console). This takes some getting used to if you're used to working at the console. 
 
 Keyboard shortcuts you can use within a R Notebook:  
 
 - run the current line of R: *ctrl + enter*  
 - run everything in the current code chunk: *ctrl + shift + enter*  
 - insert a new code chunk: *ctrl + alt + i*  
+
+# Chill Portions: Background
+
+['Chill hours'](https://en.wikipedia.org/wiki/Chilling_requirement) are commonly used to estimate when fruit-bearing trees will blossom. This in turn affects fruit productivity and the timing of management actions (including harvest). Many tree crops (e.g., nuts) require a certain number of hours at chilly temperatures in order for the tree to blossom and the fruit to ripen.  
+
+Computing chill hours essentially involves adding up the total amount of time during the cold season within a  temperature range (e.g., 32 - 45 &#176;F). 'Chill portions' is a similar calculation, however instead of simply adding up the number of hours within a certain temperature range, additional weights are assigned based on bands of temperature and/or warming periods periods between cold spells (which mimic tree physiology thus producing better predictions).
+
+Computing cumulative chill hours requires hourly temperature data. You may be lucky enough to have hourly temperature recordings from weather stations for historic and real-time analyses. However for projected climate scenarios, the smallest unit of time is daily (at least for the CMIP5 family of climate models). This creates a conundrum if you want to explore how cumulative chill hours may change due to climate change.
+
+To deal with this, we can estimate hourly temperatures based on the daily minimum and maximum temperature, as well as the time of sunrise and sunset. The `chillR` package, developed and maintained by Eike Luedeling, has a function for  [Vignette](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) and sample code for doing exactly this.
+
+In this example, we:
+
+1) Download from Cal-Adapt projected daily minimum and maximum temperatures from September 2079 thru June 2080, for a point on the west side of the San Joaquin Valley.
+
+2) Use chillR to compute a) modeled hourly temperatures, and b) accumulated chill portions.
+
+3) Plot the results
 
 # Setup
 
@@ -61,23 +79,22 @@ if (length(pkgs_missing)) install.packages(pkgs_missing, dependencies=TRUE)
 Install `caladaptr` (if needed):
 
 ```{r}
-# remotes::install_github("ucanr-igis/caladaptr")
+## Uncomment and run the following line if you don't have the latest version of caladaptr
+# devtools::install_github("ucanr-igis/caladaptr")
 ```
 
-Load all the required libraries:
+Load all the libraries we'll be using below:
 
-```{r library_all}
-library(caladaptr, quietly = TRUE)
-library(units, quietly = TRUE)
-library(ggplot2, quietly = TRUE)
-library(dplyr, quietly = TRUE)
-library(conflicted, quietly = TRUE)
-library(tidyr, quietly = TRUE)
-library(tmap, quietly = TRUE)
-library(lubridate, quietly = TRUE)
-library(tibble, quietly = TRUE)
-library(sf, quietly = TRUE)
-library(chillR, quietly = TRUE)
+```{r library_all, message = FALSE}
+library(caladaptr)
+library(units)
+library(ggplot2)
+library(dplyr)
+library(conflicted)
+library(tidyr)
+library(lubridate)
+library(tibble)
+library(chillR)
 ```
 
 The last setup task is to define your preferences when you're forced to use an ambiguous function name (i.e., a function that exists in more than one package). This is particularly needed with a few common generic functions from `dplyr`:
@@ -88,101 +105,358 @@ conflict_prefer("count", "dplyr", quiet = TRUE)
 conflict_prefer("select", "dplyr", quiet = TRUE)
 ```
 
-# Chill Hours: Background
-
-['Chill hours'](https://en.wikipedia.org/wiki/Chilling_requirement) are commonly used to estimate when fruit-bearing tree will blossom. This in turn affects fruit productivity and the timing of a whole bunch of management actions (including harvest!). Many tree crops (e.g., nuts) require a certain number of hours at chilly temperatures in order for the tree to blossom and the fruit to ripen. 
-
-Computing chill hours essentially involves adding up the total amount of time during the cold season within a  temperature range (e.g., 32 - 45 &#176;F). 'Chill portions' is a similar calculation, however instead of simply adding up the number of hours within a certain temperature range, additional weights are assigned based on bands of temperature and/or warming periods periods between cold spells (which mimic tree physiology thus producing better predictions).
-
-Computing cumulative chill hours requires hourly temperature data. You may be lucky enough to have hourly temperature recordings from weather stations for historic and real-time analyses. However for projected climate scenarios, the smallest unit of time is daily ((at least for the CMIP5 family of climate models). This creates a conundrum if you want to explore how cumulative chill hours may change due to climate change.
-
-To deal with this, we can estimate hourly temperatures based on the daily minimum and maximum temperature, as well as the time of sunrise and sunset. The `chillR` package, developed and maintained by Eike Luedeling, has a [Vignette](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) and sample code for doing exactly this.
-
-In this example, we'll generate estimated hourly temperature readings for a time series of daily min/max data, then feed the hourly readings into `chillR`.
 
 # 1) Create the Cal-Adapt API Request
 
-The first step in getting climate variables back is to create the Cal-Adapt API request object. This involves stringing together a series of functions together that specify the pieces of the request. For illustration purposes, we'll create an API require to query a single point, single GCM, and a single scenario for a single season. This of course is not the recommended practice, and you should always look at 10-30 year time spans and take averages. 
+The first step in getting climate data with caladaptR is to create an API request object. This involves stringing together a series of functions together that specify the pieces of the request. 
+
+To illustrate how to write code for this analysis, we'll create an API request to query a single point, single GCM, and a single scenario for a single season. This of course is not the recommended practice, and you should always look at a minimum 10-20 year time spans and take averages. 
 
 ```{r}
-cap1 <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
+pt1_xy <- c(-119.964, 36.019)
+pt1_cap <- ca_loc_pt(coords = pt1_xy) %>%
   ca_gcm(gcms[1]) %>%
-  ca_scenario("rcp85") %>%
+  ca_scenario("rcp45") %>%
   ca_period("day") %>%
-  ca_dates(start = "2079-11-01", end = "2080-06-30") %>%
+  ca_dates(start = "2080-09-01", end = "2081-06-30") %>%
   ca_cvar(c("tasmax", "tasmin"))
 
-cap1
+pt1_cap
 ```
-To verify the location in an API request, you can plot it. (Note we still haven't fetched any climate data yet, this just shows you the location the request will ask for.)
+To verify the location saved in an API request, you can plot it. (Note we still haven't fetched any data yet, this just shows you the location the request will ask for.)
 
 ```{r plot_cap1}
-plot(cap1)
+plot(pt1_cap)
 ```
 
 # 2) Fetch Data from Cal-Adapt
 
-Next we fetch the temperature data with `ca_getvals()` followed by `ca_vals2tbl()` and `mutate()` to change the temperature values to Farenheit.
+Next we fetch the temperature data with `ca_getvals_tbl()`, which returns a tibble. We'll then add a new column with the temperature values in Celsius.
 
 ```{r cap1_lst, cache = TRUE}
-cap1_df <- cap1 %>% ca_getvals(quiet = TRUE) %>% 
-  ca_vals2tbl() %>% mutate(temp_f = set_units(val, degF)) %>% 
-  select(id, cvar, period, gcm, scenario, dt, temp_f)
-cap1_df
+pt1_tbl <- pt1_cap %>% 
+  ca_getvals_tbl(quiet = TRUE) %>% 
+  mutate(temp_c = set_units(val, degC)) %>% 
+  select(id, cvar, period, gcm, scenario, dt, temp_c)
+
+head(pt1_tbl)
 ```
 
-# 3) Message Results into the Format Required by `chillR`
+# 3) Wrangle Results into the Format Required by `chillR`
 
-From the [sample code](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html):
-
-```{r}
-weather_df <- make_all_day_table(KA_weather)
-as_tibble(head(weather_df))
-```
-
-This part is a work in progress. TODO:
-
-- The 'DATE' column in weather_df has the hour set to 12 noon. The code below sets the time to midnight. Verify if this is an issue.  
-- Double-check if the column names and/or order matters  
-- Double-check if the units for Tmax and Tmin need to be numeric (probably Celsius)  
+Guided by chillR's documentation and Vignette on [hourly temperature records](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html), we prepare a five-column tibble with the projected temperature values:
 
 ```{r}
-cap1_chillr_df <- cap1_df %>%
+library(tidyr); library(lubridate)
+
+pt1_dyr_tbl <- pt1_tbl %>%
   mutate(DATE = as.POSIXct(format(dt), tz="America/Los_Angeles")) %>%
-  mutate(Year = year(DATE), Month = as.integer(month(DATE)), Day = day(DATE)) %>% 
-  pivot_wider(names_from = cvar, values_from = temp_f) %>% 
-  rename(Tmax = tasmax, Tmin = tasmin) %>% 
-  select(DATE, Year, Month, Day, Tmax, Tmin)
+  mutate(Year = as.integer(year(DATE)), 
+         Month = as.integer(month(DATE)), 
+         Day = day(DATE),
+         temp_c = as.numeric(temp_c)) %>%
+  select(cvar, temp_c, Year, Month, Day) %>%
+  pivot_wider(names_from = cvar, values_from = temp_c) %>%
+  rename(Tmax = tasmax, Tmin = tasmin)
 
-cap1_chillr_df
+head(pt1_dyr_tbl)
+```
+
+# 4) Model hourly temperature
+
+Now we're ready to compute the hourly temps. In addition to the daily min/max values, we need to pass the latitude of our site (which is used to determine sunrise and sunset time):
+
+```{r compute_hourly, cache = TRUE, message = FALSE}
+library(chillR)
+
+pt1_hrtmp_wide <- make_hourly_temps(latitude = pt1_xy[2],
+                                year_file = pt1_dyr_tbl,
+                                keep_sunrise_sunset = FALSE)
+head(pt1_hrtmp_wide)
+```
+
+# 5) Plot Modelled Hourly Temps
+
+To plot the hourly temperatures, we need to convert the 'wide' format of the table to a 'long' format. Fortunately `tidyr` has everything we need to [pivot between long and wide formats](https://tidyr.tidyverse.org/articles/pivot.html){target="_blank" rel="noopener"}: 
+
+```{r}
+pt1_hrtmp_long <- pt1_hrtmp_wide %>%
+  pivot_longer(cols = starts_with("Hour_"),
+               names_to = "Hour",
+               names_prefix = "Hour_",
+               names_transform = list(hour = as.integer),
+               values_to = "temp_c") %>%
+  mutate(date_hour = ISOdatetime(Year, Month, Day, Hour, 0, 0, tz = "America/Los_Angeles")) %>%
+  select(date_hour, temp_c) %>%
+  arrange(date_hour)
+
+head(pt1_hrtmp_long)
+```
+
+Now we can plot the hourly temperatures. To illustrate we'll plot just the month of December, 2079:
+
+```{r plot_hourly_temp, cache = TRUE}
+ts_start <- as.Date("2080-12-01")
+ts_end <- as.Date("2080-12-31")
+
+pt1_hrtmp_onewk <- pt1_hrtmp_long %>% 
+  filter(date_hour >= ts_start, date_hour <= ts_end)
+
+ggplot(data = pt1_hrtmp_onewk,
+       aes(x = date_hour, y = temp_c)) +
+  geom_line(aes(color="red"), show.legend = FALSE) +
+  labs(title = "Modelled Hourly Temperature for Pt 1.\nDec 1-31, 2080. GCM:HadGEM2-ES, RCP:4.5", x = "date", y = "temp (C)")
+
+```
+
+# 6) Compute Chill Portions
+
+The `Dynamic_Model()` function from `chillR` computes cumulative chill portions. We can add these values to the table as a new column with `mutate()`:  
+
+```{r}
+pt1_hrtmpchill_long <- pt1_hrtmp_long %>% 
+  mutate(accum_chill_prtn = Dynamic_Model(pt1_hrtmp_long$temp_c))
+
+head(pt1_hrtmpchill_long)
+```
+
+Lastly, we plot the accumulated chill portions with `ggplot()`:
+
+```{r}
+ggplot(data = pt1_hrtmpchill_long,
+       aes(x = date_hour, y = accum_chill_prtn)) +
+  geom_line(aes(color="red"), show.legend = FALSE) +
+  labs(title = "Accumulated Chill Portions Projected for Pt 1.\nSept 2080 - June 2081. GCM:HadGEM2-ES, RCP:4.5", x = "date", y = "Chill Portion")
+```
+
+# Identify the Date When the Accumulated Chill Portions Reach a Threshhold
+
+Suppose you're hoping to grow the Kerman variety of Pistachios in 2080, which require [**54 accumulated chill hours**]
+(http://fruitsandnuts.ucdavis.edu/Weather_Services/chilling_accumulation_models/CropChillReq/){target="_blank" rel="noopener"} to ripen. We can easily find the date when the required accumulated chill is predicted to be reached:
+
+
+```{r}
+chill_min <- 54
+
+chill_date <- pt1_hrtmpchill_long %>% 
+  filter(accum_chill_prtn > chill_min) %>% 
+  slice(1) %>% 
+  pull(date_hour) %>% 
+  as.Date()
+
+chill_date
+```
+
+# Compare Chill Requirement Date for Different Climate Models and Emissions Scenarios
+
+Climate models are not crystal balls, so thinking about the consequences of climate change generally involves looking at the predictions from a) a number of climate models (GCMs), 2) multiple emissions scenarios, and 3) multiple years.
+
+Here we'll compute the date when the chill portion reaches 36 for the **10 GCMs** recommended for California, and **10 growing seasons**. That should give us 100 maturation dates, which will plot using a box plot. We'll do this twice, once with RCP 4.5 (low emissions scenario) and RCP 8.5 (higher emission scenario).
+
+## Create the API Request
+
+```{r cap2_make, cache=TRUE}
+pt1_10yrs_cap <- ca_loc_pt(coords = pt1_xy) %>%
+  ca_gcm(gcms[1:10]) %>%
+  ca_scenario(c("rcp45", "rcp85")) %>%
+  ca_period("day") %>%
+  ca_dates(start = "2080-09-01", end = "2090-06-30") %>%
+  ca_cvar(c("tasmax", "tasmin"))
+
+pt1_10yrs_cap
+```
+
+## Fetch Data
+
+Our API request asks for >140,000 temperature values, so fetching the data could take a minute or two.
+
+```{r pt1_10yrs_tbl_fetch, cache = TRUE}
+pt1_10yrs_tbl <- pt1_10yrs_cap %>% ca_getvals_tbl(quiet = TRUE) 
+
+dim(pt1_10yrs_tbl)
+head(pt1_10yrs_tbl)
+```
+
+## Munge the Results
+
+This tibble has daily min/max values from September 1 2079 thru June 30, 2090. We need to break it up into groups by 1) growing season, 2) GCM, and 3) RCP. Grouping it up by GCM and RCP will be easy - there are already columns for those. We need to add a column for growing season however, which (for the purposes of this example) we define as September thru June. In other words, every day from Nov 1 2079 thru June 30 2080 should be part of growing season 2080, Nov 2080 thru June 2081 should be part of growing season 2081, and so on. 
+
+To construct the growing season column, we'll first create columns for Year, Month, and Day. Later on, we'll use these columns in a formula to compute the growing season year.
+
+```{r}
+pt1_10yrs_ymd_tbl <- pt1_10yrs_tbl %>% 
+  mutate(Year = as.integer(substr(dt, 1, 4)), 
+         Month = as.integer(substr(dt, 6, 7)),
+         Day = as.integer(substr(dt, 9, 10))) %>% 
+  select(cvar, gcm, scenario, Year, Month, Day, val)
+
+head(pt1_10yrs_ymd_tbl)
+```
+
+We can now add a column for growing season using a case_when statement. While we're at it, we'll remove rows that don't belong to any growing season, and convert the temperature from Kelvin to Celcius.
+
+```{r pt1_10yrs_grwsn_tbl_make, cache = TRUE}
+pt1_10yrs_ymd_gs_tbl <- pt1_10yrs_ymd_tbl %>% 
+  mutate(gs = case_when(Month <= 6 ~ Year,
+                        Month >= 9 ~ as.integer(Year + 1))) %>% 
+  filter(!is.na(gs)) %>% 
+  mutate(temp_c = set_units(val, degC))
+
+head(pt1_10yrs_ymd_gs_tbl)
+```
+
+Next, we convert this 'long' format into a 'wide' format which `chillR::make_hourly_temps()` requires:
+
+```{r}
+library(tidyr); library(lubridate)
+
+pt1_10yrs_ymd_gcmrcp_gs_tbl <- pt1_10yrs_ymd_gs_tbl %>%
+  select(cvar, temp_c, Year, Month, Day, gcm, scenario, gs) %>%
+  pivot_wider(names_from = cvar, values_from = temp_c) %>%
+  rename(Tmax = tasmax, Tmin = tasmin)
+
+dim(pt1_10yrs_ymd_gcmrcp_gs_tbl)
+head(pt1_10yrs_ymd_gcmrcp_gs_tbl)
+```
+
+## Model hourly temperature
+
+Now we're ready to compute the hourly temps. In addition to the daily min/max values, we need to pass the latitude of our site (which is used to determine sunrise and sunset time):
+
+```{r compute_10yrs_hourly, cache = TRUE, message = FALSE}
+pt1_10yrs_hrtmp_wide <- make_hourly_temps(latitude = pt1_xy[2],
+                                year_file = pt1_10yrs_ymd_gcmrcp_gs_tbl,
+                                keep_sunrise_sunset = FALSE)
+dim(pt1_10yrs_hrtmp_wide)
+head(pt1_10yrs_hrtmp_wide)
+```
+
+Now we go from wide back to long, and recreate the date-time column. This generates over a million rows so it can take several seconds.
+
+```{r pt1_10yrs_hrtmp_long, cache = TRUE}
+pt1_10yrs_hrtmp_long <- pt1_10yrs_hrtmp_wide %>%
+  pivot_longer(cols = starts_with("Hour_"),
+               names_to = "Hour",
+               names_prefix = "Hour_",
+               names_transform = list(Hour = as.integer),
+               values_to = "temp_c") %>%
+  mutate(date_hour = ISOdatetime(Year, Month, Day, Hour, 0, 0, tz = "America/Los_Angeles")) %>%
+  arrange(date_hour)
+
+dim(pt1_10yrs_hrtmp_long)
+head(pt1_10yrs_hrtmp_long)
+```
+
+To reality-check, we can plot a portion of the hourly temperature:
+
+```{r plot_hourly_temp2, cache = TRUE}
+ts_start <- as.Date("2081-01-01")
+ts_end <- as.Date("2081-03-01")
+
+sample_time_series <- pt1_10yrs_hrtmp_long %>% 
+  filter(date_hour >= ts_start, date_hour <= ts_end, 
+         gcm == "CanESM2", scenario == "rcp45") %>% 
+  arrange(date_hour)
+
+dim(sample_time_series)
+
+ggplot(data = sample_time_series,
+       aes(x = date_hour, y = as.numeric(temp_c))) +
+  geom_line(aes(color="red"), show.legend = FALSE) +
+  labs(title = "Modelled Hourly Temperature", x = "date", y = "temp (C)")
 ```
 
 
-# Coming Soon
+## Compute Chill Portions
 
-reproduce the hourly graph in the Vignette.
+Now we're ready to compute chill portions. We need to break this up by growing season, gcm and rcp.
 
-feed results into chillR and create the cummulative chill hour curve (when to start?)
+```{r accum_chill_prtn_compute, cache = TRUE}
+chill_min <- 54
+
+pt1_10yrs_hrtmpcp <- pt1_10yrs_hrtmp_long %>% 
+  mutate(temp_c = as.numeric(temp_c)) %>% 
+  group_by(gs, gcm, scenario) %>% 
+  mutate(accum_chill_prtn = Dynamic_Model(temp_c))
+
+head(pt1_10yrs_hrtmpcp)
+```
+
+View the maximum accumulated chill portion per RCP:
+
+```{r}
+pt1_10yrs_hrtmpcp %>% 
+  group_by(scenario, gs, gcm) %>% 
+  summarise(max(accum_chill_prtn))
+```
+
+For each RCP, how many combinations of growing season and GCM resulted in at least `r chill_min` accumulated chill portions? 
+
+```{r}
+pt1_10yrs_hrtmpcp %>% 
+  group_by(gs, gcm, scenario) %>% 
+  summarise(reached_thresh = max(accum_chill_prtn) >= chill_min) %>% 
+  group_by(scenario) %>% 
+  summarise(percent_reached_thresh = sum(reached_thresh) / n()) %>% 
+  mutate(percent_reached_thresh = scales::percent(percent_reached_thresh))
+```
+
+
+Plot the accumulation curves:
+
+```{r plot_acc_curves_rcp45, cache = TRUE}
+## First make a copy of data, manually set the year to the same value (so the dates are in the same range), and keep
+## only midnight values
+
+pt1_10yrs_hrtmpcp_4plot <- pt1_10yrs_hrtmpcp %>% 
+  filter(Hour == 0) %>% 
+  mutate(YearPlot = if_else(Month >= 9, 1970, 1971)) %>% 
+  mutate(date_hour = ISOdatetime(YearPlot, Month, Day, Hour, 0, 0, tz = "America/Los_Angeles"),
+         gs_gcm = paste(gs, gcm, sep = "_")) %>% 
+  select(scenario, gs, gcm, gs_gcm, date_hour, accum_chill_prtn)
+
+## Create plot
+ggplot(data = pt1_10yrs_hrtmpcp_4plot %>% filter(scenario == "rcp45"),
+       aes(x = date_hour, y = accum_chill_prtn)) +
+  geom_line(aes(color=gs_gcm), show.legend = FALSE) +
+  geom_hline(yintercept = chill_min, size = 1) +
+  labs(title = "Projected Chill Portion Accumulation for Pt 1: RCP 4.5", 
+       subtitle = "2080 - 2090",
+       caption = stringr::str_wrap(paste0("GCMs: ", paste(unique(pt1_10yrs_hrtmpcp_4plot$gcm), collapse = ", "), width = 60)),
+       x = "date", y = "Chill Portion") +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.background = element_rect(
+          colour = "forestgreen",
+          size = 1))
+```
+
+
+```{r plot_acc_curves_rcp85, cache = TRUE}
+## RCP 85
+ggplot(data = pt1_10yrs_hrtmpcp_4plot %>% filter(scenario == "rcp85"),
+       aes(x = date_hour, y = accum_chill_prtn)) +
+  geom_line(aes(color=gs_gcm), show.legend = FALSE) +
+  geom_hline(yintercept = chill_min, size = 1) +
+  labs(title = "Projected Chill Portion Accumulation for Pt 1: RCP 8.5", 
+       subtitle = "2080 - 2090",
+       caption = stringr::str_wrap(paste0("GCMs: ", paste(unique(pt1_10yrs_hrtmpcp_4plot$gcm), collapse = ", "), width = 60)),
+       x = "date", y = "Chill Portion") +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.background = element_rect(
+          color = "forestgreen",
+          size = 1))
+```
+
+# Questions and Next Steps
 
 Add caveats about not looking at a single model, single-year.
 
-Present and/or discuss how to combine / average results from multiple models
+Is this a good way to combine / average results from multiple models, multiple years?
 
+How to compute agroclimatic metrics?
 
-# Sandbox
+When to start counting chill hours?
 
-```{r}
-## daylength returns a list. It is NOT vectorized.
-daylength(latitude=50.4,JDay=c(15))
-
-## Compile a data frame of sunrise, sunset, and daylength for each Julian day 
-all_daylengths_df <- cbind(JDay=1:365, sapply(daylength(latitude=50.5, JDay=1:365), cbind))
-head(all_daylengths_df)
-
-
-
-```
-
-
+Turn this into a Shiny app with selectable start date and required number of chill portions. Create a table (or box-plot) showing the date that number is reached (per GCM & RCP). Do this for 10 years?
 
 

@@ -8,6 +8,7 @@ output:
     lib_dir: lib
     keep_md: no
     smart: no
+    df_print: paged
 ---
 
 # About Us...
@@ -932,7 +933,6 @@ Shane Feirer<br/><stfeirer@ucanr.edu>
 Andy Lyons<br/><andlyons@ucanr.edu>
 </div>
 </div>
-
 
 <p style='text-align:center; margin-top:2em;'><img src='images/igis-anr_horiz-stacked_320x80.png' style='height:80px;'/><img src='images/gif-logo-col_300x118.png' style='height:75px; margin-left:100px;'/><img src='images/cec_logo_400x354x256.png' style='height:100px; margin-left:100px;'/><img src='images/scg-logo_460x230.png' style='height:100px; margin-left:100px;'/></p>
 
