@@ -18,7 +18,7 @@
 #' areas will be used.
 #'
 #' Note all of the AOI Presets supported by the Cal-Adapt API are \emph{polygons}. This means
-#' in order to query values for these areas (i.e., with \code{\link{ca_getvals}}), you must also
+#' in order to query values for these areas (i.e., with \code{\link{ca_getvals_tbl}}), you must also
 #' specify a spatial aggregation function using \code{\link{ca_options}}.
 #'
 #' @seealso \code{\link{ca_apireq}}

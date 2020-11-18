@@ -37,7 +37,9 @@ from Cal-Adapt. An example of this would be the raster series data catalog and t
 geometries of AOI Presets.
 
 NOTE: \code{caladaptr} does \emph{not} cache climate data fetched from Cal-Adapt. Every time
-you call a function that fetches data (e.g., \code{\link{ca_getvals}}), data is retrieved fresh.
+you call a function that fetches data (e.g., \code{\link{ca_getvals_tbl}}), data is retrieved fresh.
+The exception to this is \code{\link{ca_getvals_db}}, which is built to cache retrieved values
+in a local SQLite database.
 
 If \code{default = TRUE}, a default cache directory will be used (\link[rappdirs]{user_cache_dir})
 \emph{if} one hasn't already been set with \code{ca_setcache}.

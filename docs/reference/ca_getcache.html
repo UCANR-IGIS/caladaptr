@@ -111,7 +111,7 @@
       <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
     </li>
     <li>
-      <a href="../notebooks/caladaptr_chillhours.nb.html">Compute Chill Portions</a>
+      <a href="../notebooks/chill.nb.html">Compute Chill Portions</a>
     </li>
   </ul>
 </li>
@@ -202,7 +202,9 @@
 from Cal-Adapt. An example of this would be the raster series data catalog and the
 geometries of AOI Presets.</p>
 <p>NOTE: <code>caladaptr</code> does <em>not</em> cache climate data fetched from Cal-Adapt. Every time
-you call a function that fetches data (e.g., <code>ca_getvals</code>), data is retrieved fresh.</p>
+you call a function that fetches data (e.g., <code><a href='ca_getvals_tbl.html'>ca_getvals_tbl</a></code>), data is retrieved fresh.
+The exception to this is <code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>, which is built to cache retrieved values
+in a local SQLite database.</p>
 <p>If <code>default = TRUE</code>, a default cache directory will be used (<a href='https://rdrr.io/pkg/rappdirs/man/user_cache_dir.html'>user_cache_dir</a>)
 <em>if</em> one hasn't already been set with <code>ca_setcache</code>.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>

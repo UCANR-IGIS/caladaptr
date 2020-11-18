@@ -1,4 +1,4 @@
-# caladaptr 0.4.2 (2020-11-xx)
+# caladaptr 0.4.2 (2020-11-18)
 
 * `plot.ca_apireq()`: default symbol size tweaked for point features
 
