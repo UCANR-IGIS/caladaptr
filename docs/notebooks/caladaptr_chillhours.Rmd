@@ -256,7 +256,7 @@ ggplot(data = pt1_hrtmpchill_long,
 
 ```
 
-## 7) Identify the Date When the Accumulated Chill Portions Reach a Threshhold
+## 7) Identify when Accumulated Chill Reaches a Threshhold
 
 Suppose you're hoping to grow the Kerman variety of Pistachios in 2080, which require [**54 accumulated chill hours**]
 (http://fruitsandnuts.ucdavis.edu/Weather_Services/chilling_accumulation_models/CropChillReq/){target="_blank" rel="noopener"} to ripen. We can easily find the date when the required accumulated chill is predicted to be reached:
@@ -274,7 +274,7 @@ chill_date <- pt1_hrtmpchill_long %>%
 chill_date
 ```
 
-# Compare Chill Requirement Date for Different Climate Models and Emissions Scenarios
+# Compare Chill Accumulation for Multiple Growing Seasons, Climate Models, and Emissions Scenarios
 
 Climate models are not crystal balls, so thinking about the consequences of climate change generally involves looking at the predictions from a) a number of climate models (GCMs), 2) multiple emissions scenarios, and 3) multiple years.
 
@@ -283,6 +283,9 @@ Here we'll compute the date when the chill portion reaches 36 for the **10 GCMs*
 ## 1) Create the API Request
 
 ```{r cap2_make, cache=TRUE}
+## Pick a location
+pt1_xy <- c(-119.964, 36.019)
+
 pt1_10yrs_cap <- ca_loc_pt(coords = pt1_xy) %>%
   ca_gcm(gcms[1:10]) %>%
   ca_scenario(c("rcp45", "rcp85")) %>%
@@ -422,7 +425,7 @@ pt1_10yrs_hrtmpcp %>%
   head()
 ```
 
-## 6) How Many Growing Seasons Reach Minimum Chill Requirements
+## 6) How Many Growing Seasons Reach the Minimum Chill Requirement?
 
 For each RCP, how many combinations of growing season and GCM resulted in at least `r chill_min` accumulated chill portions? 
 
@@ -437,7 +440,7 @@ pt1_10yrs_hrtmpcp %>%
 ```
 
 
-## 7) Plot Accumulated Chill Curves
+## 7) Accumulated Chill Curves
 
 We plot the curves for accumulated chill for RCP 4.5 and 8.5. We have 10 growing seasons and 10 GCMs, for a total of 100 curves. The lines that end above the minimum chill requirement represent simulations where the minimum chill for a viable crop was reached. 
 
@@ -483,7 +486,9 @@ ggplot(data = pt1_10yrs_hrtmpcp_4plot %>% filter(scenario == "rcp85"),
         plot.background = element_rect(colour = "gray50", size = 3))
 ```
 
-## 8) Plot the distribution of ripened dates during successful years
+## 8) Distribution of Required Accumulation Date
+
+Here we plot the distribution of projected dates when the accumulated chill reaches the minimum requirement.
 
 ```{r}
 ## Number of runs for each emissions scenario = number of growing seasons * number of gcms
@@ -531,7 +536,7 @@ ggplot(pt1_10yrs_scen_chilldt, aes(date_1970 , scenario)) +
 
 Is this a good way to combine / average results from multiple models, multiple years?
 
-Other agroclimatic metrics?
+Would it be useful to also compute chill hours? Other agroclimatic metrics?
 
 Do you always start computing chill portions on Sept 1? Should this be a variable?
 
