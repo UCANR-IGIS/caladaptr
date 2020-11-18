@@ -1,3 +1,7 @@
+# caladaptr 0.4.2 (2020-11-xx)
+
+* `plot.ca_apireq()`: default symbol size tweaked for point features
+
 # caladaptr 0.4.1 (2020-11-10)
 
 * `ca_getvals()` split into `ca_getvals_tbl()` and `ca_getvals_db()`; user_agent added to headers; support for sf objects added

@@ -90,7 +90,7 @@ navbar:
       menu:
        - text: "Intro and Examples"
          href: notebooks/caladaptr_intro.nb.html
-       - text: "Computing Chill Hours"
+       - text: "Compute Chill Portions"
          href: notebooks/caladaptr_chillhours.nb.html
     presentations:
       text: Presentations

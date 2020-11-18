@@ -115,7 +115,7 @@ print.ca_apireq <- function(x, ...) {
 #' @param static Plot a static map instead of a interactive leaflet map
 #' @param ... Unused
 #' @importFrom crayon yellow bold
-#' @importFrom tmap tm_shape tm_polygons tm_symbols tm_basemap
+#' @importFrom tmap tm_shape tm_polygons tm_symbols tm_basemap tm_view
 #' @importFrom sf st_as_sf st_read st_geometry st_geometry_type
 #' @importFrom dplyr slice filter select
 #' @method plot ca_apireq
@@ -135,9 +135,11 @@ plot.ca_apireq <- function(x,
 
     # When type = "pt", val = a 3-column data frame with columns id, x, y
     pts_sf <- st_as_sf(x$loc$val, coords = c("x", "y"), crs = 4326)
+
     tm_shape(pts_sf) +
       tm_basemap(basemap) +
-      tm_symbols(col = "red", alpha = 0.8, scale = 1.5)
+      tm_symbols(col = "red", alpha = 0.8, size = 0.2) +
+      tm_view(symbol.size.fixed = TRUE)
 
   } else if (x$loc$type == "aoipreset") {
 
@@ -182,7 +184,8 @@ plot.ca_apireq <- function(x,
 
       tm_shape(pts_sf) +
         tm_basemap(basemap) +
-        tm_symbols(col = "red", alpha = 0.8, scale = 1.5)
+        tm_symbols(col = "red", alpha = 0.8, size = 0.2) +
+        tm_view(symbol.size.fixed = TRUE)
 
     }
 
