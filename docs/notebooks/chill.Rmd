@@ -50,13 +50,17 @@ Keyboard shortcuts you can use within a R Notebook:
 
 # Chill Portions: Background
 
-['Chill hours'](https://en.wikipedia.org/wiki/Chilling_requirement) are commonly used to estimate when fruit-bearing trees will blossom. This in turn affects fruit productivity and the timing of management actions (including harvest). Many tree crops (e.g., nuts) require a certain number of hours at chilly temperatures in order for the tree to blossom and the fruit to ripen.  
+['Chill hours'](https://en.wikipedia.org/wiki/Chilling_requirement) and 'Chill portions' are commonly used to estimate when tree crops will "wake up" from their winter slumber and start to grow their fruit / nuts. The timing and rate of chill also affects fruit productivity and scheduling of management actions (including harvest). Many tree crops (e.g., nuts) require a certain number of hours at chilly temperatures in order for the tree to blossom and the fruit to ripen. This presents a concern for climate change, because if the winters aren't cold enough the operation may no longer be economically viable. 
 
-Computing chill hours essentially involves adding up the total amount of time during the cold season within a  temperature range (e.g., 32 - 45 &#176;F). 'Chill portions' is a similar calculation, however instead of simply adding up the number of hours within a certain temperature range, additional weights are assigned based on bands of temperature and/or warming periods periods between cold spells (which mimic tree physiology thus producing better predictions).
+Computing 'chill hours' essentially involves adding up the total amount of time during the cold season within a  temperature range (e.g., 32 - 45 &#176;F). 'Chill portions' is a similar calculation, however instead of simply adding up the number of hours within a certain temperature range, additional weights are assigned based on bands of temperature and/or warming periods periods between cold spells (this mimics tree physiology thus producing better predictions).
 
-Computing cumulative chill hours requires hourly temperature data. You may be lucky enough to have hourly temperature recordings from weather stations for historic and real-time analyses. However for projected climate scenarios, the smallest unit of time is daily (at least for the CMIP5 family of climate models). This creates a conundrum if you want to explore how cumulative chill hours may change due to climate change.
+Computing chill hours and chill portions requires hourly temperature data. You may be lucky enough to have hourly temperature recordings from weather stations for historic and real-time analyses. However for projected climate scenarios, the smallest unit of time for the CMIP5 family of climate models is daily min and max. This creates a conundrum if you want to explore how cumulative chill hours may change due to climate change.
 
-To deal with this, we can estimate hourly temperatures based on the daily minimum and maximum temperature, as well as the time of sunrise and sunset. The [**chillR**](https://cran.r-project.org/package=chillR) package, developed and maintained by [Dr. Eike Luedeling](http://eikeluedeling.com/), has functions for modeling hourly temperatures and computing chill portions (see the chillR [Vignette](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) for details).
+To deal with this, we can estimate hourly temperatures based on the daily minimum and maximum temperature. The model that does this uses the time of sunrise and sunset to model temperature variation over the day. The [**chillR**](https://cran.r-project.org/package=chillR) package, developed by [Dr. Eike Luedeling](http://eikeluedeling.com/), has functions for modeling hourly temperatures and computing chill portions (see the chillR [Vignette](https://cran.r-project.org/web/packages/chillR/vignettes/hourly_temperatures.html) for details).
+
+See also:
+
+Luedeling, E., M. Zhang and E. H. Girvetz (2009). *Climatic Changes Lead to Declining Winter Chill for Fruit and Nut Trees in California during 1950–2099*. [PLOS ONE 4(7): e6166](https://doi.org/10.1371/journal.pone.0006166).
 
 ## Exercise Summary
 
@@ -280,6 +284,119 @@ Climate models are not crystal balls, so thinking about the consequences of clim
 
 Here we'll compute the date when the chill portion reaches 36 for the **10 GCMs** recommended for California, and **10 growing seasons**. That should give us 100 maturation dates, which will plot using a box plot. We'll do this twice, once with RCP 4.5 (low emissions scenario) and RCP 8.5 (higher emission scenario).
 
+## Step 0. Historical Baseline
+
+When looking at historical data, we can either use modeled or observed. Here we use modeled because 1) modeled data has been shown to matches observed patterns very well, and 2) it facilitates comparisons with modeled predictions.
+
+```{r cap2baseline_make, cache=TRUE}
+## Pick a location
+pt1_xy <- c(-119.964, 36.019)
+
+pt1_baseline_cap <- ca_loc_pt(coords = pt1_xy) %>%
+  ca_gcm(gcms[1:10]) %>%
+  ca_scenario(c("historical")) %>%
+  ca_period("day") %>%
+  ca_dates(start = "1995-01-01", end = "2005-12-31") %>%
+  ca_cvar(c("tasmax", "tasmin"))
+
+pt1_baseline_cap
+```
+
+```{r pt1_baseline_tbl_fetch, cache = TRUE}
+pt1_baseline_tbl <- pt1_baseline_cap %>% ca_getvals_tbl(quiet = TRUE) 
+dim(pt1_baseline_tbl)
+head(pt1_baseline_tbl)
+```
+
+Add columns:
+
+```{r}
+pt1_baseline_ymd_tbl <- pt1_baseline_tbl %>% 
+  mutate(Year = as.integer(substr(dt, 1, 4)), 
+         Month = as.integer(substr(dt, 6, 7)),
+         Day = as.integer(substr(dt, 9, 10))) %>% 
+  select(cvar, gcm, scenario, Year, Month, Day, val)
+pt1_baseline_ymd_tbl
+```
+
+Add growing season column:
+
+```{r}
+pt1_baseline_ymd_gs_tbl <- pt1_baseline_ymd_tbl %>% 
+  mutate(gs = case_when(Month <= 6 ~ Year,
+                        Month >= 9 ~ as.integer(Year + 1))) %>% 
+  filter(!is.na(gs)) %>% 
+  mutate(temp_c = set_units(val, degC))
+head(pt1_baseline_ymd_gs_tbl)
+```
+
+Pivot wider (make tasmax and tasmin separate columns):
+
+```{r}
+library(tidyr); library(lubridate)
+
+pt1_baseline_ymd_gcmrcp_gs_tbl <- pt1_baseline_ymd_gs_tbl %>%
+  select(cvar, temp_c, Year, Month, Day, gcm, scenario, gs) %>%
+  pivot_wider(names_from = cvar, values_from = temp_c) %>%
+  rename(Tmax = tasmax, Tmin = tasmin)
+
+dim(pt1_baseline_ymd_gcmrcp_gs_tbl)
+head(pt1_baseline_ymd_gcmrcp_gs_tbl)
+
+```
+Compute hourly temps (in wide format):
+
+```{r}
+pt1_baseline_hrtmp_wide <- make_hourly_temps(latitude = pt1_xy[2],
+                                year_file = pt1_baseline_ymd_gcmrcp_gs_tbl,
+                                keep_sunrise_sunset = FALSE)
+dim(pt1_baseline_hrtmp_wide)
+head(pt1_baseline_hrtmp_wide)
+```
+
+Convert wide to long:
+
+```{r}
+pt1_baseline_hrtmp_long <- pt1_baseline_hrtmp_wide %>%
+  pivot_longer(cols = starts_with("Hour_"),
+               names_to = "Hour",
+               names_prefix = "Hour_",
+               names_transform = list(Hour = as.integer),
+               values_to = "temp_c") %>%
+  mutate(date_hour = ISOdatetime(Year, Month, Day, Hour, 0, 0, tz = "America/Los_Angeles")) %>%
+  arrange(date_hour)
+
+dim(pt1_baseline_hrtmp_long)
+head(pt1_baseline_hrtmp_long)
+```
+
+Compute baseline chill portions:
+
+```{r}
+pt1_baseline_hrtmpcp <- pt1_baseline_hrtmp_long %>% 
+  mutate(temp_c = as.numeric(temp_c)) %>% 
+  group_by(gs, gcm, scenario) %>% 
+  mutate(accum_chill_prtn = Dynamic_Model(temp_c))
+
+head(pt1_baseline_hrtmpcp)
+
+```
+
+Compute the max-chill reached each growing season / GCM during the baseline period. Next we compute the 'safe chill' (10% quantile):
+
+```{r}
+pt1_baseline_maxchill <- pt1_baseline_hrtmpcp %>% 
+  group_by(scenario, gs, gcm) %>% 
+  summarise(max_chill = max(accum_chill_prtn), .groups = 'drop') 
+
+pt1_baseline_maxchill %>% head()
+
+safe_chill_baseline_tbl <- pt1_baseline_maxchill %>% 
+  summarize(safe_chill = quantile(max_chill, probs = 0.1), .groups = "drop")
+
+safe_chill_baseline_tbl
+```
+
 ## 1) Create the API Request
 
 ```{r cap2_make, cache=TRUE}
@@ -426,7 +543,7 @@ pt1_10yrs_maxchill %>% head()
 
 ## 6) Compute Safe Chill
 
-For each RCP, we compute the 'safe winter chill' value. 'Safe winter chill' is the minimum chill portion one can expect 90% of the time ([Luedeling et al, 2009](https://doi.org/10.1371/journal.pone.0006166))). For growers, safe winter chill reflects the economic need for an orchard operation to produce good yields in most years, rather than an average year. Here it is computed as the 10% quantile of all end-of-season chill portions in the analysis (ie., all GCMs and all growing seasons 2080-2090), with the assumption that all of these outcomes are equally likely.
+For each RCP, we compute the 'safe winter chill' value. 'Safe winter chill' is the minimum chill portion one can expect 90% of the time ([Luedeling et al, 2009](https://doi.org/10.1371/journal.pone.0006166)). For growers, safe winter chill reflects the economic need for an orchard operation to produce good yields in most years, rather than an average year. Here it is computed as the 10% quantile of all end-of-season chill portions in the analysis (ie., all GCMs and all growing seasons 2080-2090), with the assumption that all of these outcomes are equally likely.
 
 ```{r find_safe_chill, cache=TRUE}
 ## Compute safe winter chill for each RCP
