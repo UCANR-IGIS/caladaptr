@@ -74,7 +74,7 @@ In this example, we:
 
 **Note:** This notebook is primarily intended to demonstrate *how to write code* to compute chill portions using projected climate data. It is *not* presented as *best practice* for assessing the viability of tree crops under climate change!
 
-Want to skip the details? You can [**&ddarr; cut to the chase &ddarr;**](#how-many-growing-seasons-reach-the-minimum-chill-requirement).
+Want to skip the details? You can [**&ddarr; cut to the chase &ddarr;**](#conclusions).
 
 # Setup
 
@@ -284,119 +284,6 @@ Climate models are not crystal balls, so thinking about the consequences of clim
 
 Here we'll compute the date when the chill portion reaches 36 for the **10 GCMs** recommended for California, and **10 growing seasons**. That should give us 100 maturation dates, which will plot using a box plot. We'll do this twice, once with RCP 4.5 (low emissions scenario) and RCP 8.5 (higher emission scenario).
 
-## Step 0. Historical Baseline
-
-When looking at historical data, we can either use modeled or observed. Here we use modeled because 1) modeled data has been shown to matches observed patterns very well, and 2) it facilitates comparisons with modeled predictions.
-
-```{r cap2baseline_make, cache=TRUE}
-## Pick a location
-pt1_xy <- c(-119.964, 36.019)
-
-pt1_baseline_cap <- ca_loc_pt(coords = pt1_xy) %>%
-  ca_gcm(gcms[1:10]) %>%
-  ca_scenario(c("historical")) %>%
-  ca_period("day") %>%
-  ca_dates(start = "1995-01-01", end = "2005-12-31") %>%
-  ca_cvar(c("tasmax", "tasmin"))
-
-pt1_baseline_cap
-```
-
-```{r pt1_baseline_tbl_fetch, cache = TRUE}
-pt1_baseline_tbl <- pt1_baseline_cap %>% ca_getvals_tbl(quiet = TRUE) 
-dim(pt1_baseline_tbl)
-head(pt1_baseline_tbl)
-```
-
-Add columns:
-
-```{r}
-pt1_baseline_ymd_tbl <- pt1_baseline_tbl %>% 
-  mutate(Year = as.integer(substr(dt, 1, 4)), 
-         Month = as.integer(substr(dt, 6, 7)),
-         Day = as.integer(substr(dt, 9, 10))) %>% 
-  select(cvar, gcm, scenario, Year, Month, Day, val)
-pt1_baseline_ymd_tbl
-```
-
-Add growing season column:
-
-```{r}
-pt1_baseline_ymd_gs_tbl <- pt1_baseline_ymd_tbl %>% 
-  mutate(gs = case_when(Month <= 6 ~ Year,
-                        Month >= 9 ~ as.integer(Year + 1))) %>% 
-  filter(!is.na(gs)) %>% 
-  mutate(temp_c = set_units(val, degC))
-head(pt1_baseline_ymd_gs_tbl)
-```
-
-Pivot wider (make tasmax and tasmin separate columns):
-
-```{r}
-library(tidyr); library(lubridate)
-
-pt1_baseline_ymd_gcmrcp_gs_tbl <- pt1_baseline_ymd_gs_tbl %>%
-  select(cvar, temp_c, Year, Month, Day, gcm, scenario, gs) %>%
-  pivot_wider(names_from = cvar, values_from = temp_c) %>%
-  rename(Tmax = tasmax, Tmin = tasmin)
-
-dim(pt1_baseline_ymd_gcmrcp_gs_tbl)
-head(pt1_baseline_ymd_gcmrcp_gs_tbl)
-
-```
-Compute hourly temps (in wide format):
-
-```{r}
-pt1_baseline_hrtmp_wide <- make_hourly_temps(latitude = pt1_xy[2],
-                                year_file = pt1_baseline_ymd_gcmrcp_gs_tbl,
-                                keep_sunrise_sunset = FALSE)
-dim(pt1_baseline_hrtmp_wide)
-head(pt1_baseline_hrtmp_wide)
-```
-
-Convert wide to long:
-
-```{r}
-pt1_baseline_hrtmp_long <- pt1_baseline_hrtmp_wide %>%
-  pivot_longer(cols = starts_with("Hour_"),
-               names_to = "Hour",
-               names_prefix = "Hour_",
-               names_transform = list(Hour = as.integer),
-               values_to = "temp_c") %>%
-  mutate(date_hour = ISOdatetime(Year, Month, Day, Hour, 0, 0, tz = "America/Los_Angeles")) %>%
-  arrange(date_hour)
-
-dim(pt1_baseline_hrtmp_long)
-head(pt1_baseline_hrtmp_long)
-```
-
-Compute baseline chill portions:
-
-```{r}
-pt1_baseline_hrtmpcp <- pt1_baseline_hrtmp_long %>% 
-  mutate(temp_c = as.numeric(temp_c)) %>% 
-  group_by(gs, gcm, scenario) %>% 
-  mutate(accum_chill_prtn = Dynamic_Model(temp_c))
-
-head(pt1_baseline_hrtmpcp)
-
-```
-
-Compute the max-chill reached each growing season / GCM during the baseline period. Next we compute the 'safe chill' (10% quantile):
-
-```{r}
-pt1_baseline_maxchill <- pt1_baseline_hrtmpcp %>% 
-  group_by(scenario, gs, gcm) %>% 
-  summarise(max_chill = max(accum_chill_prtn), .groups = 'drop') 
-
-pt1_baseline_maxchill %>% head()
-
-safe_chill_baseline_tbl <- pt1_baseline_maxchill %>% 
-  summarize(safe_chill = quantile(max_chill, probs = 0.1), .groups = "drop")
-
-safe_chill_baseline_tbl
-```
-
 ## 1) Create the API Request
 
 ```{r cap2_make, cache=TRUE}
@@ -550,6 +437,7 @@ For each RCP, we compute the 'safe winter chill' value. 'Safe winter chill' is t
 safe_chill_tbl <- pt1_10yrs_maxchill %>% 
   group_by(scenario) %>% 
   summarize(safe_chill = quantile(max_chill, probs = 0.1), .groups = "drop")
+
 safe_chill_tbl
 ```
 
@@ -557,7 +445,7 @@ Plot distribution of chill portion:
 
 ```{r chill_histo, cache = TRUE}
 ## Plot the histogram and overlay the safe chill value
-ggplot(pt1_10yrs_maxchill, aes(x=max_chill)) + 
+projected_histo <- ggplot(pt1_10yrs_maxchill, aes(x=max_chill)) + 
   geom_histogram() +
   geom_vline(data = safe_chill_tbl, color = "red", aes(xintercept = safe_chill), size = 1) +
   facet_wrap("scenario", nrow = 1) +
@@ -571,6 +459,8 @@ ggplot(pt1_10yrs_maxchill, aes(x=max_chill)) +
   theme(plot.caption = element_text(hjust = 0),
         plot.margin = margin(20, 20, 20, 20),
         plot.background = element_rect(colour = "gray50", size = 3))
+
+projected_histo
 ```
 
 ## 7) How Many Growing Seasons Reach the Minimum Chill Requirement?
@@ -580,13 +470,16 @@ Next, for each RCP we compute how many projected temperature series resulted in 
 ```{r prct_min_chill_reached, cache=TRUE, message=FALSE}
 chill_min <- 54
 
-pt1_10yrs_hrtmpcp %>% 
+pt1_10yrs_prct_reached_min <- pt1_10yrs_hrtmpcp %>% 
   group_by(gs, gcm, scenario) %>% 
   summarise(reached_thresh = max(accum_chill_prtn) >= chill_min) %>% 
   ungroup() %>% 
   group_by(scenario) %>% 
   summarise(percent_reached_thresh = sum(reached_thresh) / n()) %>% 
-  mutate(percent_reached_thresh = scales::percent(percent_reached_thresh))
+  mutate(time_period = "2081 - 2090", percent_reached_thresh = scales::percent(percent_reached_thresh)) %>% 
+  relocate(time_period, scenario, percent_reached_thresh)
+
+pt1_10yrs_prct_reached_min
 ```
 
 
@@ -682,17 +575,205 @@ ggplot(pt1_10yrs_scen_chilldt, aes(date_1970 , scenario)) +
 ```
 
 
+# Historical Baseline
+
+When looking at historical data, we can either use modeled or observed. Here we use modeled because 1) modeled data has been shown to matches observed patterns very well, and 2) it facilitates comparisons with modeled predictions.
+
+```{r cap2baseline_make, cache=TRUE}
+## Pick a location
+pt1_xy <- c(-119.964, 36.019)
+
+pt1_baseline_cap <- ca_loc_pt(coords = pt1_xy) %>%
+  ca_gcm(gcms[1:10]) %>%
+  ca_scenario(c("historical")) %>%
+  ca_period("day") %>%
+  ca_dates(start = "1995-01-01", end = "2005-12-31") %>%
+  ca_cvar(c("tasmax", "tasmin"))
+
+pt1_baseline_cap
+```
+
+```{r pt1_baseline_tbl_fetch, cache = TRUE}
+pt1_baseline_tbl <- pt1_baseline_cap %>% ca_getvals_tbl(quiet = TRUE) 
+dim(pt1_baseline_tbl)
+head(pt1_baseline_tbl)
+```
+
+Add columns:
+
+```{r}
+pt1_baseline_ymd_tbl <- pt1_baseline_tbl %>% 
+  mutate(Year = as.integer(substr(dt, 1, 4)), 
+         Month = as.integer(substr(dt, 6, 7)),
+         Day = as.integer(substr(dt, 9, 10))) %>% 
+  select(cvar, gcm, scenario, Year, Month, Day, val)
+pt1_baseline_ymd_tbl
+```
+
+Add growing season column:
+
+```{r baseline_gs, cache = TRUE}
+pt1_baseline_ymd_gs_tbl <- pt1_baseline_ymd_tbl %>% 
+  mutate(gs = case_when(Month <= 6 ~ Year,
+                        Month >= 9 ~ as.integer(Year + 1))) %>% 
+  filter(!is.na(gs)) %>% 
+  mutate(temp_c = set_units(val, degC))
+head(pt1_baseline_ymd_gs_tbl)
+```
+
+Pivot wider (make tasmax and tasmin separate columns):
+
+```{r pt1_baseline_ymd_gcmrcp_gs_tbl, cache = TRUE}
+pt1_baseline_ymd_gcmrcp_gs_tbl <- pt1_baseline_ymd_gs_tbl %>%
+  select(cvar, temp_c, Year, Month, Day, gcm, scenario, gs) %>%
+  pivot_wider(names_from = cvar, values_from = temp_c) %>%
+  rename(Tmax = tasmax, Tmin = tasmin)
+
+dim(pt1_baseline_ymd_gcmrcp_gs_tbl)
+head(pt1_baseline_ymd_gcmrcp_gs_tbl)
+
+```
+Compute hourly temps (in wide format):
+
+```{r pt1_baseline_hrtmp_wide, cache = TRUE}
+pt1_baseline_hrtmp_wide <- make_hourly_temps(latitude = pt1_xy[2],
+                                year_file = pt1_baseline_ymd_gcmrcp_gs_tbl,
+                                keep_sunrise_sunset = FALSE)
+dim(pt1_baseline_hrtmp_wide)
+head(pt1_baseline_hrtmp_wide)
+```
+
+Convert wide to long:
+
+```{r pt1_baseline_hrtmp_long, cache = TRUE}
+pt1_baseline_hrtmp_long <- pt1_baseline_hrtmp_wide %>%
+  pivot_longer(cols = starts_with("Hour_"),
+               names_to = "Hour",
+               names_prefix = "Hour_",
+               names_transform = list(Hour = as.integer),
+               values_to = "temp_c") %>%
+  mutate(date_hour = ISOdatetime(Year, Month, Day, Hour, 0, 0, tz = "America/Los_Angeles")) %>%
+  arrange(date_hour)
+
+dim(pt1_baseline_hrtmp_long)
+head(pt1_baseline_hrtmp_long)
+```
+
+Compute baseline chill portions:
+
+```{r pt1_baseline_hrtmpcp, cache = TRUE}
+pt1_baseline_hrtmpcp <- pt1_baseline_hrtmp_long %>% 
+  mutate(temp_c = as.numeric(temp_c)) %>% 
+  group_by(gs, gcm, scenario) %>% 
+  mutate(accum_chill_prtn = Dynamic_Model(temp_c))
+
+head(pt1_baseline_hrtmpcp)
+
+```
+
+Compute the max-chill reached each growing season / GCM during the baseline period. Next we compute the 'safe chill' (10% quantile):
+
+```{r pt1_baseline_maxchill, cache = TRUE}
+pt1_baseline_maxchill <- pt1_baseline_hrtmpcp %>% 
+  group_by(scenario, gs, gcm) %>% 
+  summarise(max_chill = max(accum_chill_prtn), .groups = 'drop') 
+
+dim(pt1_baseline_maxchill)
+pt1_baseline_maxchill %>% head()
+
+safe_chill_baseline_tbl <- pt1_baseline_maxchill %>% 
+  group_by(scenario) %>% 
+  summarize(safe_chill = quantile(max_chill, probs = 0.1), .groups = "drop") 
+
+safe_chill_baseline_tbl
+```
+
+Plot distribution of the baseline maximum chill portion:
+
+```{r chill_baseline_histo, cache = TRUE}
+## Plot the histogram and overlay the safe chill value
+baseline_histo <- ggplot(pt1_baseline_maxchill, aes(x=max_chill)) + 
+  geom_histogram() +
+  geom_vline(data = safe_chill_baseline_tbl, color = "red", aes(xintercept = safe_chill), size = 1) +
+  facet_wrap("scenario", nrow = 1) +
+  labs(title = "Maximum Projected Chill Portion", 
+     subtitle = "1995 - 2005",
+     caption = paste0(
+       str_wrap(paste0("GCMs: ", paste(unique(pt1_baseline_maxchill$gcm), collapse = ", "), width = 105)),
+       "\n",
+       str_wrap("The red line is the 10% quantile and represents the safe winter chill (the mimimum chill portion one may expect 90% of the time assumming all projections are equally likely).", width = 105)),
+     x = "end-of-season chill portion", y = "count") +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.margin = margin(20, 20, 20, 20),
+        plot.background = element_rect(colour = "gray50", size = 3))
+
+baseline_histo
+```
+
+How Many Growing Seasons and Simulated (Backcast) Climate Conditions During the Baseline Seasons Reached Our Minimum Chill Requirement?
+
+```{r baseline_prct_min_chill_reached, cache=TRUE, message=FALSE}
+chill_min <- 54
+
+pt1_baseline_prct_reached_min <- pt1_baseline_hrtmpcp %>% 
+  group_by(gs, gcm, scenario) %>% 
+  summarise(reached_thresh = max(accum_chill_prtn) >= chill_min) %>% 
+  ungroup() %>% 
+  group_by(scenario) %>% 
+  summarise(percent_reached_thresh = sum(reached_thresh) / n()) %>% 
+  mutate(time_period = "1995-2005", percent_reached_thresh = scales::percent(percent_reached_thresh)) %>% 
+  relocate(time_period, scenario, percent_reached_thresh)
+
+pt1_baseline_prct_reached_min
+
+```
+
+# Conclusions
+
+In this analysis we examined projected and historic accumulated chill portions for this point:
+
+```{r pt1_10yrs_cap_plot, cache = TRUE}
+plot(pt1_10yrs_cap)
+```
+
+We looked at the projected temperatures at this location according to 10 GCMs in the recent historic time period (1995-2005), as well as projected for 2080-2090 under two carbon emissions scenarios (RCP4.5 & 8.5). Our analysis shows that the percent of seasons & models where the maximum chill portion by the end of winter is greater than or equal to the amount of chill needed to grow Kerman variety of Pistachios (`r chill_min`) was:
+
+```{r percnt_reached_all_tbl, cache = TRUE}
+pt1_baseline_prct_reached_min %>% 
+  bind_rows(pt1_10yrs_prct_reached_min)
+```
+
+We also computed the 'safe-chill' portion for each of the time periods. This is the amount of chill one can expect to reach 90% of the time:
+
+```{r histos_repeated, cache = TRUE}
+safe_chill_baseline_tbl %>% bind_rows(safe_chill_tbl)
+
+baseline_histo
+projected_histo
+```
+
+## Interpretation
+
+This example was primarily an exercise on how to write code, and should be taken with a grain of salt. However the results we came up with suggest that this location may continue to be viable for the Kerman variety of Pistachios in 2080-2090 under emission scenario 4.5, but may not produce enough winter chill portions consistently enough to be economically viable under RCP 8.5. 
+
+This analysis was based on the assumption that all 10 GCMs recommended for California under the 4th Climate Change Assessment are equally likely. We also interpolated hourly temperatures based on a generic statistical model that was not specific to this location. We could improve this analysis by:
+
+1. Selecting GCMs that are best suited for California's San Joaquin Valley  
+1. Reviewing the latest literature to assess whether emission scenario 4.5 or 8.5 seems more likely
+1. Waiting for CMIP6 projected climate data which will include sub-daily temperature values (e.g., every 2 hours)
+
 # Questions and Next Steps
 
 Is this a good way to combine / average results from multiple models, multiple years?
 
-Need to show historical chill curves (actual or modelled?) for reference.
+Should we use actual or modelled data for the historical baseline?
 
-Would it be useful to also compute chill hours? Other agroclimatic metrics?
+Would it be useful to also compute **chill hours**? Other agroclimatic metrics?
 
 Do you always start computing chill portions on Sept 1? Should this be a variable?
 
 Add caveats about not looking at a single model, single-year.
 
 Turn this into a Shiny app with selectable start date and required number of chill portions. 
+
 
