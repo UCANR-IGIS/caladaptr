@@ -68,8 +68,6 @@ pre {
 }
 ```
 
-<script type="text/javascript">w3c_slidy.mouse_click_enabled = false;</script>
-
 ```{r color, echo = FALSE, results='asis'}
 # crayon needs to be explicitly activated in Rmd
 options(crayon.enabled = TRUE)

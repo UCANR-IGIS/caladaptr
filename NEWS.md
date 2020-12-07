@@ -1,3 +1,7 @@
+# caladaptr 0.4.4 (2020-12-07)
+
+* `ca_example_apireq()`: updated example #1
+
 # caladaptr 0.4.3 (2020-12-06)
 
 * `ca_getvals_tbl()`, `ca_getvals_db()` and `ca_apicalls()`: removed format=json parameter in favor of accept_json()

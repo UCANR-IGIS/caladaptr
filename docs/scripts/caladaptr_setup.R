@@ -1,20 +1,42 @@
-# install.packages("easypackages")
-#
-# library(easypackages)
-#
-# # install.packages("pacman")
-# # library(pacman)
+######################################################################
+## caladaptR Workshop Setup
+##
+## Please run the following lines of code *before* the workshop starts
+## to install all the packages that we'll be using during the workshop.
+##
+## If you have any difficulties please email the instructor.
+##
+## For more info about caladaptr, visit:
+## https://ucanr-igis.github.io/caladaptr/
+######################################################################
 
+## Define the required packages
 req_pkg <- c("assertthat", "backports", "chillR", "conflicted","crayon", "curl", "DBI",
              "dbplyr", "digest", "dplyr", "fastmatch", "ggplot2", "httr", "lubridate",
-             "magrittr", "purrr", "remotes", "RSQLite", "sf", "stars", "stringr",
+             "magrittr", "purrr", "remotes", "rmarkdown", "RSQLite", "sf", "stars", "stringr",
              "tibble", "tidyr", "tmap", "units")
 
+## Install any missing packages
 install.packages(setdiff(req_pkg, rownames(installed.packages())))
 
+## Install caladaptr
+remotes::install_github("ucanr-igis/caladaptr")
 
-# p_install(req_pkg, character.only = TRUE, force = FALSE)
-#
-# p_install(tibble, tidyr, tmap, units, force = FALSE)
-#
-# packages()
+## Load it
+library(caladaptr)
+
+## See if it works!
+
+library(ggplot2); library(units)
+
+ca_example_apireq(1) %>%
+  ca_getvals_tbl() %>%
+  mutate(temp_f = set_units(val, degF)) %>%
+  ggplot(aes(x = as.Date(dt), y = as.numeric(temp_f))) +
+  geom_line(aes(color=gcm)) +
+  labs(title = "Annual Max Temp for Sacramento", x = "year", y = "temp (F)")
+
+## Done!
+
+
+

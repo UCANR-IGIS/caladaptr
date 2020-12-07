@@ -22,7 +22,7 @@ ca_example_apireq <- function(n) {
   if (n == 1) {
     ## Basic API request - one point, two CGMs, 20 years of annual data
     ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%
-      ca_gcm(gcms[1:2]) %>%
+      ca_gcm(gcms[1:4]) %>%
       ca_scenario(scenarios[1]) %>%
       ca_period("year") %>%
       ca_years(start = 2040, end = 2060) %>%

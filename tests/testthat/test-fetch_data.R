@@ -13,8 +13,8 @@ with_mock_api({
     pt1_cap <- ca_example_apireq(1)
     pt1_vals <- pt1_cap %>% ca_getvals_tbl()
 
-    expect_equal(nrow(pt1_vals), 42)
-    expect_equal(sum(as.numeric(pt1_vals$val)), 12551.93988, tolerance = .001)
+    expect_equal(nrow(pt1_vals), 84)
+    expect_equal(sum(as.numeric(pt1_vals$val)), 25110.4350, tolerance = .001)
     expect_s3_class(pt1_vals$val, "units")
   })
 

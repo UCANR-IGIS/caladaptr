@@ -144,7 +144,7 @@ ggplot(data = sac_tasmax_tbl2,
        aes(x = as.Date(dt), y = as.numeric(temp_f))) +
   geom_line(aes(color=gcm)) +
   facet_grid(scenario ~ .) +
-  labs(title = "Annual Maximum Temperature for Sacamento", x = "year", y = "temp (F)")
+  labs(title = "Annual Maximum Temperature for Sacramento", x = "year", y = "temp (F)")
 ```
 
 5) To query a raster series which isn't one of the CMIP5 climate projections from Scripps, you have to specify the raster series "slug" (which is like an id key). 
