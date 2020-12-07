@@ -10,22 +10,32 @@
 ## https://ucanr-igis.github.io/caladaptr/
 ######################################################################
 
-## Define the required packages
+## Define the required packages (these are all on CRAN)
+
 req_pkg <- c("assertthat", "backports", "chillR", "conflicted","crayon", "curl", "DBI",
              "dbplyr", "digest", "dplyr", "fastmatch", "ggplot2", "httr", "lubridate",
              "magrittr", "purrr", "remotes", "rmarkdown", "RSQLite", "sf", "stars", "stringr",
              "tibble", "tidyr", "tmap", "units")
 
-## Install any missing packages
-install.packages(setdiff(req_pkg, rownames(installed.packages())))
+## Install *all* required packages (recommended if you haven't updated packages in a while)
+
+install.packages(req_pkg, dependencies = TRUE)
+
+## OR uncomment the next line to just install missing packages:
+# install.packages(setdiff(req_pkg, rownames(installed.packages())), dependencies = TRUE)
 
 ## Install caladaptr
+## (If it asks you whether you want to update a zillion packages, you can generally skip these
+## unless its one of the above.)
+
 remotes::install_github("ucanr-igis/caladaptr")
 
 ## Load it
+
 library(caladaptr)
 
 ## See if it works
+
 library(ggplot2); library(units); library(dplyr)
 
 ca_example_apireq(1) %>%
@@ -36,6 +46,4 @@ ca_example_apireq(1) %>%
   labs(title = "Annual Max Temp for Sacramento", x = "year", y = "temp (F)")
 
 ## See a plot? Done!
-
-
 
