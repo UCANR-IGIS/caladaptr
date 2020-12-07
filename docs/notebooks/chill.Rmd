@@ -90,7 +90,7 @@ Install `caladaptr` from GitHub (if needed):
 
 ```{r}
 ## Uncomment and run the following line if you don't have the latest version of caladaptr
-# devtools::install_github("ucanr-igis/caladaptr")
+## devtools::install_github("ucanr-igis/caladaptr")
 ```
 
 Load all the libraries we'll be using below:

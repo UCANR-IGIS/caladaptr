@@ -2,16 +2,17 @@
 #'
 #' @param x Cal-Adapt API request
 #' @param ... Unused
-#' @importFrom crayon yellow bold cyan
+#' @import crayon
 #' @importFrom sf st_geometry_type
 #' @export
 #' @method format ca_apireq
 
 format.ca_apireq <- function(x, ...) {
 
-  colorme <- cyan
+  accent1 <- getOption("ca_accent1", paste0)
+  accent2 <- getOption("ca_accent2", paste0)
 
-  loc1 <- colorme("Location(s): ")
+  loc1 <- accent2("Location(s): ")
 
   if (identical(x$loc, NA)) {
     loc2 <- "NA"
@@ -65,22 +66,22 @@ format.ca_apireq <- function(x, ...) {
   }
   loc_str <- paste0(loc1, loc2, "\n")
 
-  vars_str <- paste0(colorme("Variable(s): "), paste(x$cvar, collapse = ", "), "\n")
+  vars_str <- paste0(accent2("Variable(s): "), paste(x$cvar, collapse = ", "), "\n")
 
-  gcm_str <- paste0(colorme("GCM(s): "), paste(x$gcm, collapse = ", "), "\n")
+  gcm_str <- paste0(accent2("GCM(s): "), paste(x$gcm, collapse = ", "), "\n")
 
-  scen_str <- paste0(colorme("Scenario(s): "), paste(x$scenario, collapse = ", "), "\n")
+  scen_str <- paste0(accent2("Scenario(s): "), paste(x$scenario, collapse = ", "), "\n")
 
-  per_str <- paste0(colorme("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
+  per_str <- paste0(accent2("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
 
-  slug_str <- paste0(colorme("Slug(s): "), paste(x$slug, collapse = ", "), "\n")
+  slug_str <- paste0(accent2("Slug(s): "), paste(x$slug, collapse = ", "), "\n")
 
   if (identical(x$dates, NA)) {
     dates_val <- "NA"
   } else {
     dates_val <- paste(x$dates$start, "to", x$dates$end)
   }
-  dates_str <- paste0(colorme("Dates: "), dates_val, "\n")
+  dates_str <- paste0(accent2("Dates: "), dates_val, "\n")
 
   if (identical(x$options, NA)) {
     opt_obj <- "NA"
@@ -88,7 +89,7 @@ format.ca_apireq <- function(x, ...) {
     opt_obj <- paste0("\n  spatial ag: ", paste(x$options$spatial_ag, collapse = ", "),
                       "\n  temporal ag (add'l): ", x$options$temporal_ag)
   }
-  options_str <- paste0(colorme("Options: "), opt_obj, "\n")
+  options_str <- paste0(accent2("Options: "), opt_obj, "\n")
 
   invisible(paste0(loc_str, vars_str, per_str, gcm_str, scen_str, slug_str, dates_str, options_str))
 
@@ -98,13 +99,13 @@ format.ca_apireq <- function(x, ...) {
 #'
 #' @param x Cal-Adapt API request
 #' @param ... Unused
-#' @importFrom crayon yellow bold cyan
+#' @import crayon
 #' @method print ca_apireq
 #' @export
 
 print.ca_apireq <- function(x, ...) {
-  colorme <- cyan
-  cat(colorme$bold("Cal-Adapt API Request\n"))
+  accent1 <- getOption("ca_accent1", paste0)
+  cat(accent1("Cal-Adapt API Request\n"))
   cat(format(x), "\n")
 }
 
@@ -112,17 +113,19 @@ print.ca_apireq <- function(x, ...) {
 #'
 #' @param x Cal-Adapt API request
 #' @param basemap The name of a basemap tile layer (see tm_basemap)
+#' @param locagrid Overlay a portion of the LOCA downscaled grid
 #' @param static Plot a static map instead of a interactive leaflet map
 #' @param ... Unused
-#' @importFrom crayon yellow bold
-#' @importFrom tmap tm_shape tm_polygons tm_symbols tm_basemap tm_view
-#' @importFrom sf st_as_sf st_read st_geometry st_geometry_type
+#' @import crayon
+#' @importFrom tmap tm_shape tm_polygons tm_symbols tm_basemap tm_view tm_borders
+#' @importFrom sf st_as_sf st_read st_geometry st_geometry_type st_transform st_buffer st_as_sfc st_bbox
 #' @importFrom dplyr slice filter select
 #' @method plot ca_apireq
 #' @export
 
 plot.ca_apireq <- function(x,
                            basemap = c("Esri.NatGeoWorldMap", "OpenStreetMap")[1],
+                           locagrid = FALSE,
                            static = FALSE, ...) {
 
   if (static) {
@@ -131,21 +134,34 @@ plot.ca_apireq <- function(x,
     options(tmap.mode = "view")
   }
 
+  if (locagrid) locagrid_sf <- ca_locagrid_geom(quiet = TRUE) %>% st_transform(3857)
+
   if (x$loc$type == "pt") {
 
     # When type = "pt", val = a 3-column data frame with columns id, x, y
-    pts_sf <- st_as_sf(x$loc$val, coords = c("x", "y"), crs = 4326)
+    pts_sf <- st_as_sf(x$loc$val, coords = c("x", "y"), crs = 4326) %>%
+      st_transform(3857)
 
-    tm_shape(pts_sf) +
+    api_map <- tm_shape(pts_sf) +
       tm_basemap(basemap) +
       tm_symbols(col = "red", alpha = 0.8, size = 0.2) +
       tm_view(symbol.size.fixed = TRUE)
+
+    if (locagrid) {
+      ## Get the bounding box of the features, buffer by 10km
+      bbox_sf <- st_as_sfc(st_bbox(pts_sf)) %>% st_buffer(dist = 15000)
+      api_map <- api_map +
+        tm_shape(locagrid_sf[bbox_sf, ]) +
+        tm_borders(col="dimgray")
+    }
+
+    api_map
 
   } else if (x$loc$type == "aoipreset") {
 
     ## Get the vector layer
     preset_name <- x$loc$val$type
-    polyall_sf <- ca_aoipreset_geom(preset_name, quiet = TRUE)
+    polyall_sf <- ca_aoipreset_geom(preset_name, quiet = TRUE) %>% st_transform(3857)
 
     if (is.null(x$loc$val$idval)) {
       polyuse_sf <- polyall_sf
@@ -164,35 +180,57 @@ plot.ca_apireq <- function(x,
       }
     }
 
-    ## Generate the plot
+    ## Generate the plot if a feature was found
     if (!is.null(polyuse_sf)) {
-      tm_shape(polyuse_sf) +
+
+      api_map <- tm_shape(polyuse_sf) +
         tm_basemap(basemap) +
         tm_polygons(col = "red", alpha = 0.2)
+
+      if (locagrid) {
+        ## Get the bounding box of the features, buffer by 10km
+        bbox_sf <- st_as_sfc(st_bbox(polyuse_sf)) %>% st_buffer(dist = 10000)
+        api_map <- api_map +
+          tm_shape(locagrid_sf[bbox_sf, ]) +
+          tm_borders(col="dimgray")
+      }
+
+      api_map
+
     }
 
 
   } else if (x$loc$type == "sf") {
 
-    if (unique(as.character(st_geometry_type(x$loc$val$loc))) %in% c("POLYGON", "MULTIPOLYGON")) {
+    loc_webmerc <- x$loc$val$loc %>% st_transform(3857)
 
-      tm_shape(x$loc$val$loc) +
+    if (unique(as.character(st_geometry_type(loc_webmerc))) %in% c("POLYGON", "MULTIPOLYGON")) {
+
+      api_map <- tm_shape(loc_webmerc) +
         tm_basemap(basemap) +
         tm_polygons(col = "red", alpha = 0.2)
 
-    } else {
-
-      tm_shape(pts_sf) +
+    } else {   ## point layer
+      api_map <- tm_shape(loc_webmerc) +
         tm_basemap(basemap) +
         tm_symbols(col = "red", alpha = 0.8, size = 0.2) +
         tm_view(symbol.size.fixed = TRUE)
-
     }
 
 
+    if (locagrid) {
+      ## Add the locagrid to the map
+      bbox_sf <- st_as_sfc(st_bbox(loc_webmerc)) %>% st_buffer(dist = 10000)
+      api_map <- api_map +
+        tm_shape(locagrid_sf[bbox_sf, ]) +
+        tm_borders(col="dimgray")
+    }
+
+    api_map
 
   } else if (x$loc$type == "zip") {
-    message(yellow("Sorry, plotting this location type is not yet supported"))
+    msg <- getOption("ca_message", paste0)
+    message(msg("Sorry, plotting this location type is not yet supported"))
 
   }
 

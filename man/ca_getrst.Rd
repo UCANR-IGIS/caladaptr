@@ -4,13 +4,16 @@
 \alias{ca_getrst}
 \title{Get raster from an API request object}
 \usage{
-ca_getrst(x, quiet = TRUE)
+ca_getrst(slug, quiet = TRUE)
 }
 \arguments{
-\item{x}{A Cal-Adapt API request}
+\item{slug}{A Cal-Adapt API slug}
 
 \item{quiet}{Suppress messages}
 }
 \description{
 Get raster from an API request object
+}
+\seealso{
+\code{\link{ca_catalog_rs}}
 }

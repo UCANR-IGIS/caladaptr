@@ -1,5 +1,5 @@
 ---
-title: "Intro and Examples"
+title: "Introduction"
 output:
   html_notebook:
     df_print: paged
@@ -166,7 +166,7 @@ cap1_rcp45_tbl
 Plot these with ggplot:
 
 ```{r ggplot_cap1, cache = TRUE}
-ggplot(data = cap1_rcp45_tbl, aes(x = dt, y = as.numeric(temp_f), group = gcm)) +
+ggplot(data = cap1_rcp45_tbl, aes(x = as.Date(dt), y = as.numeric(temp_f), group = gcm)) +
   geom_line(aes(color=gcm)) +
   labs(title = "Average Annual Maximum Temperature for RCP4.5", x = "year", y = "temp (F)")
 ```
@@ -261,7 +261,7 @@ head(rcp85_minus_rcp45_tbl)
 Now we're ready to make the plot:
 
 ```{r cap2_ggplot, cache = TRUE}
-ggplot(data = rcp85_minus_rcp45_tbl, aes(x = dt, y = as.numeric(rcp85 - rcp45), group = gcm)) +
+ggplot(data = rcp85_minus_rcp45_tbl, aes(x = as.Date(dt), y = as.numeric(rcp85 - rcp45), group = gcm)) +
   geom_line(aes(color=gcm)) +
   labs(title = "Difference between RCP8.5 and RCP4.5 in the Maximum Annual Minimum \nTemperature for Kings County", x = "year", y = "temp (F)")
 ```
@@ -272,7 +272,7 @@ ggplot(data = rcp85_minus_rcp45_tbl, aes(x = dt, y = as.numeric(rcp85 - rcp45), 
 
 ## 1\. Find the GEOID of a Census Tract in Kings County
 
-Census tracts have 10-digit GEOID numbers rather than 6-digit FIPS codes [more info](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html){target="_blank" rel="noopener"}. To find the GEOID for a census tract in Kings County, we could:
+Census tracts have 10-digit GEOID numbers rather than 6-digit FIPS codes ([more info](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html){target="_blank" rel="noopener"}). To find the GEOID for a census tract in Kings County, we could:
 
 1) Ask Google.  
 2) Plot all the census tracts (as we did above with counties), and click on the one we're interested in.  
@@ -310,7 +310,6 @@ cap3 <- ca_loc_aoipreset(type="censustracts", idfld = "tract", idval = 603100170
   ca_options(spatial_ag = "max")
 
 cap3
-
 ```
 
 ```{r}

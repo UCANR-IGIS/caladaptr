@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
-Title: Import Climate Data from Cal-Adapt through the API
-Version: 0.4.2
-Date: 2020-11-18
+Title: Import Climate Data from Cal-Adapt via the API
+Version: 0.4.3
+Date: 2020-12-06
 Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
 URL: https://ucanr-igis.github.io/caladaptr
@@ -22,19 +22,24 @@ Imports:
     magrittr,
     crayon,
     digest,
-    jsonlite,
-    rappdirs, 
     utils,
     tmap,
     curl,
     RSQLite,
     DBI,
     dbplyr,
-    fastmatch
+    fastmatch,
+    backports,
+    stars
 RoxygenNote: 7.1.1
 Suggests: 
-    testthat,
+    chillR,
+    lubridate,
     DiagrammeR,
-    chillR
+    httptest,
+    testthat,
+    knitr,
+    roxygen2
 Depends: 
     R (>= 3.0)
+VignetteBuilder: knitr

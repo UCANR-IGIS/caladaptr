@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -95,6 +95,18 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -110,7 +122,7 @@
       <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
     </li>
     <li>
-      <a href="../notebooks/chill.nb.html">Compute Chill Portions</a>
+      <a href="../notebooks/chill.nb.html">Compute Chill</a>
     </li>
   </ul>
 </li>
@@ -242,12 +254,18 @@
           <p><code><a href="ca_apireq.html">ca_apireq()</a></code> </p>
         </td>
         <td><p>Creates a new API request object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_example_apireq.html">ca_example_apireq()</a></code> </p>
+        </td>
+        <td><p>Example API requests</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
           <h2 id="section-fetching-data" class="hasAnchor"><a href="#section-fetching-data" class="anchor"></a>Fetching Data</h2>
-          <p class="section-desc"><p>Functions that fetch data from the Cal-Adapt server and reformat the results</p></p>
+          <p class="section-desc"><p>Functions that fetch data from the Cal-Adapt server</p></p>
         </th>
       </tr>
       
@@ -270,15 +288,40 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="ca_getrst.html">ca_getrst()</a></code> </p>
+          <p><code><a href="ca_getrst_stars.html">ca_getrst_stars()</a></code> </p>
         </td>
-        <td><p>Get raster from an API request object</p></td>
+        <td><p>Get values from an API request object as a tibble</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="ca_apicalls.html">ca_apicalls()</a></code> </p>
         </td>
         <td><p>Creates a tibble of individual API calls</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_baseurl.html">ca_baseurl</a></code> </p>
+        </td>
+        <td><p>Cal-Adapt Base URL</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-managing-sqlite-databases" class="hasAnchor"><a href="#section-managing-sqlite-databases" class="anchor"></a>Managing SQLite databases</h2>
+          <p class="section-desc"><p>Working with local SQLite databases</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="ca_db_info.html">ca_db_info()</a></code> </p>
+        </td>
+        <td><p>Check the properties of a Cal-Adapt values databases</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -352,7 +395,7 @@
       <tr>
         <th colspan="2">
           <h2 id="section-helper-functions" class="hasAnchor"><a href="#section-helper-functions" class="anchor"></a>Helper Functions</h2>
-          <p class="section-desc"><p>Constants to help you specify a preset area-of-interest when constructing an API Request object, and get the geometry</p></p>
+          <p class="section-desc"><p>Helper functions</p></p>
         </th>
       </tr>
       
@@ -363,9 +406,9 @@
       <tr>
         
         <td>
-          <p><code><a href="ca_baseurl.html">ca_baseurl</a></code> </p>
+          <p><code><a href="ca_locagrid_geom.html">ca_locagrid_geom()</a></code> </p>
         </td>
-        <td><p>Cal-Adapt Base URL</p></td>
+        <td><p>Get the geometry of the LOCA data set vector grid.</p></td>
       </tr>
     </tbody><tbody>
       <tr>

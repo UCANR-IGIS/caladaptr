@@ -18,9 +18,10 @@
 #'
 #' @importFrom sf st_read
 #' @importFrom utils download.file unzip
+#' @importFrom curl has_internet
 #' @export
 
-ca_aoipreset_geom <- function(aoipreset, quiet = TRUE) {
+ca_aoipreset_geom <- function(aoipreset, quiet = FALSE) {
 
   ## Consider adding an argument to download in temp space (or a user defined directory),
   ## for people who can't or don't want to use a cache dir
@@ -39,12 +40,23 @@ ca_aoipreset_geom <- function(aoipreset, quiet = TRUE) {
   gpkg_fn <- file.path(cache_dir, paste0(aoipreset, ".gpkg"))
 
   if (!file.exists(gpkg_fn)) {
+    if (!has_internet()) stop("No internet connection")
+    if (!quiet) {
+      msg <- getOption("ca_message", paste0)
+      message(msg(paste0("Downloading ", aoipreset, ".zip from GitHub")))
+    }
     ## Try to download it
-    gpkg_url <- paste0("https://github.com/ucanr-igis/caladaptr/raw/master/aoipreset_geoms/", aoipreset, ".zip")
+    gpkg_url <- paste0("https://github.com/ucanr-igis/caladaptr/raw/master/geoms/", aoipreset, ".zip")
     tmp_zipfn <- tempfile(aoipreset, fileext = ".zip")
-    download_success <- download.file(url = gpkg_url, destfile = tmp_zipfn)
+    download_success <- download.file(url = gpkg_url, destfile = tmp_zipfn, quiet = quiet)
     if (download_success == 0) {
       unzip(tmp_zipfn, exdir = cache_dir)
+      unlink(tmp_zipfn)
+      if (!quiet) {
+        success <- getOption("ca_success", paste0)
+        message(success("Done"))
+      }
+
     }
   }
 

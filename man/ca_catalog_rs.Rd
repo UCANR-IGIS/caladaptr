@@ -4,28 +4,21 @@
 \alias{ca_catalog_rs}
 \title{Get the Cal-Adapt raster series data catalog}
 \usage{
-ca_catalog_rs(download = FALSE, cache = download, quiet = FALSE)
+ca_catalog_rs(quiet = FALSE)
 }
 \arguments{
-\item{download}{Download a new copy of the catalog from Cal-Adapt.org}
-
-\item{cache}{Use a local copy}
-
 \item{quiet}{Suppress messages}
 }
 \value{
-A data frame (tibble) with columns of information about the raster series available through
-the Cal-Adapt API.
+A tibble with columns of information about the raster series available through the Cal-Adapt API.
 }
 \description{
-Get the Cal-Adapt raster series data catalog
+Get a local copy of the Cal-Adapt raster series data catalog
 }
 \details{
-This retrieves a 'catalog' of the raster series available through the Cal-Adapt API.
-Normally, you can use the copy which comes with caladaptr, but to force download a new copy,
-use \code{download = TRUE}. This is only needed when new
-datasets are added to the API (subscribe to the Cal-Adapt news letter for notifications).
+This retrieves a local copy of the Cal-Adapt 'catalog' of raster series available through the Cal-Adapt API.
+A copy of the catalog comes with caladaptR. You can also fetch a new copy using \link{ca_catalog_fetch}.
 }
 \seealso{
-\code{\link{ca_getcache}}
+\code{\link{ca_catalog_fetch}}, \code{\link{ca_getcache}}
 }

@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Import Climate Data from Cal-Adapt through the API • caladaptr</title>
+<title>Import Climate Data from Cal-Adapt via the API • caladaptr</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Import Climate Data from Cal-Adapt through the API">
+<script src="pkgdown.js"></script><meta property="og:title" content="Import Climate Data from Cal-Adapt via the API">
 <meta property="og:description" content="Base functions for importing climate data using the 
     Cal-Adapt API.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -52,6 +52,18 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/big-query.html">Querying Large Amounts of Data</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -67,7 +79,7 @@
       <a href="notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
     </li>
     <li>
-      <a href="notebooks/chill.nb.html">Compute Chill Portions</a>
+      <a href="notebooks/chill.nb.html">Compute Chill</a>
     </li>
   </ul>
 </li>
@@ -111,27 +123,44 @@
 <!-- badges: start -->
 
 <p>See also: <a href="https://ucanr-igis.github.io/caladaptr/" class="uri">https://ucanr-igis.github.io/caladaptr/</a></p>
-<p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/">Cal-Adapt.org</a> in R. The role of <code>caladaptr</code> is to bring data into R and provide low-level functions to get it into the shape and format you require:</p>
+<p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/">Cal-Adapt.org</a> in R. The niche of <code>caladaptr</code> is to bring data into R after which you can other packages to visualize and analyze:</p>
 <p align="center">
 </p>
-<p><img src="reference/figures/caladaptr_workflow_630x524x256.png" width="504" height="419"></p>
+<p><img src="reference/figures/caladaptr_role_460x340x256.png" width="460" height="340"></p>
 
+<p><code>caladaptr</code> functions have been designed to:</p>
+<ul>
+<li>be pipe friendly</li>
+<li>queries return tibbles for compatibility with tidyverse packages</li>
+<li>query values are endowed with units (managed by the <a href="https://cran.r-project.org/package=units">units</a>) package)</li>
+<li>spatial objects are received and returned as <code>sf</code> data frames</li>
+<li>rasters are returned as <a href="https://r-spatial.github.io/stars/"><code>stars</code></a> rasters for user-friendly space time manipulation</li>
+</ul>
+<div id="development-status" class="section level2">
+<h2 class="hasAnchor">
+<a href="#development-status" class="anchor"></a>Development Status</h2>
+<ul>
+<li>query <em>any</em> of Cal-Adapt’s ~850 raster data layers ✔ ✓ ✓<br>
+</li>
+<li>retrieve values by point, one of the preset areas-of-interest (e.g., census tract), or a user-provided polygon ✔<br>
+</li>
+<li>cache large queries in a local SQLite database ✔<br>
+</li>
+<li>download cropped rasters by a preset area-of-interest ✔<br>
+</li>
+<li>download cropped rasters by a user-supplied polygon - <em>coming soon</em><br>
+</li>
+<li>download full rasters - <em>not currently planned</em><br>
+</li>
+<li>import station data (e.g., sea level rise) - <em>not currently planned</em>
+</li>
+</ul>
 <p><strong>‘Beta’</strong> status means:</p>
 <p>1) the package is still under development<br>
 2) the package is being updated fairly often<br>
 3) there’s a possibility that updates will <em>not</em> be backward compatible<br>
 4) user feedback and input is extremely welcome! (please join the <a href="#caladaptr-betar-club">caladaptR betaR</a> club)</p>
-<p><em>Development Status (Aug 2020)</em></p>
-<ul>
-<li>
-<code>caladaptr</code> only supports Cal-Adapt’s raster data layers (which is most of them). There are no plans at present to support importing station data (i.e., sea level rise).<br>
-</li>
-<li>Currently only temperature and precipitation rasters can be queried (both projected and historic modeled). Variables from the VIC datasets and others will be coming soon.<br>
-</li>
-<li>Retrieving values currently works. Retrieving rasters is not yet supported.<br>
-</li>
-<li>Currently you can query point locations and preset areas of interest. Querying a user-provided polygon will be coming soon.</li>
-</ul>
+</div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -146,101 +175,177 @@
 <a href="#general-workflow" class="anchor"></a>General Workflow</h2>
 <p>In general, there are three steps to getting data via the Cal-Adapt API:</p>
 <p>1) Create a ‘Cal-Adapt API Request’ object</p>
-<p>2) Feed the API Request object into a function that fetches data (either values or rasters*)</p>
-<p>3) Massage the data that comes back into the format you require (e.g., a data frame or clipped raster)</p>
+<p>2) Feed the API Request object into a function that fetches data (either values or clipped rasters)</p>
+<p>3) Wrangle the data that comes back into the format you require</p>
 </div>
-<div id="sample-usage-get-annual-projected-temperature-at-a-point-location" class="section level2">
+<div id="example-get-annual-projected-temperature-at-a-point-location" class="section level2">
 <h2 class="hasAnchor">
-<a href="#sample-usage-get-annual-projected-temperature-at-a-point-location" class="anchor"></a>Sample Usage: Get Annual Projected Temperature at a Point Location</h2>
+<a href="#example-get-annual-projected-temperature-at-a-point-location" class="anchor"></a>Example: Get Annual Projected Temperature at a Point Location</h2>
 <p>1) Load the package:</p>
 <!-- end list -->
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span>)
-<span class="co">#&gt; Cal-Adapt R (version 0.2.9)</span>
-<span class="co">#&gt; URL: https://github.com/ucanr-igis/caladaptr</span>
-<span class="co">#&gt; Bug reports: caladaptr@gmail.com</span>
+<span class="co">#&gt; caladaptr (version 0.4.3)</span>
+<span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
+<span class="co">#&gt; Bug reports: https://github.com/ucanr-igis/caladaptr/issues</span>
 </pre></div>
-<p>2) Next, create an <strong>API request object</strong> for a point location. This doesn’t actually fetch any data, it puts together the pieces pieces of an API request. There are a number of ‘<em>constructor</em>’ functions you can mix and match to create an API request object, for example:</p>
-<!-- end list -->
+<p>2) Create an <strong>API request object</strong> for a point location. Creating an API request object like filling in an order form. The request is essentially a description of the data you want, but by itself doesn’t fetch any data.</p>
+<p>To get data from one of the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections from Scripps</a>, there are a number of ‘<em>constructor</em>’ functions you can mix and match to create an API request object. Here we’ll grab 30 years of projected annual maximum temperature for a point location:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">cap1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span>(coords = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span>)) <span class="op">%&gt;%</span>  <span class="co">## specify a location</span>
-  <span class="fu"><a href="reference/ca_gcm.html">ca_gcm</a></span>(<span class="kw">gcms</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]) <span class="op">%&gt;%</span>                                <span class="co">## select GCM(s)</span>
-  <span class="fu"><a href="reference/ca_scenario.html">ca_scenario</a></span>(<span class="kw">scenarios</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>]) <span class="op">%&gt;%</span>                      <span class="co">## select emission scenarios(s)</span>
-  <span class="fu"><a href="reference/ca_period.html">ca_period</a></span>(<span class="st">"year"</span>) <span class="op">%&gt;%</span>                                <span class="co">## select a precooked temporal aggregation period</span>
-  <span class="fu"><a href="reference/ca_years.html">ca_years</a></span>(start = <span class="fl">2040</span>, end = <span class="fl">2060</span>) <span class="op">%&gt;%</span>               <span class="co">## select start and end dates</span>
-  <span class="fu"><a href="reference/ca_cvar.html">ca_cvar</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tasmax"</span>, <span class="st">"tasmin"</span>))                       <span class="co">## select climate variables</span>
+<span class="kw">sac_tasmax_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span>(coords = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span>)) <span class="op">%&gt;%</span>     <span class="co">## specify a location</span>
+  <span class="fu"><a href="reference/ca_gcm.html">ca_gcm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"HadGEM2-ES"</span>, <span class="st">"CNRM-CM5"</span>, <span class="st">"CanESM2"</span>,<span class="st">"MIROC5"</span>,            <span class="co">## select GCM(s)</span>
+           <span class="st">"ACCESS1-0"</span>, <span class="st">"CCSM4"</span>, <span class="st">"CESM1-BGC"</span>, 
+           <span class="st">"CMCC-CMS"</span>, <span class="st">"GFDL-CM3"</span>, <span class="st">"HadGEM2-CC"</span>)) <span class="op">%&gt;%</span>     
+  <span class="fu"><a href="reference/ca_scenario.html">ca_scenario</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"rcp45"</span>,<span class="st">"rcp85"</span>)) <span class="op">%&gt;%</span>                               <span class="co">## select emission scenarios(s)</span>
+  <span class="fu"><a href="reference/ca_cvar.html">ca_cvar</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tasmax"</span>)) <span class="op">%&gt;%</span>                                          <span class="co">## select climate variables</span>
+  <span class="fu"><a href="reference/ca_period.html">ca_period</a></span>(<span class="st">"year"</span>) <span class="op">%&gt;%</span>                                             <span class="co">## select a temporal aggregation period</span>
+  <span class="fu"><a href="reference/ca_years.html">ca_years</a></span>(start = <span class="fl">2040</span>, end = <span class="fl">2070</span>)                                <span class="co">## select start and end dates</span>
 
-<span class="kw">cap1</span>
+<span class="kw">sac_tasmax_cap</span>
 <span class="co">#&gt; Cal-Adapt API Request</span>
 <span class="co">#&gt; Location(s): </span>
 <span class="co">#&gt;   x: -121.469</span>
 <span class="co">#&gt;   y: 38.594</span>
-<span class="co">#&gt; Variable(s): tasmax, tasmin</span>
+<span class="co">#&gt; Variable(s): tasmax</span>
 <span class="co">#&gt; Temporal aggregration period(s): year</span>
-<span class="co">#&gt; GCM(s): HadGEM2-ES, CNRM-CM5, CanESM2, MIROC5</span>
+<span class="co">#&gt; GCM(s): HadGEM2-ES, CNRM-CM5, CanESM2, MIROC5, ACCESS1-0, CCSM4, CESM1-BGC, CMCC-CMS, GFDL-CM3, HadGEM2-CC</span>
 <span class="co">#&gt; Scenario(s): rcp45, rcp85</span>
-<span class="co">#&gt; Dates: 2040-01-01 to 2060-01-01</span>
+<span class="co">#&gt; Slug(s): NA</span>
+<span class="co">#&gt; Dates: 2040-01-01 to 2070-12-31</span>
 <span class="co">#&gt; Options: NA</span>
+<span class="co">#&gt; </span>
 </pre></div>
 <p>To help you pass arguments for the various constructor functions, <code>caladpatr</code> provides the following constants:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">climvars</span>
+<span class="co">## Climate Variables </span>
+<span class="kw">cvars</span>
 <span class="co">#&gt; [1] "tasmax" "tasmin" "pr"     "swe"</span>
 
+<span class="co">## Global Climate Models</span>
+<span class="co">## Note: the first 4 are the 'priority' models recommended under California's 4th Climate Change Assessment.</span>
 <span class="kw">gcms</span>
 <span class="co">#&gt;  [1] "HadGEM2-ES" "CNRM-CM5"   "CanESM2"    "MIROC5"     "ACCESS1-0" </span>
 <span class="co">#&gt;  [6] "CCSM4"      "CESM1-BGC"  "CMCC-CMS"   "GFDL-CM3"   "HadGEM2-CC"</span>
 <span class="co">#&gt; [11] "ens32avg"   "ens32max"   "ens32min"</span>
 
-<span class="co">## Note the first four GCMs are the 'priority' models recommended under </span>
-<span class="co">## California's 4th Climate Change Assessment.</span>
-
+<span class="co">## Emission scenarios</span>
 <span class="kw">scenarios</span>
 <span class="co">#&gt; [1] "rcp45"      "rcp85"      "historical"</span>
 
+<span class="co">## Temporal resolution periods</span>
 <span class="kw">periods</span>
 <span class="co">#&gt; [1] "day"    "month"  "year"   "30yavg"</span>
 </pre></div>
-<p><strong>Note</strong>: Cal-Adapt has data for many but by no means all permutations of the above constants.</p>
-<p>3) Next, feed your API call into a function that <strong>fetches data</strong>, such as <code>ca_getvals()</code>.</p>
+<p>3) Feed your API call into a function that <strong>fetches data</strong>, such as <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>.</p>
 <!-- end list -->
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">cap1_vals_df</span> <span class="op">&lt;-</span> <span class="fu">ca_getvals</span>(<span class="kw">cap1</span>, quiet = <span class="fl">TRUE</span>) <span class="op">%&gt;%</span> <span class="fu">ca_vals2tbl</span>()
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="kw">cap1_vals_df</span>)
-<span class="co">#&gt; [1] 336   7</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">cap1_vals_df</span>)
-<span class="co">#&gt; # A tibble: 6 x 7</span>
-<span class="co">#&gt;   feat_id cvar   period gcm        scenario dt              val</span>
-<span class="co">#&gt;   &lt;fct&gt;   &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;      &lt;fct&gt;    &lt;chr&gt;           [K]</span>
-<span class="co">#&gt; 1 1       tasmax year   HadGEM2-ES rcp45    2040-01-01 298.7698</span>
-<span class="co">#&gt; 2 1       tasmax year   HadGEM2-ES rcp45    2041-01-01 298.7150</span>
-<span class="co">#&gt; 3 1       tasmax year   HadGEM2-ES rcp45    2042-01-01 298.5987</span>
-<span class="co">#&gt; 4 1       tasmax year   HadGEM2-ES rcp45    2043-01-01 299.6766</span>
-<span class="co">#&gt; 5 1       tasmax year   HadGEM2-ES rcp45    2044-01-01 299.5327</span>
-<span class="co">#&gt; 6 1       tasmax year   HadGEM2-ES rcp45    2045-01-01 298.2451</span>
+<span class="kw">sac_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span>(<span class="kw">sac_tasmax_cap</span>)
+<span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%</span>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="kw">sac_tasmax_tbl</span>)
+<span class="co">#&gt; [1] 620   8</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">sac_tasmax_tbl</span>)
+<span class="co">#&gt; # A tibble: 6 x 8</span>
+<span class="co">#&gt;      id cvar   period gcm        scenario spag  dt              val</span>
+<span class="co">#&gt;   &lt;int&gt; &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;      &lt;fct&gt;    &lt;fct&gt; &lt;chr&gt;           [K]</span>
+<span class="co">#&gt; 1     1 tasmax year   HadGEM2-ES rcp45    none  2040-12-31 298.7698</span>
+<span class="co">#&gt; 2     1 tasmax year   HadGEM2-ES rcp45    none  2041-12-31 298.7150</span>
+<span class="co">#&gt; 3     1 tasmax year   HadGEM2-ES rcp45    none  2042-12-31 298.5987</span>
+<span class="co">#&gt; 4     1 tasmax year   HadGEM2-ES rcp45    none  2043-12-31 299.6766</span>
+<span class="co">#&gt; 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31 299.5327</span>
+<span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31 298.2451</span>
+</pre></div>
+<p>4) Wrangle the data as much as needed for your visualization or analysis. Here all we have to do is to add a column for Fahrenheit then we’re ready to plot</p>
+<!-- end list -->
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="co">## Add a column with Fahrenheit units</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'dplyr'</span>
+<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     filter, lag</span>
+<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/r-quantities/units">units</a></span>)
+<span class="co">#&gt; udunits system database from C:/Users/Andy/Documents/R/win-library/4.0/units/share/udunits</span>
+<span class="kw">sac_tasmax_tbl2</span> <span class="op">&lt;-</span> <span class="kw">sac_tasmax_tbl</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(temp_f = <span class="fu"><a href="https://rdrr.io/pkg/units/man/set_units.html">set_units</a></span>(<span class="kw">val</span>, <span class="kw">degF</span>))
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">sac_tasmax_tbl2</span>)
+<span class="co">#&gt; # A tibble: 6 x 9</span>
+<span class="co">#&gt;      id cvar   period gcm        scenario spag  dt              val   temp_f</span>
+<span class="co">#&gt;   &lt;int&gt; &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;      &lt;fct&gt;    &lt;fct&gt; &lt;chr&gt;           [K]   [degF]</span>
+<span class="co">#&gt; 1     1 tasmax year   HadGEM2-ES rcp45    none  2040-12-31 298.7698 78.11560</span>
+<span class="co">#&gt; 2     1 tasmax year   HadGEM2-ES rcp45    none  2041-12-31 298.7150 78.01705</span>
+<span class="co">#&gt; 3     1 tasmax year   HadGEM2-ES rcp45    none  2042-12-31 298.5987 77.80770</span>
+<span class="co">#&gt; 4     1 tasmax year   HadGEM2-ES rcp45    none  2043-12-31 299.6766 79.74794</span>
+<span class="co">#&gt; 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31 299.5327 79.48889</span>
+<span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31 298.2451 77.17127</span>
+</pre></div>
+<p>Make the plot</p>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span>)
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(data = <span class="kw">sac_tasmax_tbl2</span>, 
+       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="kw">dt</span>), y = <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw">temp_f</span>))) <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(color=<span class="kw">gcm</span>)) <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span>(<span class="kw">scenario</span> <span class="op">~</span> <span class="kw">.</span>) <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(title = <span class="st">"Annual Maximum Temperature for Sacamento"</span>, x = <span class="st">"year"</span>, y = <span class="st">"temp (F)"</span>)
+</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<p>5) To query a raster series which isn’t one of the CMIP5 climate projections from Scripps, you have to specify the raster series “slug” (which is like an id key).</p>
+<p>View all slugs:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="co">## View(ca_catalog_rs())</span>
+<span class="co">## From here you can use the filter buttons in RStudio viewer pane to find the slug you want.</span>
+</pre></div>
+<p>Here we’ll get 30 years of historical observed annual precipitation from the Livneh dataset.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="kw">sac_precip_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span>(coords = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span>)) <span class="op">%&gt;%</span>  <span class="co">## Sacramento</span>
+  <span class="fu"><a href="reference/ca_slug.html">ca_slug</a></span>(<span class="st">"pr_year_livneh"</span>)                                      <span class="co">## Livneh yearly average precipitation historical</span>
+  <span class="fu"><a href="reference/ca_years.html">ca_years</a></span>(start = <span class="fl">1980</span>, end = <span class="fl">2010</span>)                             <span class="co">## Start and end dates</span>
+<span class="kw">sac_precip_cap</span>
+<span class="co">#&gt; Cal-Adapt API Request</span>
+<span class="co">#&gt; Location(s): </span>
+<span class="co">#&gt;   x: -121.469</span>
+<span class="co">#&gt;   y: 38.594</span>
+<span class="co">#&gt; Variable(s): NA</span>
+<span class="co">#&gt; Temporal aggregration period(s): NA</span>
+<span class="co">#&gt; GCM(s): NA</span>
+<span class="co">#&gt; Scenario(s): NA</span>
+<span class="co">#&gt; Slug(s): pr_year_livneh</span>
+<span class="co">#&gt; Dates: NA</span>
+<span class="co">#&gt; Options: NA</span>
+<span class="co">#&gt; </span>
+</pre></div>
+<p>Fetch the values:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="kw">sac_precip_tbl</span> <span class="op">&lt;-</span> <span class="kw">sac_precip_cap</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span>()
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">sac_precip_tbl</span>)
+<span class="co">#&gt; # A tibble: 6 x 5</span>
+<span class="co">#&gt;      id slug           spag  dt               val</span>
+<span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;fct&gt; &lt;chr&gt;           [mm]</span>
+<span class="co">#&gt; 1     1 pr_year_livneh none  1950-12-31 1.5772589</span>
+<span class="co">#&gt; 2     1 pr_year_livneh none  1951-12-31 1.0809340</span>
+<span class="co">#&gt; 3     1 pr_year_livneh none  1952-12-31 1.6848391</span>
+<span class="co">#&gt; 4     1 pr_year_livneh none  1953-12-31 0.7950504</span>
+<span class="co">#&gt; 5     1 pr_year_livneh none  1954-12-31 1.4136573</span>
+<span class="co">#&gt; 6     1 pr_year_livneh none  1955-12-31 1.5759532</span>
 </pre></div>
 <p>For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the ‘R Notebooks’ menu on the <a href="https://ucanr-igis.github.io/caladaptr/">website</a>.</p>
 </div>
 </div>
-<div id="convenience-features-and-functions" class="section level1">
+<div id="convenience-functions" class="section level1">
 <h1 class="hasAnchor">
-<a href="#convenience-features-and-functions" class="anchor"></a>Convenience Features and Functions</h1>
+<a href="#convenience-functions" class="anchor"></a>Convenience Functions</h1>
 <ul>
-<li>All <code>caladaptr</code> functions are pipe friendly and tidyverse compliant.<br>
-</li>
-<li>Spatial data formats use the <code>sf</code> and <code>raster</code> packages.<br>
--Returned values have units (thanks to the <a href="https://cran.r-project.org/package=units">units</a>) package. No more guessing what the units are or having to look up unit conversion constants!<br>
-</li>
 <li>Plotting an API Request object shows the query’s location.<br>
 </li>
-<li>You can search the Cal-Adapt catalog of raster series from within R. Download a new version of the catalog with <code><a href="reference/ca_catalog_rs.html">ca_catalog_rs()</a></code>.<br>
+<li>You can view the Cal-Adapt catalog of raster series <code><a href="reference/ca_catalog_rs.html">ca_catalog_rs()</a></code>
 </li>
-<li>Don’t need every single column in your output dataframe? <code>ca_vals2tbl()</code> provides arguments to specify which column(s) to return.</li>
 </ul>
 </div>
 <div id="caladaptr-betar-club" class="section level1">
 <h1 class="hasAnchor">
-<a href="#caladaptr-betar-club" class="anchor"></a>caladaptR betaR club</h1>
+<a href="#caladaptr-betar-club" class="anchor"></a>caladaptR betaR Club</h1>
 <p>The <strong>caladaptR betaR</strong> club is <strong>now accepting members!</strong> If you would like to be part of this elite cadre of <code>caladaptr</code> early adopters, you should join our beta testing program. Benefits of joining the <strong>caladaptR betaR</strong> club include:</p>
 <ul>
 <li>early notification of <strong>package updates</strong><br>

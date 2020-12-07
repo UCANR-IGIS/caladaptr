@@ -7,13 +7,14 @@
 #'
 #' @return A tibble
 #'
-#' @importFrom crayon bold yellow red silver green magenta
-#' @importFrom httr GET POST content content_type_json modify_url user_agent upload_file
+#' @import crayon
+#' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status
 #' @importFrom utils txtProgressBar setTxtProgressBar packageVersion
 #' @importFrom units set_units
 #' @importFrom dplyr select mutate left_join slice
 #' @importFrom curl has_internet
-#' @importFrom sf st_write
+#' @importFrom sf st_write st_geometry st_as_text
+#' @importFrom digest digest
 #' @export
 
 ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) {
@@ -23,13 +24,19 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
   ## Check for an internet connection
   if (!has_internet()) stop("No internet connection detected")
 
+  accent2 <- getOption("ca_accent2", paste0)
+
   ## Get a tibble with the individual API calls
   apicalls_lst <- ca_apicalls(x)
   api_tbl <- apicalls_lst$api_tbl
 
-  ## Get the name of first column and random string to make the geojson filenames unique to this run
+  ## Get the name of first column
   feat_id_fldname <- apicalls_lst$idfld
-  gson_fn_base  <- apicalls_lst$gson_fn_base
+
+  ## Get the cache dir to save temporary geojson files
+  ## (we save them here rather than tempdir so httptest will
+  ## generate the same hash for the API call each time)
+  ca_cache_dir <- ca_getcache()
 
   ## Rename the first column (feature id)
   names(api_tbl)[1] <- feat_id_fldname
@@ -56,16 +63,26 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
   ## Determine if this set of API calls uses sf objects
   aoi_sf <- inherits(apicalls_lst$loc_sf, "sf")
 
-  # aoi_sf <- !(is.na(apicalls_lst$loc_sf))
-  # aoi_sf <- api_tbl[1, "loc_type", drop = TRUE] == "sf"
-
   ## Compute the file names which will be used to export individual features to temporary geojson files
   ## There should be one file name for each feature (row)
   if (aoi_sf) {
-    gjsn_all_fn <- file.path(tempdir(),
-                         paste0("~ca_", gson_fn_base,
-                                sprintf("_%03d", 1:nrow(apicalls_lst$loc_sf)),
-                                ".geojson"))
+
+    # features_hashes <- apicalls_lst$loc_sf %>%
+    #   st_geometry() %>%
+    #   st_as_text() %>%
+    #   digest(algo = "crc32", file = FALSE)
+
+    features_hashes <- unname(sapply(apicalls_lst$loc_sf %>%
+                                       st_geometry() %>% st_as_text(),
+                                     digest,
+                                     algo = "crc32",
+                                     file = FALSE))
+
+    gjsn_all_fn <- file.path(ca_cache_dir,
+                             paste0("~ca_", features_hashes, ".geojson"))
+
+    if (anyDuplicated(gjsn_all_fn) > 0) warning(red("Duplicate feature hashes(s) encountered"))
+
   }
 
   ## If a progress bar is needed, set it up
@@ -84,10 +101,9 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
       ## Get the temporary geojson file name for this row (which is stored in the loc_qry column)
       gjsn_fn <- gjsn_all_fn[api_tbl[i, "loc_qry", drop = TRUE]]
 
-      #gjsn_fn <- file.path(tempdir(), api_tbl[i, "loc_preset", drop = TRUE])
-
       if (!file.exists(gjsn_fn)) {
         if (debug) message(silver(paste0(" - saving temp geojson: ", basename(gjsn_fn))))
+        ## loc_sf is already projected to 4326
         st_write(apicalls_lst$loc_sf %>%
                    slice(api_tbl[i, "loc_qry", drop = TRUE]),
                  dsn = gjsn_fn,
@@ -116,108 +132,88 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
       body_flds_lst <- list(features = upload_file(gjsn_fn),
                             start = start_dt,
                             end = end_dt,
-                            stat = spatial_ag,
-                            format = "json")
+                            stat = spatial_ag)
+
+      # format = "json" - not using any more
 
       post_url <- api_tbl[i, "api_url", drop = TRUE]
 
       if (debug) {
         feat_id <- api_tbl[i, 1, drop = TRUE]
         message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") PUT ", post_url, ". (", feat_id_fldname, "=",
-                                       feat_id, ", start='", start_dt, "', end='", end_dt, "', stat='", spatial_ag, "', format='json')")))
+                              feat_id, ", start='", start_dt, "', end='", end_dt, "', stat='", spatial_ag, "')")))
       }
 
       ## Make the POST request
       qry_resp <- POST(url = post_url,
                        body = body_flds_lst,
                        encode = "multipart",
+                       accept_json(),
                        caladaptr_ua)
 
-      if (qry_resp$status_code == 200) {
+    } else {   ## SEND A GET REQUEST
 
-        ## Convert response to a list
-        qry_content <- content(qry_resp, type = "application/json")
+      api_url_full <- api_tbl[i, "api_url", drop = TRUE]
+      # api_url_short <- as.character(substring(api_url_full, 30, nchar(api_url_full)))
 
-        if (length(qry_content) > 0) {
+      if (debug) message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
 
-          ## Get the data values (one per date)
-          these_vals <- unlist(qry_content$data)
+      qry_resp <- GET(api_url_full, accept_json(), caladaptr_ua)
 
-          ## Convert units
-          if (!is.na(api_tbl[i, "rs_units", drop = TRUE])) {
-            these_vals <- set_units(these_vals,
-                                    value = api_tbl[i, "rs_units", drop = TRUE],
-                                    mode = "standard")
-          }
+    }
 
-          ## Append these rows to the tibble
-          res_tbl <- rbind(res_tbl,
-                           tibble(api_tbl[i, apicall_cols_keep],
-                                  dt = substr(unlist(qry_content$index), 1, 10),
-                                  val = these_vals))
+    ## At this point we have a response object
 
-        } else {
-          ## Nothing returned - date fell outside of range? location outside extent?
-          if (debug) message(silver(" - no values returned!"))
-        }
+    ## See if the server sent an error
+    if (http_error(qry_resp)) {
 
+      if (stop_on_err) {
+        stop_for_status(qry_resp)
 
       } else {
-        if (debug) message(red(paste0(" - Oh dear. Status code = ", qry_resp$status_code)))
-        if (stop_on_err) ca_resp_check(qry_resp, "POST request to query a raster")
-      }
 
-      ## END IF AOI_SF
-      ###########################################
+        ## Don't stop - print a message or generate a warning
+        if (quiet && !debug) {
+          warn_for_status(qry_resp)
+
+        } else {
+          ## quiet = FALSE or debug = TRUE
+          message(red(paste0(" - Oh dear. ", http_status(qry_resp)$message)))
+        }
+
+      }
 
 
     } else {
 
-      api_url_full <- api_tbl[i, "api_url", drop = TRUE]
-      api_url_short <- as.character(substring(api_url_full, 30, nchar(api_url_full)))
+      ## Good response. Convert content to a list
+      qry_content <- content(qry_resp, type = "application/json")
 
-      if (debug) message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
+      if (length(qry_content) > 0) {
 
-      ## Make request
-      qry_resp <- GET(api_url_full, content_type_json(), caladaptr_ua)
+        ## Get the data values (one per date)
+        these_vals <- unlist(qry_content$data)
 
-      if (qry_resp$status_code == 200) {
-
-        ## Convert response to a list
-        qry_content <- content(qry_resp, type = "application/json")
-
-        if (length(qry_content) > 0) {
-
-          ## Get the data values (one per date)
-          these_vals <- unlist(qry_content$data)
-
-          ## Convert units
-          if (!is.na(api_tbl[i, "rs_units", drop = TRUE])) {
-            these_vals <- set_units(these_vals,
-                                    value = api_tbl[i, "rs_units", drop = TRUE],
-                                    mode = "standard")
-          }
-
-          ## Append these rows to the tibble
-          res_tbl <- rbind(res_tbl,
-                           tibble(api_tbl[i, apicall_cols_keep],
-                                  dt = substr(unlist(qry_content$index), 1, 10),
-                                  val = these_vals))
-
-        } else {
-          ## Nothing returned - date fell outside of range? location outside extent?
-          if (debug) message(silver(" - no values returned!"))
+        ## Convert units
+        if (!is.na(api_tbl[i, "rs_units", drop = TRUE])) {
+          these_vals <- set_units(these_vals,
+                                  value = api_tbl[i, "rs_units", drop = TRUE],
+                                  mode = "standard")
         }
 
-      } else {
+        ## Append these rows to the tibble
+        res_tbl <- rbind(res_tbl,
+                         tibble(api_tbl[i, apicall_cols_keep],
+                                dt = substr(unlist(qry_content$index), 1, 10),
+                                val = these_vals))
 
-        if (debug) message(red(paste0(" - Oh dear. Status code = ", qry_resp$status_code)))
-        if (stop_on_err) ca_resp_check(qry_resp, "Retrieve pixel values")
+      } else {
+        ## Nothing returned - date fell outside of range? location outside extent?
+        if (debug) message(silver(" - no values returned!"))
+
       }
 
-
     }
-
 
   } ## for (i in 1:nrow(api_tbl)) {
 
@@ -226,7 +222,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
 
   ## Delete any temporary geojson files created (including this run and previous runs)
   if (aoi_sf) {
-    tmp_jsn_fn <- list.files(tempdir(), pattern = "^\\~ca_(.*).geojson$", full.names = TRUE)
+    tmp_jsn_fn <- list.files(ca_cache_dir, pattern = "^\\~ca_(.*).geojson$", full.names = TRUE)
     if (length(tmp_jsn_fn) > 0) {
       if (debug) message(silver(paste0(" - deleting ", length(tmp_jsn_fn), " temp geojson files")))
       unlink(tmp_jsn_fn)

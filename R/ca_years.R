@@ -28,7 +28,7 @@ ca_years <- function(x = ca_apireq(), start, end) {
     end_dt <- NA
   } else {
     if (end > 2100) stop("The largest value of the end year is 2100")
-    end_dt <- as.Date(paste0(end, "-01-01"), optional = TRUE)
+    end_dt <- as.Date(paste0(end, "-12-31"), optional = TRUE)
     if (is.na(end_dt)) stop(err_msg_format)
   }
 

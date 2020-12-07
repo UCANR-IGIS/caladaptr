@@ -5,26 +5,24 @@
 \alias{ca_setcache}
 \title{Manage Cache Directory}
 \usage{
-ca_getcache(default = TRUE, quiet = TRUE)
+ca_getcache(quiet = TRUE)
 
 ca_setcache(
   cache_dir = NULL,
-  make_dir = FALSE,
-  write = TRUE,
+  make_dir = TRUE,
+  save = TRUE,
   reset = FALSE,
   quiet = FALSE
 )
 }
 \arguments{
-\item{default}{Use a default cache directory if no other has been set}
-
 \item{quiet}{Suppress messages}
 
 \item{cache_dir}{The directory for cached data}
 
 \item{make_dir}{Make the directory if needed, logical}
 
-\item{write}{Save the cache directory in the \code{.Renviron} file for persistence across R sessions}
+\item{save}{Save the cache directory in the \code{.Renviron} file for persistence across R sessions}
 
 \item{reset}{Change to the default location}
 }
@@ -36,13 +34,13 @@ View and set the directory for the data catalog
 from Cal-Adapt. An example of this would be the raster series data catalog and the
 geometries of AOI Presets.
 
-NOTE: \code{caladaptr} does \emph{not} cache climate data fetched from Cal-Adapt. Every time
+NOTE: In general \code{caladaptr} does \emph{not} cache climate data fetched from Cal-Adapt. Every time
 you call a function that fetches data (e.g., \code{\link{ca_getvals_tbl}}), data is retrieved fresh.
-The exception to this is \code{\link{ca_getvals_db}}, which is built to cache retrieved values
-in a local SQLite database.
+The exception to this is \code{\link{ca_getvals_db}}, which has arguments you can pass to cache retrieved
+values into a local SQLite database to explicitly avoid downloading data twice.
 
-If \code{default = TRUE}, a default cache directory will be used (\link[rappdirs]{user_cache_dir})
-\emph{if} one hasn't already been set with \code{ca_setcache}.
+The default location for the cache directory is given by \code{R_user_dir("caladaptr", "cache")}.
+A custom location can be set with \code{ca_setcache}.
 }
 \section{Functions}{
 \itemize{
@@ -50,5 +48,5 @@ If \code{default = TRUE}, a default cache directory will be used (\link[rappdirs
 }}
 
 \seealso{
-\code{\link{ca_catalog_rs}}
+\code{\link{ca_catalog_rs}}, \code{\link{ca_aoipreset_geom}}, \code{\link{ca_locagrid_geom}}
 }

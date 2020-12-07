@@ -9,8 +9,9 @@
 #' @param dTolerance A numeric value used to simplify polgyons, see Details.
 #'
 #' @details \code{loc} should be a simple feature data frame with point or polygon features.
-#' Both 'single' and 'multi' geometries can be used. \code{loc} should have a valid CRS
-#' (does not have to be geographic).
+#' The sf object should have a valid CRS, but does not have to be geographic.
+#' Both 'single' and 'multipart' polygons can be used, but only simple point features are
+#' supported. To convert a multipoint feature layer into a single point layer, use \code{\link[sf]{st_cast}}.
 #'
 #' \code{idfld} should be the name of a column in \code{loc} containing unique values. When you
 #' fetch values from Cal-Adapt, this column will be returned in the results to help you
@@ -26,7 +27,7 @@
 #' values if a feature overlaps more than one pixel. See \code{\link{ca_options}}.
 #'
 #' \code{dTolerance} is a value in decimal degrees used to simplify polygons. If \code{dTolerance > 0},
-#' \link[sf]{st_simplify} will be called to remove polygon nodes within \code{dTolerance} of another node,
+#' \code{\link[sf]{geos_unary}{st_simplify}} will be called to remove polygon nodes within \code{dTolerance} of another node,
 #' before fetching data. This can reduce the amount of spatial data that needs to be sent to the server,
 #' which can improve performance particularly when you have very fine grained polygons.
 #' Simplifying polygons can modify (generally reduce) the pixels that a polygon overlaps, so use with caution.
@@ -43,8 +44,10 @@ ca_loc_sf <- function(x = ca_apireq(), loc, idfld = NULL, idval = NULL, dToleran
   if (is.na(st_crs(loc))) stop("loc must have a CRS set")
 
   ## Verify that loc is polygon or point (not multipolyon)
-  if (FALSE %in% (as.character(st_geometry_type(loc)) %in% c("POLYGON", "POINT", "MULTIPOLYGON", "MULTIPOINT"))) {
-    stop(paste0("Unsupported geometry type: ", paste(unique(as.character(st_geometry_type(loc))), collapse = ", ")))
+  if (FALSE %in% (as.character(st_geometry_type(loc)) %in% c("POLYGON", "POINT", "MULTIPOLYGON"))) {
+    stop(paste0("Unsupported geometry type: ",
+                paste(unique(as.character(st_geometry_type(loc))), collapse = ", "),
+                ". See help for details."))
     # warning(paste0("loc is not a simple feature of type POLYGON or POINT.\nYou passed ",
     #             paste(unique(as.character(st_geometry_type(loc))), collapse = ", "), "."))
   }

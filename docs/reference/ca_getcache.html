@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -96,6 +96,18 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -111,7 +123,7 @@
       <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
     </li>
     <li>
-      <a href="../notebooks/chill.nb.html">Compute Chill Portions</a>
+      <a href="../notebooks/chill.nb.html">Compute Chill</a>
     </li>
   </ul>
 </li>
@@ -157,12 +169,12 @@
     <p>View and set the directory for the data catalog</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_getcache</span>(default = <span class='fl'>TRUE</span>, quiet = <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>ca_getcache</span>(quiet = <span class='fl'>TRUE</span>)
 
 <span class='fu'>ca_setcache</span>(
   cache_dir = <span class='kw'>NULL</span>,
-  make_dir = <span class='fl'>FALSE</span>,
-  write = <span class='fl'>TRUE</span>,
+  make_dir = <span class='fl'>TRUE</span>,
+  save = <span class='fl'>TRUE</span>,
   reset = <span class='fl'>FALSE</span>,
   quiet = <span class='fl'>FALSE</span>
 )</pre>
@@ -170,10 +182,6 @@
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>default</th>
-      <td><p>Use a default cache directory if no other has been set</p></td>
-    </tr>
     <tr>
       <th>quiet</th>
       <td><p>Suppress messages</p></td>
@@ -187,7 +195,7 @@
       <td><p>Make the directory if needed, logical</p></td>
     </tr>
     <tr>
-      <th>write</th>
+      <th>save</th>
       <td><p>Save the cache directory in the <code>.Renviron</code> file for persistence across R sessions</p></td>
     </tr>
     <tr>
@@ -201,12 +209,12 @@
     <p><code>caladaptr</code> has the ability to store copies of objects downloaded
 from Cal-Adapt. An example of this would be the raster series data catalog and the
 geometries of AOI Presets.</p>
-<p>NOTE: <code>caladaptr</code> does <em>not</em> cache climate data fetched from Cal-Adapt. Every time
+<p>NOTE: In general <code>caladaptr</code> does <em>not</em> cache climate data fetched from Cal-Adapt. Every time
 you call a function that fetches data (e.g., <code><a href='ca_getvals_tbl.html'>ca_getvals_tbl</a></code>), data is retrieved fresh.
-The exception to this is <code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>, which is built to cache retrieved values
-in a local SQLite database.</p>
-<p>If <code>default = TRUE</code>, a default cache directory will be used (<a href='https://rdrr.io/pkg/rappdirs/man/user_cache_dir.html'>user_cache_dir</a>)
-<em>if</em> one hasn't already been set with <code>ca_setcache</code>.</p>
+The exception to this is <code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>, which has arguments you can pass to cache retrieved
+values into a local SQLite database to explicitly avoid downloading data twice.</p>
+<p>The default location for the cache directory is given by <code>R_user_dir("caladaptr", "cache")</code>.
+A custom location can be set with <code>ca_setcache</code>.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -215,7 +223,7 @@ in a local SQLite database.</p>
 </ul>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='ca_catalog_rs.html'>ca_catalog_rs</a></code></p></div>
+    <div class='dont-index'><p><code><a href='ca_catalog_rs.html'>ca_catalog_rs</a></code>, <code><a href='ca_aoipreset_geom.html'>ca_aoipreset_geom</a></code>, <code><a href='ca_locagrid_geom.html'>ca_locagrid_geom</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

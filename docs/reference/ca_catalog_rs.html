@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Get the Cal-Adapt raster series data catalog — ca_catalog_rs" />
-<meta property="og:description" content="Get the Cal-Adapt raster series data catalog" />
+<meta property="og:description" content="Get a local copy of the Cal-Adapt raster series data catalog" />
 
 
 
@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
       </span>
     </div>
 
@@ -96,6 +96,18 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -111,7 +123,7 @@
       <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
     </li>
     <li>
-      <a href="../notebooks/chill.nb.html">Compute Chill Portions</a>
+      <a href="../notebooks/chill.nb.html">Compute Chill</a>
     </li>
   </ul>
 </li>
@@ -154,22 +166,14 @@
     </div>
 
     <div class="ref-description">
-    <p>Get the Cal-Adapt raster series data catalog</p>
+    <p>Get a local copy of the Cal-Adapt raster series data catalog</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_catalog_rs</span>(download = <span class='fl'>FALSE</span>, cache = <span class='kw'>download</span>, quiet = <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_catalog_rs</span>(quiet = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>download</th>
-      <td><p>Download a new copy of the catalog from Cal-Adapt.org</p></td>
-    </tr>
-    <tr>
-      <th>cache</th>
-      <td><p>Use a local copy</p></td>
-    </tr>
     <tr>
       <th>quiet</th>
       <td><p>Suppress messages</p></td>
@@ -178,17 +182,14 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame (tibble) with columns of information about the raster series available through
-the Cal-Adapt API.</p>
+    <p>A tibble with columns of information about the raster series available through the Cal-Adapt API.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This retrieves a 'catalog' of the raster series available through the Cal-Adapt API.
-Normally, you can use the copy which comes with caladaptr, but to force download a new copy,
-use <code>download = TRUE</code>. This is only needed when new
-datasets are added to the API (subscribe to the Cal-Adapt news letter for notifications).</p>
+    <p>This retrieves a local copy of the Cal-Adapt 'catalog' of raster series available through the Cal-Adapt API.
+A copy of the catalog comes with caladaptR. You can also fetch a new copy using <a href='ca_catalog_fetch.html'>ca_catalog_fetch</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='ca_getcache.html'>ca_getcache</a></code></p></div>
+    <div class='dont-index'><p><code><a href='ca_catalog_fetch.html'>ca_catalog_fetch</a></code>, <code><a href='ca_getcache.html'>ca_getcache</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

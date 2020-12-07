@@ -1,3 +1,15 @@
+# caladaptr 0.4.3 (2020-12-06)
+
+* `ca_getvals_tbl()`, `ca_getvals_db()` and `ca_apicalls()`: removed format=json parameter in favor of accept_json()
+* `ca_resp_check()`: deleted (functionality absorbed into `ca_getvals_tbl()` & `ca_getvals_db()`)
+* testhttp added to suggests; tests added
+* `ca_lof_sf()`: trap added for multipoint features (which the Cal-Adapt server treats as individual points, hence they should not be used)
+* `ca_apicalls()`: removed gson_fn_base from the list object returned
+* `ca_example_apireq()`: added
+* `ca_locagrid_geom()`: added
+* `ca_aoipreset_geom()`: temporary zip file(s) are now deleted when no longer needed; source directory for zipfiles on GitHub changed from 'aoipreset_geoms' to just 'geoms'; check for internet connection added
+* `plot.ca_apireq()`: `locagrid` argument added to overlay the loca grid 
+
 # caladaptr 0.4.2 (2020-11-18)
 
 * `plot.ca_apireq()`: default symbol size tweaked for point features
@@ -10,7 +22,6 @@
 * `aoipreset_idvals`: `name` removed as a field for uniquely identifying counties 
 * `ca_loc_sf()` overhauled
 * package `digest` added to imports
-* 
 
 # caladaptr 0.4.0 (2020-10-11)
 

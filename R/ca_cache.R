@@ -2,85 +2,52 @@
 #'
 #' View and set the directory for the data catalog
 #'
-#' @param default Use a default cache directory if no other has been set
 #' @param quiet Show messages, logical
 #'
 #' @details \code{caladaptr} has the ability to store copies of objects downloaded
 #' from Cal-Adapt. An example of this would be the raster series data catalog and the
 #' geometries of AOI Presets.
 #'
-#' NOTE: \code{caladaptr} does \emph{not} cache climate data fetched from Cal-Adapt. Every time
+#' NOTE: In general \code{caladaptr} does \emph{not} cache climate data fetched from Cal-Adapt. Every time
 #' you call a function that fetches data (e.g., \code{\link{ca_getvals_tbl}}), data is retrieved fresh.
-#' The exception to this is \code{\link{ca_getvals_db}}, which is built to cache retrieved values
-#' in a local SQLite database.
+#' The exception to this is \code{\link{ca_getvals_db}}, which has arguments you can pass to cache retrieved
+#' values into a local SQLite database to explicitly avoid downloading data twice.
 #'
-#' If \code{default = TRUE}, a default cache directory will be used (\link[rappdirs]{user_cache_dir})
-#' \emph{if} one hasn't already been set with \code{ca_setcache}.
+#' The default location for the cache directory is given by \code{R_user_dir("caladaptr", "cache")}.
+#' A custom location can be set with \code{ca_setcache}.
 #'
-#' @seealso \code{\link{ca_catalog_rs}}
+#' @seealso \code{\link{ca_catalog_rs}}, \code{\link{ca_aoipreset_geom}}, \code{\link{ca_locagrid_geom}}
 #'
-#' @importFrom rappdirs user_cache_dir
+#' @rawNamespace if (getRversion() >= "4.0.0") {importFrom(tools, R_user_dir) } else {importFrom(backports, R_user_dir)}
+#' @import crayon
 #' @export
 
-ca_getcache <- function(default=TRUE, quiet=TRUE) {
+ca_getcache <- function(quiet=TRUE) {
 
   cache_dir <- Sys.getenv("CALADAPTR_CACHE_DIR", unset = NA)
 
   if (is.na(cache_dir)) {
 
     ## No environment variable has been set (either by command or in .Renviron)
-    if (default) {
+    default_cache_dir <- R_user_dir("caladaptr", "cache") %>% gsub("\\\\", "/", .)
 
-      ## Use rappdir to find the default location for a cache dir
-      default_cache_dir <- user_cache_dir("caladaptr", "ucanr-igis")
-
-      ## Use the default location (creating it if needed)
-      if (file.exists(default_cache_dir)) {
-        default_cache_dir
-      } else {
-        dir.create(default_cache_dir, recursive = TRUE)
-        ## Return the cache_dir if it was successfully created, else NA
-        ifelse(file.exists(default_cache_dir), default_cache_dir, NA)
-      }
-
-      # DEPRECATED:
-      #default_dir <- "~/.R/caladaptr"
-      # if (file.exists(default_dir)) {
-      #   if (file.info(default_dir)$isdir) {
-      #     ## We're done
-      #     if (!quiet) message(paste0("using cache directory: ", default_dir))
-      #     default_dir
-      #   } else {
-      #     ## Default dir exists, but is not a directory
-      #     warning(paste0(default_dir, " exists but is not a directory"))
-      #     NA
-      #   }
-      # } else {
-      #   ## Default dir doesn't exist, attempt to create it
-      #   made_dir <- TRUE
-      #   if (!file.exists("~/.R")) {
-      #     made_dir <- made_dir && dir.create("~/.R")
-      #   }
-      #   if (made_dir && !file.exists("~/.R/caladaptr")) {
-      #     made_dir <- made_dir && dir.create("~/.R/caladaptr")
-      #   }
-      #
-      #   ## Return the default dir or NA
-      #   if (made_dir) {
-      #     default_dir
-      #   } else {
-      #     NA
-      #   }
-      #
-      # }
+    ## Use the default location (creating it if needed)
+    if (file.exists(default_cache_dir)) {
+      default_cache_dir  ## we're done here
 
     } else {
-      if (!quiet) message("A cache directory could not be found. Use default = TRUE or run ca_setcache.")
-      NA
+      dir.create(default_cache_dir, recursive = TRUE)
+
+      ## Return the cache_dir if it was successfully created, else NA
+      ifelse(file.exists(default_cache_dir), default_cache_dir, NA)
     }
 
+
   } else {
-    if (!quiet) message(paste0("using cache directory: ", cache_dir))
+    if (!quiet) {
+      msg <- getOption("ca_message", paste0)
+      message(msg(paste0("Using cache directory: ", cache_dir)))
+    }
     cache_dir
   }
 
@@ -90,49 +57,43 @@ ca_getcache <- function(default=TRUE, quiet=TRUE) {
 #' @title Set cache directory to a custom location
 #' @param cache_dir The directory for cached data
 #' @param make_dir Make the directory if needed, logical
-#' @param write Save the cache directory in the \code{.Renviron} file for persistence across R sessions
+#' @param save Save the cache directory in the \code{.Renviron} file for persistence across R sessions
 #' @param reset Change to the default location
 #' @param quiet Suppress messages
 #'
-#' @importFrom rappdirs user_cache_dir
-#' @importFrom crayon yellow
+#' @rawNamespace if (getRversion() >= "4.0.0") {importFrom(tools, R_user_dir) } else {importFrom(backports, R_user_dir)}
+#' @import crayon
 
-ca_setcache <- function(cache_dir = NULL, make_dir = FALSE, write = TRUE, reset = FALSE, quiet = FALSE) {
+ca_setcache <- function(cache_dir = NULL, make_dir = TRUE, save = TRUE, reset = FALSE, quiet = FALSE) {
+
+  msg <- getOption("ca_message", paste0)
 
   if (reset) {
-    cache_dir_use <- user_cache_dir("caladaptr", "ucanr-igis")
-    if (!quiet) message(yellow(paste0(" - using default cache_dir: ", cache_dir_use)))
-  } else if (is.null(cache_dir)) {
+    cache_dir_use <- R_user_dir("caladaptr", "cache") %>% gsub("\\\\", "/", .)
+    if (!quiet) message(msg(paste0(" - using default cache_dir: ", cache_dir_use)))
+
+  } else if (is.null(cache_dir)) {   ## reset = FALSE, next check if cache_dir is NULL
     stop("cache_dir is required")
+
   } else {
-    cache_dir_use <- cache_dir
+    cache_dir_use <- cache_dir       ## reset = FALSE, use cache_dir
   }
 
+  ## Create cache_dir_use if needed
   if (!file.exists(cache_dir_use)) {
     if (make_dir) dir.create(cache_dir_use, recursive = TRUE)
 
     if (!file.exists(cache_dir_use)) {
-      stop(paste0(cache_dir_use, " does not exist. Please create it and try again."))
+      stop(paste0(cache_dir_use, " can not be created. Please create it and try again."))
     }
 
-    ## If they passed the default, attempt to create it
-    # if (dir == "~/.R/caladaptr") {
-    #   made_dir <- TRUE
-    #   if (!file.exists("~/.R")) {
-    #     made_dir <- made_dir && dir.create("~/.R")
-    #   }
-    #   if (made_dir && !file.exists("~/.R/caladaptr")) {
-    #     made_dir <- made_dir && dir.create("~/.R/caladaptr")
-    #   }
-    #   if (!made_dir) stop("Can not create cache directory. Try passing a different location for dir.")
-    # }
   }
 
   ## Save the cache directory as an environment variable (in memory)
   Sys.setenv(CALADAPTR_CACHE_DIR = cache_dir_use)
 
   ## Save the cache directory to .Renviron
-  if (write) {
+  if (save) {
     ## Grab the .Renviron file, creating it if needed
     environ_file <- file.path(Sys.getenv("HOME"), ".Renviron")
     if (!file.exists(environ_file)) file.create(environ_file)
@@ -144,12 +105,12 @@ ca_setcache <- function(cache_dir = NULL, make_dir = FALSE, write = TRUE, reset 
     cachedir_idx <- grep("^CALADAPTR_CACHE_DIR=", environ_lines)
 
     if (length(cachedir_idx) == 0) {
-      if (!quiet) message(yellow(paste0(" - adding directory to ", environ_file)))
+      if (!quiet) message(msg(paste0(" - adding directory to ", environ_file)))
       environ_lines <- c(environ_lines, paste0("CALADAPTR_CACHE_DIR=", cache_dir_use))
       writeLines(environ_lines, environ_file)
 
     } else {
-      if (!quiet) message(yellow(paste0(" - updating cache directory in ", environ_file)))
+      if (!quiet) message(msg(paste0(" - updating cache directory in ", environ_file)))
       environ_lines[cachedir_idx] <- paste0("CALADAPTR_CACHE_DIR=", cache_dir_use)
       writeLines(environ_lines, environ_file)
     }

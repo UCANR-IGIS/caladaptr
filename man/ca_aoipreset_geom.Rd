@@ -4,7 +4,7 @@
 \alias{ca_aoipreset_geom}
 \title{Get the geometry of an AOI Preset area}
 \usage{
-ca_aoipreset_geom(aoipreset, quiet = TRUE)
+ca_aoipreset_geom(aoipreset, quiet = FALSE)
 }
 \arguments{
 \item{aoipreset}{The name of a AOI preset}

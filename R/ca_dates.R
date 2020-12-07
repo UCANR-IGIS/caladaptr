@@ -3,8 +3,8 @@
 #' Specifies the start and end date of a Cal-Adapt API call
 #'
 #' @param x Cal-Adapt API request
-#' @param start start date entered as a character \emph{yyyy-mm-dd}
-#' @param end end date entered as a character \emph{yyyy-mm-dd}
+#' @param start start date entered as a character \emph{yyyy-mm-dd} or Date object
+#' @param end end date entered as a character \emph{yyyy-mm-dd} or Date object
 #'
 #' @export
 

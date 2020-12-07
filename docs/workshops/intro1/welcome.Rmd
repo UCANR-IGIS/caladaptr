@@ -1,0 +1,52 @@
+---
+title: "Workshop Welcome Email"
+output: 
+  html_document: 
+    self_contained: no
+    lib_dir: libs
+---
+
+```{css echo = FALSE}
+h1 {
+  font-size: 16px;
+  font-weight: bold;
+}
+h1.title {
+  font-size: 20px;
+}
+hr {
+  border-top: 4px solid dimgrey;
+}
+p {
+  margin-bottom: 20px;
+  font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  font-size: 16px;
+}
+h2, span.lead {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
+```
+
+\
+
+Welcome to DroneCamp! If you missed any of the welcome emails, you can catch up below.
+
+For the complete schedule and latest updates, see the [DroneCamp Program](https://dronecamp.github.io/2020/).
+
+\
+
+<hr/>
+
+# Welcome Email #1
+
+
+**Questions?** Please email dronecamp@ucanr.edu.
+
+**DroneCamp Team**
+
+\
+\
+
+

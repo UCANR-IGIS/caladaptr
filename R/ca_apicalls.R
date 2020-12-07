@@ -5,6 +5,10 @@
 #' @param x A Cal-Adapt API request
 #' @param slug_check Cross check the slug against the raster series catalog
 #' @param date_check Cross check the start and end date against the raster series catalog
+#' @param ignore_spag Ignore the spatial aggregation option
+#'
+#' @details This function generates the URLs that fulfill an API request. \code{ignore_spag = TRUE}
+#' is used if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
 #'
 #' @importFrom dplyr select mutate left_join right_join pull
 #' @importFrom tibble tibble
@@ -15,7 +19,7 @@
 #' @importFrom digest digest2int digest
 #' @export
 
-ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
+ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = FALSE) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
@@ -39,8 +43,8 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
 
   ## THE FIRST THING WE DO IS CREATE A TIBBLE FOR ALL THE LOCATIONS, WITH COLUMNS THAT WILL BE NEEDED
   ## TO BUILD THE QUERY PARAMETERS.
-  ## Columns: loc_type, loc_fld, feat_id, loc_qry (either g= or ref= or a geojson string)
-  ## (the order of these columns matters - feat_id should be first because it will be renamed down the road)
+  ## Columns: loc_type, loc_fld, feat_id, loc_qry (either g= or ref= or the row number of a sf data frame)
+  ## (the order of these columns matters a bit - feat_id should be first because it will be renamed down the road)
 
   if (x$loc$type == "pt") {
 
@@ -50,11 +54,11 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
                       loc_fld = factor(NA),
                       loc_qry = paste0("g=",
                                        sapply(1:nrow(x$loc$val),
-                                       function(i) st_as_text(st_point(as.numeric(x$loc$val[i, c(2,3)]))))))
+                                              function(i) st_as_text(st_point(as.numeric(x$loc$val[i, c(2,3)]))))))
 
     idfld_name <- names(x$loc$val)[1]
     loc_sf <- NA
-    gson_fn_base <- NA
+    #gson_fn_base <- NA
     sf_hash <- ""
 
   } else if (x$loc$type == "aoipreset") {
@@ -89,14 +93,10 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
     ## loc_qry = lapply(1:length(x$loc$val$idval), function(i)  list(ref = paste0("/api/", preset, "/", api_ids[i], "/") )))
 
     loc_sf <- NA
-    gson_fn_base <- NA
+    #gson_fn_base <- NA
     sf_hash <- ""
 
   } else if (x$loc$type == "sf") {
-
-    ## stop("Sorry, querying by simple feature object is not yet supported")
-    ## x$loc <- list(type="sf", val = list(loc = loc, idfld = idfld, idval = idval_use))
-    # browser()
 
     idfld_name <- as.character(x$loc$val$idfld)
 
@@ -108,11 +108,16 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
       ## Savings: (size_before - object.size(loc_sf))
     }
 
+    ## This next part has been deprecated. Temporary geojson files are now named based on a
+    ## hash of the WKT. If one doesn't get deleted, this isn't a deal breaker for the
+    ## next run because it should be the same geometry. The feature id no longer part of the
+    ## filename.
+
     ## Generate a random 5-character string to use as the base of the individual GeoJSON files
     ## We do this for each call of ca_apicalls() so that we have unique geojson file names
     ## each time data is fetched (i.e., it doesn't use an old one created by a previous run
     ## that didn't get deleted)
-    gson_fn_base <- paste(sample(letters, size = 5, replace = TRUE), collapse = "")
+    ## gson_fn_base <- paste(sample(letters, size = 5, replace = TRUE), collapse = "")
 
     ## Compute the location tbl. loc_qry store the row number of each feature and will be used
     ## when fetching data.
@@ -124,21 +129,21 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
                       loc_qry = 1:nrow(x$loc$val$loc))
 
     ## We create a hash string of the sf object which will be incorporated when computing the hash for each API call.
-    ## This is to differential api calls for two different SF objects that have identical id field names and values
+    ## This is to differentiate API calls for two different SF objects that have identical id field names and values
     sf_hash <- digest(loc_sf, serialize = TRUE)
 
 
   } else if (x$loc$type == "zip") {
     stop("Sorry, querying by zip code is not yet supported")
     loc_sf <- NA
-    gson_fn_base <- NA
+    #gson_fn_base <- NA
     sf_hash <- ""
 
 
   } else {
     stop("Unknown value for location type!!")
     loc_sf <- NA
-    gson_fn_base <- NA
+    #gson_fn_base <- NA
     sf_hash <- ""
 
   }
@@ -155,7 +160,7 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
                                slug = as.character(x$slug),
                                stringsAsFactors = FALSE))
 
-  ## If the user did not pass slug(s), construct those now
+  ## If the API request does not specify slug(s), construct those now
   if (identical(x$slug, NA)) {
     rs_tbl <- rs_tbl %>%
       mutate(slug = paste(cvar, period, gcm, scenario, sep="_"))
@@ -164,10 +169,10 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
   ## Add a lower case version of the slug for joining to the raster series data catalog
   rs_tbl <- rs_tbl %>% mutate(slug_lower = tolower(slug))
 
-  ## Grab a few columns from the raster series data catalog for the slug check and units assignment
+  ## Grab a few additional columns from the raster series data catalog for the slug check and units assignment
   rs_catinfo_df <- ca_catalog_rs(quiet = TRUE) %>%
-     mutate(slug_lower = tolower(slug)) %>%
-     select(slug_lower, rs_name = name, rs_units = units, rs_begin = begin, rs_end = end)
+    mutate(slug_lower = tolower(slug)) %>%
+    select(slug_lower, rs_name = name, rs_units = units, rs_begin = begin, rs_end = end, tres = tres)
 
   ## Do the join
   rs_tbl_matches <- rs_tbl %>% left_join(rs_catinfo_df, by = "slug_lower")
@@ -215,54 +220,56 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
 
   }
 
-  ## Determine if the area(s) of interest are polygons (for error trapping below)
-  err_msg <- "A spatial aggregation function is required to retrieve values from polygon areas. See `ca_options`."
-  aoi_is_poly <- FALSE
-  if (x$loc$type == "aoipreset") {
-    aoi_is_poly <- TRUE
-  } else if (x$loc$type == "sf") {
-    if (FALSE %in% (unique(as.character(st_geometry_type(x$loc$val$loc))) %in% c("POINT", "MULTIPOINT"))) {
-      aoi_is_poly <- TRUE
-    }
-  }
 
-  #message(green("IS POLY = ", aoi_is_poly))
-
-  ## Prep the spatial and temporal aggregation options
-  if (identical(x$options, NA)) {
-
-    ## Verify a spatial aggregation was passed for a polygon area
-    if (aoi_is_poly) stop(err_msg)
-
-    ## Create stat_tbl with an empty list
-    stat_tbl <- tibble(stat_idx = 1, spag = "none", stat_qry = "")
+  if (ignore_spag) {
+    stat_tbl <- tibble(stat_idx = 1, spag = factor(NA), stat_qry = NA)
 
   } else {
 
-    ## x$options$spatial_ag is not NA.
-    ## However we don't need to check if x$options$spatial_ag is NULL - that could only happen if
-    ## someone manually edited the ca_apireq object
+    ## Determine if the area(s) of interest are polygons (for error trapping below)
+    err_msg <- "A spatial aggregation function is required to retrieve values from polygon areas. See `ca_options`."
+    aoi_is_poly <- FALSE
+    if (x$loc$type == "aoipreset") {
+      aoi_is_poly <- TRUE
+    } else if (x$loc$type == "sf") {
+      if (FALSE %in% (unique(as.character(st_geometry_type(x$loc$val$loc))) %in% c("POINT", "MULTIPOINT"))) {
+        aoi_is_poly <- TRUE
+      }
+    }
 
-    spag <- x$options$spatial_ag
+    ## Prep the spatial and temporal aggregation options
+    if (identical(x$options, NA)) {
 
-    ## Verify a spatial aggregation was passed for a polygon
-    if (identical(spag, "none") && aoi_is_poly) stop(err_msg)
+      ## Verify a spatial aggregation was passed for a polygon area
+      if (aoi_is_poly) stop(err_msg)
 
-    stat_tbl <- tibble(stat_idx = 1:length(spag),
-                       spag = factor(spag),
-                       stat_qry = paste0("&stat=", spag))
+      ## Create stat_tbl with an empty list
+      stat_tbl <- tibble(stat_idx = 1, spag = factor("none"), stat_qry = "")
 
-    #stat_qry = lapply(spatial_ag, function(x) list(stat = x)))
+    } else {
 
+      ## x$options$spatial_ag is not NA.
+      ## However we don't need to check if x$options$spatial_ag is NULL - that could only happen if
+      ## someone manually edited the ca_apireq object
+
+      spag <- x$options$spatial_ag
+
+      ## Verify a spatial aggregation was passed for a polygon
+      if (identical(spag, "none") && aoi_is_poly) stop(err_msg)
+
+      stat_tbl <- tibble(stat_idx = 1:length(spag),
+                         spag = factor(spag),
+                         stat_qry = paste0("&stat=", spag))
+    }
   }
 
   ## Construct the "frame" for all permutations of location + slug + dates + spag
   apitbl_frame <- tibble(expand.grid(loc_idx = 1:nrow(loc_tbl),
-                                rs_idx = 1:nrow(rs_tbl),
-                                stat_idx = 1:nrow(stat_tbl),
-                                start = start_dt,
-                                end = end_dt,
-                                dt_qry = dt_qry))
+                                     rs_idx = 1:nrow(rs_tbl),
+                                     stat_idx = 1:nrow(stat_tbl),
+                                     start = start_dt,
+                                     end = end_dt,
+                                     dt_qry = dt_qry))
 
   ## Next, join columns from the location tibble, raster series tibble, and stat_tbl.
   ## While we're at it, we'll compute a hash integer representing the key search parameters
@@ -278,49 +285,29 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE) {
   ## Check for duplicate values in hash_int. This would mean the paste() equation above for uniquely identifying API calls is deficient.
   if (anyDuplicated(api_tbl$hash_int) != 0) warning(red("Duplicate values of `hash_int` found. Please file a bug report."))
 
-    ## Generate the full URL and an integer hash of all the search components
+  ## Generate the full URL and an integer hash of all the search components
   if (x$loc$type == "sf") {
+    ## If querying by sf object, all the parameters will go in the body, so we just need the URL
     api_tbl <- api_tbl %>%
       mutate(api_url = sapply(paste0(ca_baseurl, "series/", slug, "/events/"), URLencode))
 
-      # table(nchar(api_tbl2$api_hash))
-      # xx <- digest::digest2int(api_tbl2$api_hash)
-      # xx2 <- digest::digest2int(api_tbl2$api_hash)
-      # identical(xx,xx2)
-
   } else {
     api_tbl <- api_tbl %>%
-      mutate(api_url = sapply(paste0(ca_baseurl, "series/", slug, "/events/?", loc_qry, dt_qry, stat_qry,
-                                     "&format=json"),
+      mutate(api_url = sapply(paste0(ca_baseurl, "series/", slug, "/events/?",
+                                     loc_qry, dt_qry, stat_qry),
                               URLencode))
-
-             # hash_int = digest2int(paste(slug, loc_type, loc_preset, loc_fld, loc_qry, start, end, spag, sep =".")))
-
-              # api_hash = digest::digest2int(paste( slug, loc_fld, feat_id, start, end, spag,
-              #                                               loc_qry, dt_qry, stat_qry)     ))
 
   }
 
   ## Prepare a list to return containing the api table and the sf object
   res <- list(api_tbl = api_tbl,
               loc_sf = loc_sf,
-              idfld = idfld_name,
-              gson_fn_base = gson_fn_base)
-
-  ## Record the name of the ID field as an attribute (so it can be restored by the function
-  ## that receives this input)
-  #attr(res, "idfld") <- idfld_name
-
-  ## Record the random base for geojson files as an attribute
-  #attr(res, "gson_fn_base") <- gson_fn_base
-
-  #attr(api_tbl, "idfld") <- idfld_name
+              idfld = idfld_name)
 
   # message(silver(" - TODO: cross-check raster series period vs period"))
   # message(silver(" - TODO: cross-check location against raster series extent"))
 
   invisible(res)
-  #invisible(api_tbl)
 
 }
 

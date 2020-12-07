@@ -12,7 +12,8 @@ ca_getvals_db(
   new_recs_only = TRUE,
   trans_len = 100,
   lookup_tbls = TRUE,
-  pause_n = 1e+06,
+  lookup_ret_joined = TRUE,
+  pause_n = 1000,
   pause_secs = 60,
   stop_on_err = TRUE,
   quiet = FALSE,
@@ -26,7 +27,7 @@ ca_getvals_db(
 
 \item{db_tbl}{The name of a database table. See Details.}
 
-\item{indices}{Not used yet}
+\item{indices}{Name of fields to index. See Details.}
 
 \item{new_recs_only}{Write new records only to the database. See Details.}
 
@@ -34,7 +35,9 @@ ca_getvals_db(
 
 \item{lookup_tbls}{Use lookup tables}
 
-\item{pause_n}{Number of values after which a built-in pause is triggered. See Details.}
+\item{lookup_ret_joined}{Return a table with lookup table fields, ignored if lookup_tbls = FALSE. See Details.}
+
+\item{pause_n}{Number of API calls after which a built-in pause is triggered. See Details.}
 
 \item{pause_secs}{Number of seconds to pause. See Details.}
 
@@ -45,7 +48,7 @@ ca_getvals_db(
 \item{debug}{Print additional output at the console}
 }
 \value{
-A tibble linked to the SQLite database.
+A remote tibble linked to the SQLite database.
 }
 \description{
 Write values from an API request to a local database
@@ -63,13 +66,32 @@ exists, the new data will be added to it.
 
 \code{db_tbl} should the name of a table within the database where the new data will be saved. The table name should not
 contain special characters and spaces are discouraged. If \code{new_recs_only = TRUE}, only new records will be
-added to the database. \code{trans_len} defines the number of API calls per transaction (i.e. how many API calls of data to
+added to the database. \code{trans_len} defines the number of API calls per
+\url{https://www.sqlitetutorial.net/sqlite-transaction/}{SQLite transaction} (i.e. how many API calls of data to
 accumulate before doing a write operation to the database). This can speed things up. Set it to 0 to disable transactions.
 
-\code{pause_n} is the number of values after which a built-in pause of length \code{pause_secs} is triggered. This is intended
-to avoid disruption on the Cal-Adapt server (specifically cache management).
+If \code{lookup_tbls = TRUE}, the database will create lookup tables for categorical columns such as GCM, scenario,
+cvar, period, slug, etc. This can dramatically reduce the size of the SQLite database file and is generally recommended.
+id \code{lookup_ret_joined = TRUE}, the tibble returned will have the lookup tables joined (i.e., column names will
+be unaltered); if not the returned tibble will have id values for certain values.
+
+\code{indices} is a vector of column names that you'd like indexed (ignored if \code{lookup_tbls = FALSE}). Creating indices can
+improve the performance of filters and joins, but at the cost of a larger database file and slower write operations. Fields you can
+create indices on include \code{"feat_id"} (the location id value), \code{"cvar"}, \code{"gcm"}, \code{"scenario"}, \code{"period"},
+\code{"slug"}, and \code{"spag"}.
+
+Indices can also be added to a SQLite database after downloading is complete with \link{ca_db_indices}. For large queries (e.g. thousands of
+API calls), it is recommended to not build indices during the download process, and only add indices for those fields you
+plan to filter on or join during your analysis. You can view which indices exist with \code{\link{ca_db_info}}.
+
+\code{pause_n} is the number of API calls after which a built-in pause of length \code{pause_secs} is triggered. This is intended
+to avoid disruption on the Cal-Adapt server. The maximum value for \code{pause_n} is 2500, and the minimum value
+for \code{pause_secs} is 30 seconds.
 
 The returned tibble is linked to the SQLite datbase. For the most part you can use the same dplyr functions to manipulate
 the results, but to retrieve the actual values you need to use `collect()`. For more info working with a linked database,
 see \url{https://dbplyr.tidyverse.org/articles/dbplyr.html}.
+}
+\seealso{
+\code{\link{ca_db_info}}, \code{\link{ca_db_indices}}
 }

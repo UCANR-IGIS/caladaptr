@@ -4,7 +4,7 @@
 \alias{ca_apicalls}
 \title{Creates a tibble of individual API calls}
 \usage{
-ca_apicalls(x, slug_check = TRUE, date_check = TRUE)
+ca_apicalls(x, slug_check = TRUE, date_check = TRUE, ignore_spag = FALSE)
 }
 \arguments{
 \item{x}{A Cal-Adapt API request}
@@ -12,7 +12,13 @@ ca_apicalls(x, slug_check = TRUE, date_check = TRUE)
 \item{slug_check}{Cross check the slug against the raster series catalog}
 
 \item{date_check}{Cross check the start and end date against the raster series catalog}
+
+\item{ignore_spag}{Ignore the spatial aggregation option}
 }
 \description{
 Constructs a tibble of individual API calls for an API request
+}
+\details{
+This function generates the URLs that fulfill an API request. \code{ignore_spag = TRUE}
+is used if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
 }

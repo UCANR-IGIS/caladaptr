@@ -28,13 +28,24 @@ reference:
       - ca_dates
       - ca_options
       - ca_apireq
+      - ca_example_apireq
   - title: Fetching Data
-    desc: Functions that fetch data from the Cal-Adapt server and reformat the results
+    desc: Functions that fetch data from the Cal-Adapt server
     contents:
       - ca_getvals_tbl
       - ca_getvals_db
-      - ca_getrst
+      - ca_getrst_stars
       - ca_apicalls
+      - ca_baseurl
+  - title: Managing SQLite databases
+    desc: Working with local SQLite databases
+    contents:
+      - ca_db_info
+      - ca_db_indicies
+  - title: Managing Cropped Rasters
+    desc: Manage cropped rasters
+    contents:
+      - ca_read_stars
   - title: Finding and Specifying Data
     desc: Functions and constants to help you identify and specify datasets when constructing an API Request object
     contents:
@@ -51,9 +62,9 @@ reference:
       - aoipreset_types
       - ca_aoipreset_geom
   - title: Helper Functions
-    desc: Constants to help you specify a preset area-of-interest when constructing an API Request object, and get the geometry
+    desc: Helper functions
     contents:
-      - ca_baseurl
+      - ca_locagrid_geom
   - title: Manage Package Options
     desc: Manage package settings
     contents:
@@ -88,9 +99,9 @@ navbar:
     rnotebooks:
       text: R Notebooks
       menu:
-       - text: "Intro and Examples"
+       - text: "Introduction"
          href: notebooks/caladaptr_intro.nb.html
-       - text: "Compute Chill Portions"
+       - text: "Compute Chill"
          href: notebooks/chill.nb.html
     presentations:
       text: Presentations

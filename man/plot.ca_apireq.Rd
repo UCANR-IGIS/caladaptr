@@ -7,6 +7,7 @@
 \method{plot}{ca_apireq}(
   x,
   basemap = c("Esri.NatGeoWorldMap", "OpenStreetMap")[1],
+  locagrid = FALSE,
   static = FALSE,
   ...
 )
@@ -15,6 +16,8 @@
 \item{x}{Cal-Adapt API request}
 
 \item{basemap}{The name of a basemap tile layer (see tm_basemap)}
+
+\item{locagrid}{Overlay a portion of the LOCA downscaled grid}
 
 \item{static}{Plot a static map instead of a interactive leaflet map}
 
