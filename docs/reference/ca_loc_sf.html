@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+      <a href="../notebooks/caladaptr_intro.nb.html">Introduction</a>
     </li>
     <li>
       <a href="../notebooks/chill.nb.html">Compute Chill</a>
@@ -213,7 +213,7 @@ query, use a filter expression as part of the value of <code>loc</code> (e.g., w
 <p>If <code>loc</code> is a polygon layer, you'll also need to specify how to spatially aggregate the queried
 values if a feature overlaps more than one pixel. See <code><a href='ca_options.html'>ca_options</a></code>.</p>
 <p><code>dTolerance</code> is a value in decimal degrees used to simplify polygons. If <code>dTolerance &gt; 0</code>,
-<code><a href='https://rdrr.io/pkg/sf/man/geos_unary.html'>st_simplify</a></code> will be called to remove polygon nodes within <code>dTolerance</code> of another node,
+<code><a href='https://rdrr.io/pkg/sf/man/geos_unary.html'>geos_unary</a>{st_simplify}</code> will be called to remove polygon nodes within <code>dTolerance</code> of another node,
 before fetching data. This can reduce the amount of spatial data that needs to be sent to the server,
 which can improve performance particularly when you have very fine grained polygons.
 Simplifying polygons can modify (generally reduce) the pixels that a polygon overlaps, so use with caution.

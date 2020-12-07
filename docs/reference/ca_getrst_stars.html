@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+      <a href="../notebooks/caladaptr_intro.nb.html">Introduction</a>
     </li>
     <li>
       <a href="../notebooks/chill.nb.html">Compute Chill</a>
@@ -171,10 +171,10 @@
 
     <pre class="usage"><span class='fu'>ca_getrst_stars</span>(
   <span class='kw'>x</span>,
-  stop_on_err = <span class='fl'>TRUE</span>,
   out_dir = <span class='kw'>NULL</span>,
   merge_geoms = <span class='fl'>TRUE</span>,
   sidecar_write = <span class='fl'>TRUE</span>,
+  stop_on_err = <span class='fl'>TRUE</span>,
   quiet = <span class='fl'>FALSE</span>,
   debug = <span class='fl'>FALSE</span>
 )</pre>
@@ -187,12 +187,16 @@
       <td><p>A Cal-Adapt API request</p></td>
     </tr>
     <tr>
-      <th>stop_on_err</th>
-      <td><p>Stop if the server returns an error</p></td>
+      <th>out_dir</th>
+      <td><p>Where the output tif files should be written</p></td>
     </tr>
     <tr>
       <th>sidecar_write</th>
       <td><p>Save a small sidecar file with the TIF file containing additional attribute info</p></td>
+    </tr>
+    <tr>
+      <th>stop_on_err</th>
+      <td><p>Stop if the server returns an error</p></td>
     </tr>
     <tr>
       <th>quiet</th>
@@ -202,6 +206,10 @@
       <th>debug</th>
       <td><p>Print additional output at the console</p></td>
     </tr>
+    <tr>
+      <th>merge_geom</th>
+      <td><p>Whether to merge geoms (not currently used)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -209,11 +217,12 @@
     <p>A tibble</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This will download a multi-layer raster for your study area, convert it to a stars object, and export it to
-TIF files. Note this will only work for areas-of-interest. If you want to download rasters for a large area (e.g., the
-whole state) you're better off downloading NetCDF files from the Cal-Adapt <a href='http://albers.cnr.berkeley.edu/data/'>data server</a>.</p>
+    <p>This will download cropped multi-layer raster(s) for your study area, convert it to a stars object, and export it to
+TIF files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle. If you want to download
+rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
+Cal-Adapt <a href='http://albers.cnr.berkeley.edu/data/'>data server</a>.</p>
 <p>If <code>sidecar_write = TRUE</code>, a small file with the same base name as the TIF will be saved. This sidecar file contains
-attributes of a space-time-array not perserved by TIFs. You can import the TIF file back into R as a stars object
+attributes of a space-time-array not preserved by TIFs. You can import the TIF file back into R as a stars object
 with <code><a href='ca_read_stars.html'>ca_read_stars</a></code>.</p>
 
   </div>

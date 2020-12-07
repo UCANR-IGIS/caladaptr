@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+      <a href="../notebooks/caladaptr_intro.nb.html">Introduction</a>
     </li>
     <li>
       <a href="../notebooks/chill.nb.html">Compute Chill</a>
@@ -268,7 +268,7 @@ be unaltered); if not the returned tibble will have id values for certain values
 improve the performance of filters and joins, but at the cost of a larger database file and slower write operations. Fields you can
 create indices on include <code>"feat_id"</code> (the location id value), <code>"cvar"</code>, <code>"gcm"</code>, <code>"scenario"</code>, <code>"period"</code>,
 <code>"slug"</code>, and <code>"spag"</code>.</p>
-<p>Indices can also be added to a SQLite database after downloading is complete with ca_db_index. For large queries (e.g. thousands of
+<p>Indices can also be added to a SQLite database after downloading is complete with <a href='ca_db_indices.html'>ca_db_indices</a>. For large queries (e.g. thousands of
 API calls), it is recommended to not build indices during the download process, and only add indices for those fields you
 plan to filter on or join during your analysis. You can view which indices exist with <code><a href='ca_db_info.html'>ca_db_info</a></code>.</p>
 <p><code>pause_n</code> is the number of API calls after which a built-in pause of length <code>pause_secs</code> is triggered. This is intended

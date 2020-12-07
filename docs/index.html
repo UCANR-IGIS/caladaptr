@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
       </span>
     </div>
 
@@ -76,7 +76,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="notebooks/caladaptr_intro.nb.html">Intro and Examples</a>
+      <a href="notebooks/caladaptr_intro.nb.html">Introduction</a>
     </li>
     <li>
       <a href="notebooks/chill.nb.html">Compute Chill</a>
@@ -123,26 +123,27 @@
 <!-- badges: start -->
 
 <p>See also: <a href="https://ucanr-igis.github.io/caladaptr/" class="uri">https://ucanr-igis.github.io/caladaptr/</a></p>
+</div>
+<div id="main-features" class="section level1">
+<h1 class="hasAnchor">
+<a href="#main-features" class="anchor"></a>Main Features</h1>
 <p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/">Cal-Adapt.org</a> in R. The niche of <code>caladaptr</code> is to bring data into R after which you can other packages to visualize and analyze:</p>
 <p align="center">
 </p>
 <p><img src="reference/figures/caladaptr_role_460x340x256.png" width="460" height="340"></p>
 
-<p><code>caladaptr</code> functions have been designed to:</p>
+<p><code>caladaptr</code> functions are designed to:</p>
 <ul>
 <li>be pipe friendly</li>
-<li>queries return tibbles for compatibility with tidyverse packages</li>
-<li>query values are endowed with units (managed by the <a href="https://cran.r-project.org/package=units">units</a>) package)</li>
-<li>spatial objects are received and returned as <code>sf</code> data frames</li>
-<li>rasters are returned as <a href="https://r-spatial.github.io/stars/"><code>stars</code></a> rasters for user-friendly space time manipulation</li>
+<li>return tibbles for compatibility with tidyverse packages</li>
+<li>record units of downloaded values (managed by the <a href="https://cran.r-project.org/package=units">units</a>) package)</li>
+<li>accept and return <code>sf</code> data frames where spatial objects are needed</li>
+<li>return cropped rasters as <a href="https://r-spatial.github.io/stars/"><code>stars</code></a> objects for user-friendly space time manipulation</li>
 </ul>
-<div id="development-status" class="section level2">
-<h2 class="hasAnchor">
-<a href="#development-status" class="anchor"></a>Development Status</h2>
+<p><em>Development Status</em></p>
 <ul>
-<li>query <em>any</em> of Cal-Adapt’s ~850 raster data layers ✔ ✓ ✓<br>
-</li>
-<li>retrieve values by point, one of the preset areas-of-interest (e.g., census tract), or a user-provided polygon ✔<br>
+<li>query <em>any</em> of Cal-Adapt’s ~850 raster data layers ✔</li>
+<li>retrieve values by point, a preset area-of-interest (e.g., census tract), or a user-provided polygon ✔<br>
 </li>
 <li>cache large queries in a local SQLite database ✔<br>
 </li>
@@ -155,19 +156,18 @@
 <li>import station data (e.g., sea level rise) - <em>not currently planned</em>
 </li>
 </ul>
-<p><strong>‘Beta’</strong> status means:</p>
+<p><em>‘Beta’</em> status means:</p>
 <p>1) the package is still under development<br>
 2) the package is being updated fairly often<br>
 3) there’s a possibility that updates will <em>not</em> be backward compatible<br>
 4) user feedback and input is extremely welcome! (please join the <a href="#caladaptr-betar-club">caladaptR betaR</a> club)</p>
-</div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p><code>caladaptr</code> is hosted on <a href="https://github.com/ucanr-igis/caladaptr">GitHub</a>. To install it, you need to have <a href="https://cran.r-project.org/bin/windows/Rtools/">RTools</a> and the <code>devtools</code> (or <code>remotes</code>) package installed:</p>
+<p><code>caladaptr</code> is hosted on <a href="https://github.com/ucanr-igis/caladaptr">GitHub</a>. To install it, you need to have <a href="https://cran.r-project.org/bin/windows/Rtools/">RTools</a> and the <code>remotes</code> (or <code>devtools</code>) package installed:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://devtools.r-lib.org">devtools</a></span>)
-<span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"ucanr-igis/caladaptr"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://remotes.r-lib.org">remotes</a></span>)
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"ucanr-igis/caladaptr"</span>)
 </pre></div>
 </div>
 <div id="general-workflow" class="section level2">
@@ -175,7 +175,7 @@
 <a href="#general-workflow" class="anchor"></a>General Workflow</h2>
 <p>In general, there are three steps to getting data via the Cal-Adapt API:</p>
 <p>1) Create a ‘Cal-Adapt API Request’ object</p>
-<p>2) Feed the API Request object into a function that fetches data (either values or clipped rasters)</p>
+<p>2) Feed the API Request object into a function that fetches data (either values or cropped rasters)</p>
 <p>3) Wrangle the data that comes back into the format you require</p>
 </div>
 <div id="example-get-annual-projected-temperature-at-a-point-location" class="section level2">
@@ -185,7 +185,7 @@
 <!-- end list -->
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span>)
-<span class="co">#&gt; caladaptr (version 0.4.3)</span>
+<span class="co">#&gt; caladaptr (version 0.4.4)</span>
 <span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
 <span class="co">#&gt; Bug reports: https://github.com/ucanr-igis/caladaptr/issues</span>
 </pre></div>
@@ -259,16 +259,7 @@
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="co">## Add a column with Fahrenheit units</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/r-quantities/units">units</a></span>)
-<span class="co">#&gt; udunits system database from C:/Users/Andy/Documents/R/win-library/4.0/units/share/udunits</span>
 <span class="kw">sac_tasmax_tbl2</span> <span class="op">&lt;-</span> <span class="kw">sac_tasmax_tbl</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(temp_f = <span class="fu"><a href="https://rdrr.io/pkg/units/man/set_units.html">set_units</a></span>(<span class="kw">val</span>, <span class="kw">degF</span>))
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">sac_tasmax_tbl2</span>)
 <span class="co">#&gt; # A tibble: 6 x 9</span>
@@ -288,7 +279,7 @@
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="kw">dt</span>), y = <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw">temp_f</span>))) <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(color=<span class="kw">gcm</span>)) <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span>(<span class="kw">scenario</span> <span class="op">~</span> <span class="kw">.</span>) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(title = <span class="st">"Annual Maximum Temperature for Sacamento"</span>, x = <span class="st">"year"</span>, y = <span class="st">"temp (F)"</span>)
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(title = <span class="st">"Annual Maximum Temperature for Sacramento"</span>, x = <span class="st">"year"</span>, y = <span class="st">"temp (F)"</span>)
 </pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
 <p>5) To query a raster series which isn’t one of the CMIP5 climate projections from Scripps, you have to specify the raster series “slug” (which is like an id key).</p>

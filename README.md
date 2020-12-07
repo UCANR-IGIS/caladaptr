@@ -89,7 +89,7 @@ In general, there are three steps to getting data via the Cal-Adapt API:
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.4.3)
+#> caladaptr (version 0.4.4)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 ```
@@ -208,7 +208,7 @@ ggplot(data = sac_tasmax_tbl2,
        aes(x = as.Date(dt), y = as.numeric(temp_f))) +
   geom_line(aes(color=gcm)) +
   facet_grid(scenario ~ .) +
-  labs(title = "Annual Maximum Temperature for Sacamento", x = "year", y = "temp (F)")
+  labs(title = "Annual Maximum Temperature for Sacramento", x = "year", y = "temp (F)")
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
