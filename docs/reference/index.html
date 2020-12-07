@@ -174,7 +174,7 @@
       <tr>
         <th colspan="2">
           <h2 id="section-api-request-constructors" class="hasAnchor"><a href="#section-api-request-constructors" class="anchor"></a>API Request Constructors</h2>
-          <p class="section-desc"><p>Functions that collectively construct a Cal-Adapt API Request object</p></p>
+          <p class="section-desc"><p>Functions that build a Cal-Adapt API request object</p></p>
         </th>
       </tr>
       
@@ -265,7 +265,7 @@
       <tr>
         <th colspan="2">
           <h2 id="section-fetching-data" class="hasAnchor"><a href="#section-fetching-data" class="anchor"></a>Fetching Data</h2>
-          <p class="section-desc"><p>Functions that fetch data from the Cal-Adapt server</p></p>
+          <p class="section-desc"><p>Functions that fetch climate data using the Cal-Adapt API</p></p>
         </th>
       </tr>
       
@@ -307,46 +307,8 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-managing-sqlite-databases" class="hasAnchor"><a href="#section-managing-sqlite-databases" class="anchor"></a>Managing SQLite databases</h2>
-          <p class="section-desc"><p>Working with local SQLite databases</p></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="ca_db_info.html">ca_db_info()</a></code> </p>
-        </td>
-        <td><p>Check the properties of a Cal-Adapt values databases</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-managing-cropped-rasters" class="hasAnchor"><a href="#section-managing-cropped-rasters" class="anchor"></a>Managing Cropped Rasters</h2>
-          <p class="section-desc"><p>Manage cropped rasters</p></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="ca_read_stars.html">ca_read_stars()</a></code> </p>
-        </td>
-        <td><p>Read a stars object from disk</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-finding-and-specifying-data" class="hasAnchor"><a href="#section-finding-and-specifying-data" class="anchor"></a>Finding and Specifying Data</h2>
-          <p class="section-desc"><p>Functions and constants to help you identify and specify datasets when constructing an API Request object</p></p>
+          <h2 id="section-finding-and-specifying-datasets" class="hasAnchor"><a href="#section-finding-and-specifying-datasets" class="anchor"></a>Finding and Specifying Datasets</h2>
+          <p class="section-desc"><p>Constants and functions to help you identify and specify datasets when constructing an API request object</p></p>
         </th>
       </tr>
       
@@ -384,12 +346,18 @@
           <p><code><a href="scenarios.html">scenarios</a></code> </p>
         </td>
         <td><p>Scenarios</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_locagrid_geom.html">ca_locagrid_geom()</a></code> </p>
+        </td>
+        <td><p>Get the geometry of the LOCA data set vector grid.</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
           <h2 id="section-working-with-area-of-interest-presets" class="hasAnchor"><a href="#section-working-with-area-of-interest-presets" class="anchor"></a>Working with Area-of-Interest Presets</h2>
-          <p class="section-desc"><p>Constants to help you specify a preset area-of-interest when constructing an API Request object, and get the geometry</p></p>
+          <p class="section-desc"><p>Constants and functions to help you specify an area-of-interest preset for an API request object, and get the geometry</p></p>
         </th>
       </tr>
       
@@ -413,8 +381,8 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-helper-functions" class="hasAnchor"><a href="#section-helper-functions" class="anchor"></a>Helper Functions</h2>
-          <p class="section-desc"><p>Helper functions</p></p>
+          <h2 id="section-managing-sqlite-databases" class="hasAnchor"><a href="#section-managing-sqlite-databases" class="anchor"></a>Managing SQLite databases</h2>
+          <p class="section-desc"><p>Working with local SQLite databases</p></p>
         </th>
       </tr>
       
@@ -425,14 +393,39 @@
       <tr>
         
         <td>
-          <p><code><a href="ca_locagrid_geom.html">ca_locagrid_geom()</a></code> </p>
+          <p><code><a href="ca_db_info.html">ca_db_info()</a></code> </p>
         </td>
-        <td><p>Get the geometry of the LOCA data set vector grid.</p></td>
+        <td><p>Check the properties of a Cal-Adapt values databases</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_db_indices.html">ca_db_indices()</a></code> </p>
+        </td>
+        <td><p>Add or delete indices</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-manage-package-options" class="hasAnchor"><a href="#section-manage-package-options" class="anchor"></a>Manage Package Options</h2>
+          <h2 id="section-managing-cropped-rasters" class="hasAnchor"><a href="#section-managing-cropped-rasters" class="anchor"></a>Managing Cropped Rasters</h2>
+          <p class="section-desc"><p>Manage cropped rasters saved as TIF</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="ca_read_stars.html">ca_read_stars()</a></code> </p>
+        </td>
+        <td><p>Read a stars object from disk</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-package-options" class="hasAnchor"><a href="#section-package-options" class="anchor"></a>Package Options</h2>
           <p class="section-desc"><p>Manage package settings</p></p>
         </th>
       </tr>
@@ -447,6 +440,12 @@
           <p><code><a href="ca_getcache.html">ca_getcache()</a></code> <code><a href="ca_getcache.html">ca_setcache()</a></code> </p>
         </td>
         <td><p>Manage Cache Directory</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_catalog_fetch.html">ca_catalog_fetch()</a></code> </p>
+        </td>
+        <td><p>Fetch a new copy of the Cal-Adapt raster series catalog</p></td>
       </tr>
     </tbody>
     </table>

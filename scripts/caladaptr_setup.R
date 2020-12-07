@@ -25,9 +25,8 @@ remotes::install_github("ucanr-igis/caladaptr")
 ## Load it
 library(caladaptr)
 
-## See if it works!
-
-library(ggplot2); library(units)
+## See if it works
+library(ggplot2); library(units); library(dplyr)
 
 ca_example_apireq(1) %>%
   ca_getvals_tbl() %>%
@@ -36,7 +35,7 @@ ca_example_apireq(1) %>%
   geom_line(aes(color=gcm)) +
   labs(title = "Annual Max Temp for Sacramento", x = "year", y = "temp (F)")
 
-## Done!
+## See a plot? Done!
 
 
 
