@@ -2,8 +2,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
-^aoipreset_geoms$
-^geoms$
 ^examples$
 ^README_cache$
 ^_pkgdown\.yml$
