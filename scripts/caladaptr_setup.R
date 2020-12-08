@@ -17,7 +17,10 @@ req_pkg <- c("assertthat", "backports", "chillR", "conflicted","crayon", "curl",
              "magrittr", "purrr", "remotes", "rmarkdown", "RSQLite", "sf", "stars", "stringr",
              "tibble", "tidyr", "tmap", "units")
 
-## Install *all* required packages (recommended if you haven't updated packages in a while)
+## Install a fresh version of *all* required packages (recommended)
+
+##  - if it asks you to restart R more than once, select 'no'.
+##  - if it asks whether you want to install from source, select 'no'
 
 install.packages(req_pkg, dependencies = TRUE)
 

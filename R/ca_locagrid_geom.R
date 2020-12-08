@@ -35,7 +35,7 @@ ca_locagrid_geom <- function(quiet = FALSE) {
       msg <- getOption("ca_message", paste0)
       message(msg("Downloading locagrid.zip from GitHub"))
     }
-    gpkg_url <- "https://github.com/ucanr-igis/caladaptr/raw/master/geoms/locagrid.zip"
+    gpkg_url <- "https://github.com/ucanr-igis/caladaptr-res/raw/main/geoms/locagrid.zip"
     tmp_zipfn <- tempfile(fileext = ".zip")
     download_success <- download.file(url = gpkg_url, destfile = tmp_zipfn,
                                       quiet = quiet)

@@ -98,11 +98,11 @@ navbar:
       text: R Notebooks
       menu:
        - text: "Introduction"
-         href: notebooks/caladaptr_intro.nb.html
+         href: https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html
        - text: "Compute Chill"
-         href: notebooks/chill.nb.html
+         href: https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html
     presentations:
       text: Presentations
       menu:
        - text: "Overview"
-         href: pres/overview.html
+         href: https://ucanr-igis.github.io/caladaptr-res/pres/overview.html#(1)

@@ -1,6 +1,8 @@
 # caladaptr 0.4.4 (2020-12-07)
 
 * `ca_example_apireq()`: updated example #1
+* `ca_locagrid_geom()`: zip file download source changed to github.com/ucanr-igis/caladaptr-res/... 
+* `ca_aoipreset_geom()`: zip file download source changed to github.com/ucanr-igis/caladaptr-res/... 
 
 # caladaptr 0.4.3 (2020-12-06)
 

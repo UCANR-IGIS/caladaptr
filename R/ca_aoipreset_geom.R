@@ -46,7 +46,7 @@ ca_aoipreset_geom <- function(aoipreset, quiet = FALSE) {
       message(msg(paste0("Downloading ", aoipreset, ".zip from GitHub")))
     }
     ## Try to download it
-    gpkg_url <- paste0("https://github.com/ucanr-igis/caladaptr/raw/master/geoms/", aoipreset, ".zip")
+    gpkg_url <- paste0("https://github.com/ucanr-igis/caladaptr-res/raw/main/geoms/", aoipreset, ".zip")
     tmp_zipfn <- tempfile(aoipreset, fileext = ".zip")
     download_success <- download.file(url = gpkg_url, destfile = tmp_zipfn, quiet = quiet)
     if (download_success == 0) {
