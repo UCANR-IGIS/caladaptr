@@ -18,7 +18,6 @@ req_pkg <- c("assertthat", "backports", "chillR", "conflicted","crayon", "curl",
              "tibble", "tidyr", "tmap", "units")
 
 ## Install a fresh version of *all* required packages (recommended)
-
 ##  - if it asks you to restart R more than once, select 'no'.
 ##  - if it asks whether you want to install from source, select 'no'
 
@@ -33,11 +32,11 @@ install.packages(req_pkg, dependencies = TRUE)
 
 remotes::install_github("ucanr-igis/caladaptr")
 
-## Load it
+## Load caladaptr
 
 library(caladaptr)
 
-## See if it works
+## Try to fetch some climate data
 
 library(ggplot2); library(units); library(dplyr)
 
