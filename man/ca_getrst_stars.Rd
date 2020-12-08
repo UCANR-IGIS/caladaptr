@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_getrst_stars.R
 \name{ca_getrst_stars}
 \alias{ca_getrst_stars}
-\title{Get values from an API request object as a tibble}
+\title{Get a cropped raster}
 \usage{
 ca_getrst_stars(
   x,
@@ -19,6 +19,8 @@ ca_getrst_stars(
 
 \item{out_dir}{Where the output tif files should be written}
 
+\item{merge_geoms}{Whether to merge geoms (not currently used)}
+
 \item{sidecar_write}{Save a small sidecar file with the TIF file containing additional attribute info}
 
 \item{stop_on_err}{Stop if the server returns an error}
@@ -26,22 +28,24 @@ ca_getrst_stars(
 \item{quiet}{Suppress messages}
 
 \item{debug}{Print additional output at the console}
-
-\item{merge_geom}{Whether to merge geoms (not currently used)}
 }
 \value{
-A tibble
+A vector of TIF file names
 }
 \description{
-Get values from an API request object as a tibble
+Download a cropped raster for an API request
 }
 \details{
-This will download cropped multi-layer raster(s) for your study area, convert it to a stars object, and export it to
-TIF files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle. If you want to download
+This will download cropped multi-layer raster(s) for your study area, convert them to stars objects, and export them
+as tif files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle (i.e., smaller than
+San Bernadino County). If you want to download
 rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 Cal-Adapt \href{http://albers.cnr.berkeley.edu/data/}{data server}.
 
-If \code{sidecar_write = TRUE}, a small file with the same base name as the TIF will be saved. This sidecar file contains
-attributes of a space-time-array not preserved by TIFs. You can import the TIF file back into R as a stars object
+If \code{sidecar_write = TRUE}, a small file with the same base name as the tif will be saved. This sidecar file contains
+attributes of a space-time-array not preserved by tifs. You can import the tif file back into R as a stars object
 with \code{\link{ca_read_stars}}.
+
+This function merely downloads the cropped rasters to disk and returns the filenames. To work with cropped rasters
+as stars objects within R, import them using \code{\link{ca_read_stars}}.
 }

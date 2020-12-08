@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get values from an API request object as a tibble — ca_getrst_stars • caladaptr</title>
+<title>Get a cropped raster — ca_getrst_stars • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Get values from an API request object as a tibble — ca_getrst_stars" />
-<meta property="og:description" content="Get values from an API request object as a tibble" />
+<meta property="og:title" content="Get a cropped raster — ca_getrst_stars" />
+<meta property="og:description" content="Download a cropped raster for an API request" />
 
 
 
@@ -160,13 +160,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get values from an API request object as a tibble</h1>
+    <h1>Get a cropped raster</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_getrst_stars.R'><code>R/ca_getrst_stars.R</code></a></small>
     <div class="hidden name"><code>ca_getrst_stars.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Get values from an API request object as a tibble</p>
+    <p>Download a cropped raster for an API request</p>
     </div>
 
     <pre class="usage"><span class='fu'>ca_getrst_stars</span>(
@@ -191,6 +191,10 @@
       <td><p>Where the output tif files should be written</p></td>
     </tr>
     <tr>
+      <th>merge_geoms</th>
+      <td><p>Whether to merge geoms (not currently used)</p></td>
+    </tr>
+    <tr>
       <th>sidecar_write</th>
       <td><p>Save a small sidecar file with the TIF file containing additional attribute info</p></td>
     </tr>
@@ -206,24 +210,23 @@
       <th>debug</th>
       <td><p>Print additional output at the console</p></td>
     </tr>
-    <tr>
-      <th>merge_geom</th>
-      <td><p>Whether to merge geoms (not currently used)</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A tibble</p>
+    <p>A vector of TIF file names</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This will download cropped multi-layer raster(s) for your study area, convert it to a stars object, and export it to
-TIF files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle. If you want to download
+    <p>This will download cropped multi-layer raster(s) for your study area, convert them to stars objects, and export them
+as tif files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle (i.e., smaller than
+San Bernadino County). If you want to download
 rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 Cal-Adapt <a href='http://albers.cnr.berkeley.edu/data/'>data server</a>.</p>
-<p>If <code>sidecar_write = TRUE</code>, a small file with the same base name as the TIF will be saved. This sidecar file contains
-attributes of a space-time-array not preserved by TIFs. You can import the TIF file back into R as a stars object
+<p>If <code>sidecar_write = TRUE</code>, a small file with the same base name as the tif will be saved. This sidecar file contains
+attributes of a space-time-array not preserved by tifs. You can import the tif file back into R as a stars object
 with <code><a href='ca_read_stars.html'>ca_read_stars</a></code>.</p>
+<p>This function merely downloads the cropped rasters to disk and returns the filenames. To work with cropped rasters
+as stars objects within R, import them using <code><a href='ca_read_stars.html'>ca_read_stars</a></code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

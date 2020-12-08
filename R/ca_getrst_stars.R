@@ -1,23 +1,29 @@
-#' Get values from an API request object as a tibble
+#' Get a cropped raster
+#'
+#' Download a cropped raster for an API request
 #'
 #' @param x A Cal-Adapt API request
 #' @param out_dir Where the output tif files should be written
-#' @param merge_geom Whether to merge geoms (not currently used)
+#' @param merge_geoms Whether to merge geoms (not currently used)
 #' @param sidecar_write Save a small sidecar file with the TIF file containing additional attribute info
 #' @param stop_on_err Stop if the server returns an error
 #' @param quiet Suppress messages
 #' @param debug Print additional output at the console
 #'
-#' @details This will download cropped multi-layer raster(s) for your study area, convert it to a stars object, and export it to
-#' TIF files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle. If you want to download
+#' @details This will download cropped multi-layer raster(s) for your study area, convert them to stars objects, and export them
+#' as tif files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle (i.e., smaller than
+#' San Bernadino County). If you want to download
 #' rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 #' Cal-Adapt \href{http://albers.cnr.berkeley.edu/data/}{data server}.
 #'
-#' If \code{sidecar_write = TRUE}, a small file with the same base name as the TIF will be saved. This sidecar file contains
-#' attributes of a space-time-array not preserved by TIFs. You can import the TIF file back into R as a stars object
+#' If \code{sidecar_write = TRUE}, a small file with the same base name as the tif will be saved. This sidecar file contains
+#' attributes of a space-time-array not preserved by tifs. You can import the tif file back into R as a stars object
 #' with \code{\link{ca_read_stars}}.
 #'
-#' @return A tibble
+#' This function merely downloads the cropped rasters to disk and returns the filenames. To work with cropped rasters
+#' as stars objects within R, import them using \code{\link{ca_read_stars}}.
+#'
+#' @return A vector of TIF file names
 #'
 #' @import crayon
 #' @importFrom httr GET POST content user_agent upload_file accept_json accept http_error write_disk progress stop_for_status warn_for_status
