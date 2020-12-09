@@ -15,7 +15,7 @@
 req_pkg <- c("assertthat", "backports", "chillR", "conflicted","crayon", "curl", "DBI",
              "dbplyr", "digest", "dplyr", "fastmatch", "ggplot2", "httr", "lubridate",
              "magrittr", "purrr", "remotes", "rmarkdown", "RSQLite", "sf", "stars", "stringr",
-             "tibble", "tidyr", "tmap", "units")
+             "tibble", "tidyr", "tmap", "units", "usethis")
 
 ## Install a fresh version of *all* required packages (recommended)
 ##  - if it asks you to restart R more than once, select 'no'.

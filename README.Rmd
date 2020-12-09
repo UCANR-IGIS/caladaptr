@@ -33,7 +33,7 @@ See also: <https://ucanr-igis.github.io/caladaptr/>
 
 - be pipe friendly 
 - return tibbles for compatibility with tidyverse packages
-- record units of downloaded values (managed by the [units](https://cran.r-project.org/package=units)) package)
+- return values with encoded units (managed by the [units](https://cran.r-project.org/package=units) package)
 - accept and return `sf` data frames where spatial objects are needed
 - return cropped rasters as [`stars`](https://r-spatial.github.io/stars/) objects for user-friendly space time manipulation
 
@@ -56,16 +56,16 @@ See also: <https://ucanr-igis.github.io/caladaptr/>
 3) there's a possibility that updates will *not* be backward compatible  
 4) user feedback and input is extremely welcome! (please join the [caladaptR betaR](#caladaptr-betar-club) club)
 
-## Installation
+# Installation
 
-`caladaptr` is hosted on [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. To install it, you need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} and the `remotes` (or `devtools`) package installed:
+`caladaptr` is hosted on [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. To install it, you need the  `remotes` (or `devtools`) package. Windows users also need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} installed.
 
 ```{r install_caladaptr, eval = FALSE}
 library(remotes)
 remotes::install_github("ucanr-igis/caladaptr")
 ```
 
-## General Workflow 
+# General Workflow 
 
 In general, there are three steps to getting data via the Cal-Adapt API:
 
@@ -76,19 +76,14 @@ In general, there are three steps to getting data via the Cal-Adapt API:
 3) Wrangle the data that comes back into the format you require
 
 
-## Example: Get Annual Projected Temperature at a Point Location
+## Example 1: Get Projected Annual Temperature at a Point Location
 
-1) Load the package:
-
-```{r load_package}
-library(caladaptr)
-```
-
-2) Create an **API request object** for a point location. Creating an API request object like filling in an order form. The request is essentially a description of the data you want, but by itself doesn't fetch any data. 
+1) Create an **API request object** for a point location. Creating an API request object like filling in an order form. The request is essentially a description of the data you want, but by itself doesn't fetch any data. 
 
 To get data from one of the [LOCA downscaled CMIP5 climate projections from Scripps](https://berkeley-gif.github.io/caladapt-docs/data-catalog.html), there are a number of '*constructor*' functions you can mix and match to create an API request object. Here we'll grab 30 years of projected annual maximum temperature for a point location:
 
 ```{r cap1_create, cache = FALSE}
+library(caladaptr)
 sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a location
   ca_gcm(c("HadGEM2-ES", "CNRM-CM5", "CanESM2","MIROC5",            ## select GCM(s)
            "ACCESS1-0", "CCSM4", "CESM1-BGC", 
@@ -118,7 +113,7 @@ scenarios
 periods
 ```
 
-3) Feed your API call into a function that **fetches data**, such as `ca_getvals_tbl()`. 
+2) Feed your API call into a function that **fetches data**, such as `ca_getvals_tbl()`. 
 
 ```{r cap1_getvals, cache = FALSE}
 sac_tasmax_tbl <- ca_getvals_tbl(sac_tasmax_cap)
@@ -126,7 +121,7 @@ dim(sac_tasmax_tbl)
 head(sac_tasmax_tbl)
 ```
 
-4) Wrangle the data as much as needed for your visualization or analysis. Here all we have to do is to add a column for Fahrenheit then we're ready to plot
+3) **Wrangle** the data as much as needed for your visualization or analysis. Here we'll add a column for Fahrenheit which is more familiar than Kelvin.
 
 ```{r message = FALSE}
 ## Add a column with Fahrenheit units
@@ -136,7 +131,7 @@ sac_tasmax_tbl2 <- sac_tasmax_tbl %>% mutate(temp_f = set_units(val, degF))
 head(sac_tasmax_tbl2)
 ```
 
-Make the plot
+Now we can make a plot:
 
 ```{r}
 library(ggplot2)
@@ -147,16 +142,18 @@ ggplot(data = sac_tasmax_tbl2,
   labs(title = "Annual Maximum Temperature for Sacramento", x = "year", y = "temp (F)")
 ```
 
-5) To query a raster series which isn't one of the CMIP5 climate projections from Scripps, you have to specify the raster series "slug" (which is like an id key). 
+## Example 2: Query a Raster Series by its Slug
 
-View all slugs:
+To query a raster series which *isn't* one of the CMIP5 climate projections from Scripps, you have to specify the raster series "slug" (which is like an id key). 
 
-```{r}
-## View(ca_catalog_rs())
+You can view all 850 raster series available thru the Cal-Adapt API and then use the filter button in the RStudio table viewer to find the slug of the dataset you want to query:
+
+```{r eval=FALSE}
+View(ca_catalog_rs())
 ## From here you can use the filter buttons in RStudio viewer pane to find the slug you want.
 ```
 
-Here we'll get 30 years of historical observed annual precipitation from the Livneh dataset.
+Here we'll get 30 years of historical observed annual precipitation from the Livneh dataset (slug = `pr_year_livneh`):
 
 ```{r}
 sac_precip_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%  ## Sacramento
@@ -165,12 +162,14 @@ sac_precip_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%  ## Sacramento
 sac_precip_cap
 ```
 
-Fetch the values:
+Fetch values:
 
 ```{r}
 sac_precip_tbl <- sac_precip_cap %>% ca_getvals_tbl()
 head(sac_precip_tbl)
 ```
+
+\
 
 For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the 'R Notebooks' menu on the [website](https://ucanr-igis.github.io/caladaptr/). 
 
