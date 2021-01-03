@@ -7,8 +7,9 @@
 #' @param date_check Cross check the start and end date against the raster series catalog
 #' @param ignore_spag Ignore the spatial aggregation option
 #'
-#' @details This function generates the URLs that fulfill an API request. \code{ignore_spag = TRUE}
-#' is used if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
+#' @details This function generates the URLs that fulfill an API request. It is used internally
+#' but can be useful for debugging. Let \code{ignore_spag = TRUE}
+#' if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
 #'
 #' @importFrom dplyr select mutate left_join right_join pull
 #' @importFrom tibble tibble
@@ -58,7 +59,6 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
 
     idfld_name <- names(x$loc$val)[1]
     loc_sf <- NA
-    #gson_fn_base <- NA
     sf_hash <- ""
 
   } else if (x$loc$type == "aoipreset") {
@@ -72,8 +72,6 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
     idfld <- as.character(x$loc$val$idfld)
     idvals <- x$loc$val$idval
     idfld_name <- idfld
-
-    # idfld_lst <- list(name = idfld, class = class(idvals))
 
     ## Get the matching values of the 'id' column (which is what we have to put in the URL)
     api_ids <- tibble(!!idfld := idvals) %>%
@@ -93,7 +91,6 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
     ## loc_qry = lapply(1:length(x$loc$val$idval), function(i)  list(ref = paste0("/api/", preset, "/", api_ids[i], "/") )))
 
     loc_sf <- NA
-    #gson_fn_base <- NA
     sf_hash <- ""
 
   } else if (x$loc$type == "sf") {
@@ -220,9 +217,8 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
 
   }
 
-
   if (ignore_spag) {
-    stat_tbl <- tibble(stat_idx = 1, spag = factor(NA), stat_qry = NA)
+    stat_tbl <- tibble(stat_idx = 1, spag = factor(NA), stat_qry = "")
 
   } else {
 

@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.5</span>
       </span>
     </div>
 
@@ -163,6 +163,20 @@
       <small>Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="caladaptr-045-2021-01-02" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.5">
+<a href="#caladaptr-045-2021-01-02" class="anchor"></a>caladaptr 0.4.5 (2021-01-02)</h1>
+<p>The highlight of this update is improvements to <code><a href="../reference/ca_getrst_stars.html">ca_getrst_stars()</a></code>. You can now download cropped rasters for user-defined sf data frames as well, points, and preset areas of interest. Rasters can also be masked to the polygon boundary.</p>
+<ul>
+<li>
+<code><a href="../reference/ca_getrst_stars.html">ca_getrst_stars()</a></code>: added support sf data frames and point locations; added <code>mask</code> and <code>merge_geom</code> arguments</li>
+<li>
+<code>geojsonsf</code> and <code>zip</code> added to imports</li>
+<li>
+<code><a href="../reference/ca_apicalls.html">ca_apicalls()</a></code>: fixed a bug in the api_url when <code>ignore_spag = TRUE</code>
+</li>
+</ul>
+</div>
     <div id="caladaptr-044-2020-12-07" class="section level1">
 <h1 class="page-header" data-toc-text="0.4.4">
 <a href="#caladaptr-044-2020-12-07" class="anchor"></a>caladaptr 0.4.4 (2020-12-07)</h1>
@@ -173,6 +187,10 @@
 <code><a href="../reference/ca_locagrid_geom.html">ca_locagrid_geom()</a></code>: zip file download source changed to github.com/ucanr-igis/caladaptr-res/…</li>
 <li>
 <code><a href="../reference/ca_aoipreset_geom.html">ca_aoipreset_geom()</a></code>: zip file download source changed to github.com/ucanr-igis/caladaptr-res/…</li>
+<li>
+<code><a href="../reference/ca_getrst_stars.html">ca_getrst_stars()</a></code>: added</li>
+<li>
+<code><a href="../reference/ca_read_stars.html">ca_read_stars()</a></code>: added</li>
 </ul>
 </div>
     <div id="caladaptr-043-2020-12-06" class="section level1">

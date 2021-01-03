@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 # start_vignette("D:/GitHub/cal-adapt/caladaptr")
 ```
 
-# caladaptR <img src="man/figures/caladaptr-beta_logo.svg" align="right" width="240" />
+# caladaptR <a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" /></a>
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 See also: <https://ucanr-igis.github.io/caladaptr/>
 
-# Main Features
+# Features
 
 `caladaptr` is an API client that makes it easier to work with data from [Cal-Adapt.org](https://cal-adapt.org/) in R. The niche of `caladaptr` is to bring data into R after which you can other packages to visualize and analyze:
 
@@ -44,8 +44,7 @@ See also: <https://ucanr-igis.github.io/caladaptr/>
 - query *any* of Cal-Adapt's ~850 raster data layers &#10004; 
 - retrieve values by point, a preset area-of-interest (e.g., census tract), or a user-provided polygon &#10004;  
 - cache large queries in a local SQLite database &#10004;  
-- download cropped rasters by a preset area-of-interest &#10004;  
-- download cropped rasters by a user-supplied polygon - *coming soon*  
+- download cropped rasters (small to medium size areas) &#10004;  
 - download full rasters - *not currently planned*  
 - import station data (e.g., sea level rise) - *not currently planned*
 
@@ -157,7 +156,7 @@ Here we'll get 30 years of historical observed annual precipitation from the Liv
 
 ```{r}
 sac_precip_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%  ## Sacramento
-  ca_slug("pr_year_livneh")                                      ## Livneh yearly average precipitation historical
+  ca_slug("pr_year_livneh") %>%                                  ## Livneh yearly average precipitation historical
   ca_years(start = 1980, end = 2010)                             ## Start and end dates
 sac_precip_cap
 ```

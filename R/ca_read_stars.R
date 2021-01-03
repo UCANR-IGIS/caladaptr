@@ -33,6 +33,11 @@ ca_read_stars <- function(x, read_sidecar = TRUE) {
 
   }
 
+  if (1 %in% dim(res)[1:2]) {
+    msg <- "This stars object has a single row or column of pixels. Tidyverse methods may not work, use square bracket syntax instead."
+    warning(paste(strwrap(msg, indent = 0, exdent = 2), collapse = "\n"))
+  }
+
   invisible(res)
 
 }

@@ -1,8 +1,20 @@
+# caladaptr 0.4.5 (2021-01-02)
+
+The highlight of this update is improvements to `ca_getrst_stars()`. You can now download cropped rasters
+for user-defined sf data frames as well, points, and preset areas of interest. Rasters can also be masked to the
+polygon boundary.
+
+* `ca_getrst_stars()`: added support sf data frames and point locations; added `mask` and `merge_geom` arguments
+* `geojsonsf` and `zip` added to imports
+* `ca_apicalls()`: fixed a bug in the api_url when `ignore_spag = TRUE`
+
 # caladaptr 0.4.4 (2020-12-07)
 
 * `ca_example_apireq()`: updated example #1
 * `ca_locagrid_geom()`: zip file download source changed to github.com/ucanr-igis/caladaptr-res/... 
 * `ca_aoipreset_geom()`: zip file download source changed to github.com/ucanr-igis/caladaptr-res/... 
+* `ca_getrst_stars()`: added
+* `ca_read_stars()`: added
 
 # caladaptr 0.4.3 (2020-12-06)
 

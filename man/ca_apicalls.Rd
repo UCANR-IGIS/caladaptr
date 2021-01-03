@@ -19,6 +19,7 @@ ca_apicalls(x, slug_check = TRUE, date_check = TRUE, ignore_spag = FALSE)
 Constructs a tibble of individual API calls for an API request
 }
 \details{
-This function generates the URLs that fulfill an API request. \code{ignore_spag = TRUE}
-is used if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
+This function generates the URLs that fulfill an API request. It is used internally
+but can be useful for debugging. Let \code{ignore_spag = TRUE}
+if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
 }

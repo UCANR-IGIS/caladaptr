@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.5</span>
       </span>
     </div>
 
@@ -118,15 +118,15 @@
 
 <div id="caladaptr-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#caladaptr-" class="anchor"></a>caladaptR <img src="reference/figures/caladaptr-beta_logo.svg" align="right" width="240">
+<a href="#caladaptr-" class="anchor"></a>caladaptR <a href="http://ucanr-igis.github.io/caladaptr"><img src="reference/figures/logo.gif" align="right" height="150"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p>See also: <a href="https://ucanr-igis.github.io/caladaptr/" class="uri">https://ucanr-igis.github.io/caladaptr/</a></p>
 </div>
-<div id="main-features" class="section level1">
+<div id="features" class="section level1">
 <h1 class="hasAnchor">
-<a href="#main-features" class="anchor"></a>Main Features</h1>
+<a href="#features" class="anchor"></a>Features</h1>
 <p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/">Cal-Adapt.org</a> in R. The niche of <code>caladaptr</code> is to bring data into R after which you can other packages to visualize and analyze:</p>
 <p align="center">
 </p>
@@ -136,7 +136,7 @@
 <ul>
 <li>be pipe friendly</li>
 <li>return tibbles for compatibility with tidyverse packages</li>
-<li>record units of downloaded values (managed by the <a href="https://cran.r-project.org/package=units">units</a>) package)</li>
+<li>return values with encoded units (managed by the <a href="https://cran.r-project.org/package=units">units</a> package)</li>
 <li>accept and return <code>sf</code> data frames where spatial objects are needed</li>
 <li>return cropped rasters as <a href="https://r-spatial.github.io/stars/"><code>stars</code></a> objects for user-friendly space time manipulation</li>
 </ul>
@@ -147,9 +147,7 @@
 </li>
 <li>cache large queries in a local SQLite database ✔<br>
 </li>
-<li>download cropped rasters by a preset area-of-interest ✔<br>
-</li>
-<li>download cropped rasters by a user-supplied polygon - <em>coming soon</em><br>
+<li>download cropped rasters (small to medium size areas) ✔<br>
 </li>
 <li>download full rasters - <em>not currently planned</em><br>
 </li>
@@ -161,37 +159,33 @@
 2) the package is being updated fairly often<br>
 3) there’s a possibility that updates will <em>not</em> be backward compatible<br>
 4) user feedback and input is extremely welcome! (please join the <a href="#caladaptr-betar-club">caladaptR betaR</a> club)</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p><code>caladaptr</code> is hosted on <a href="https://github.com/ucanr-igis/caladaptr">GitHub</a>. To install it, you need to have <a href="https://cran.r-project.org/bin/windows/Rtools/">RTools</a> and the <code>remotes</code> (or <code>devtools</code>) package installed:</p>
+</div>
+<div id="installation" class="section level1">
+<h1 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h1>
+<p><code>caladaptr</code> is hosted on <a href="https://github.com/ucanr-igis/caladaptr">GitHub</a>. To install it, you need the <code>remotes</code> (or <code>devtools</code>) package. Windows users also need to have <a href="https://cran.r-project.org/bin/windows/Rtools/">RTools</a> installed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://remotes.r-lib.org">remotes</a></span>)
 <span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"ucanr-igis/caladaptr"</span>)
 </pre></div>
 </div>
-<div id="general-workflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#general-workflow" class="anchor"></a>General Workflow</h2>
+<div id="general-workflow" class="section level1">
+<h1 class="hasAnchor">
+<a href="#general-workflow" class="anchor"></a>General Workflow</h1>
 <p>In general, there are three steps to getting data via the Cal-Adapt API:</p>
 <p>1) Create a ‘Cal-Adapt API Request’ object</p>
 <p>2) Feed the API Request object into a function that fetches data (either values or cropped rasters)</p>
 <p>3) Wrangle the data that comes back into the format you require</p>
-</div>
-<div id="example-get-annual-projected-temperature-at-a-point-location" class="section level2">
+<div id="example-1-get-projected-annual-temperature-at-a-point-location" class="section level2">
 <h2 class="hasAnchor">
-<a href="#example-get-annual-projected-temperature-at-a-point-location" class="anchor"></a>Example: Get Annual Projected Temperature at a Point Location</h2>
-<p>1) Load the package:</p>
-<!-- end list -->
+<a href="#example-1-get-projected-annual-temperature-at-a-point-location" class="anchor"></a>Example 1: Get Projected Annual Temperature at a Point Location</h2>
+<p>1) Create an <strong>API request object</strong> for a point location. Creating an API request object like filling in an order form. The request is essentially a description of the data you want, but by itself doesn’t fetch any data.</p>
+<p>To get data from one of the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections from Scripps</a>, there are a number of ‘<em>constructor</em>’ functions you can mix and match to create an API request object. Here we’ll grab 30 years of projected annual maximum temperature for a point location:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span>)
-<span class="co">#&gt; caladaptr (version 0.4.4)</span>
+<span class="co">#&gt; caladaptr (version 0.4.5)</span>
 <span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
 <span class="co">#&gt; Bug reports: https://github.com/ucanr-igis/caladaptr/issues</span>
-</pre></div>
-<p>2) Create an <strong>API request object</strong> for a point location. Creating an API request object like filling in an order form. The request is essentially a description of the data you want, but by itself doesn’t fetch any data.</p>
-<p>To get data from one of the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections from Scripps</a>, there are a number of ‘<em>constructor</em>’ functions you can mix and match to create an API request object. Here we’ll grab 30 years of projected annual maximum temperature for a point location:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="kw">sac_tasmax_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span>(coords = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span>)) <span class="op">%&gt;%</span>     <span class="co">## specify a location</span>
   <span class="fu"><a href="reference/ca_gcm.html">ca_gcm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"HadGEM2-ES"</span>, <span class="st">"CNRM-CM5"</span>, <span class="st">"CanESM2"</span>,<span class="st">"MIROC5"</span>,            <span class="co">## select GCM(s)</span>
            <span class="st">"ACCESS1-0"</span>, <span class="st">"CCSM4"</span>, <span class="st">"CESM1-BGC"</span>, 
@@ -210,13 +204,11 @@
 <span class="co">#&gt; Temporal aggregration period(s): year</span>
 <span class="co">#&gt; GCM(s): HadGEM2-ES, CNRM-CM5, CanESM2, MIROC5, ACCESS1-0, CCSM4, CESM1-BGC, CMCC-CMS, GFDL-CM3, HadGEM2-CC</span>
 <span class="co">#&gt; Scenario(s): rcp45, rcp85</span>
-<span class="co">#&gt; Slug(s): NA</span>
 <span class="co">#&gt; Dates: 2040-01-01 to 2070-12-31</span>
-<span class="co">#&gt; Options: NA</span>
 <span class="co">#&gt; </span>
 </pre></div>
 <p>To help you pass arguments for the various constructor functions, <code>caladpatr</code> provides the following constants:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
+<div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="co">## Climate Variables </span>
 <span class="kw">cvars</span>
 <span class="co">#&gt; [1] "tasmax" "tasmin" "pr"     "swe"</span>
@@ -236,9 +228,9 @@
 <span class="kw">periods</span>
 <span class="co">#&gt; [1] "day"    "month"  "year"   "30yavg"</span>
 </pre></div>
-<p>3) Feed your API call into a function that <strong>fetches data</strong>, such as <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>.</p>
+<p>2) Feed your API call into a function that <strong>fetches data</strong>, such as <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>.</p>
 <!-- end list -->
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="kw">sac_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span>(<span class="kw">sac_tasmax_cap</span>)
 <span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%</span>
 <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="kw">sac_tasmax_tbl</span>)
@@ -254,9 +246,9 @@
 <span class="co">#&gt; 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31 299.5327</span>
 <span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31 298.2451</span>
 </pre></div>
-<p>4) Wrangle the data as much as needed for your visualization or analysis. Here all we have to do is to add a column for Fahrenheit then we’re ready to plot</p>
+<p>3) <strong>Wrangle</strong> the data as much as needed for your visualization or analysis. Here we’ll add a column for Fahrenheit which is more familiar than Kelvin.</p>
 <!-- end list -->
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="co">## Add a column with Fahrenheit units</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/r-quantities/units">units</a></span>)
@@ -272,8 +264,8 @@
 <span class="co">#&gt; 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31 299.5327 79.48889</span>
 <span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31 298.2451 77.17127</span>
 </pre></div>
-<p>Make the plot</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
+<p>Now we can make a plot:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span>)
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(data = <span class="kw">sac_tasmax_tbl2</span>, 
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="kw">dt</span>), y = <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw">temp_f</span>))) <span class="op">+</span>
@@ -282,44 +274,43 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(title = <span class="st">"Annual Maximum Temperature for Sacramento"</span>, x = <span class="st">"year"</span>, y = <span class="st">"temp (F)"</span>)
 </pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
-<p>5) To query a raster series which isn’t one of the CMIP5 climate projections from Scripps, you have to specify the raster series “slug” (which is like an id key).</p>
-<p>View all slugs:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co">## View(ca_catalog_rs())</span>
+</div>
+<div id="example-2-query-a-raster-series-by-its-slug" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example-2-query-a-raster-series-by-its-slug" class="anchor"></a>Example 2: Query a Raster Series by its Slug</h2>
+<p>To query a raster series which <em>isn’t</em> one of the CMIP5 climate projections from Scripps, you have to specify the raster series “slug” (which is like an id key).</p>
+<p>You can view all 850 raster series available thru the Cal-Adapt API and then use the filter button in the RStudio table viewer to find the slug of the dataset you want to query:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(<span class="fu"><a href="reference/ca_catalog_rs.html">ca_catalog_rs</a></span>())
 <span class="co">## From here you can use the filter buttons in RStudio viewer pane to find the slug you want.</span>
 </pre></div>
-<p>Here we’ll get 30 years of historical observed annual precipitation from the Livneh dataset.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
+<p>Here we’ll get 30 years of historical observed annual precipitation from the Livneh dataset (slug = <code>pr_year_livneh</code>):</p>
+<div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="kw">sac_precip_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span>(coords = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span>)) <span class="op">%&gt;%</span>  <span class="co">## Sacramento</span>
-  <span class="fu"><a href="reference/ca_slug.html">ca_slug</a></span>(<span class="st">"pr_year_livneh"</span>)                                      <span class="co">## Livneh yearly average precipitation historical</span>
+  <span class="fu"><a href="reference/ca_slug.html">ca_slug</a></span>(<span class="st">"pr_year_livneh"</span>) <span class="op">%&gt;%</span>                                  <span class="co">## Livneh yearly average precipitation historical</span>
   <span class="fu"><a href="reference/ca_years.html">ca_years</a></span>(start = <span class="fl">1980</span>, end = <span class="fl">2010</span>)                             <span class="co">## Start and end dates</span>
 <span class="kw">sac_precip_cap</span>
 <span class="co">#&gt; Cal-Adapt API Request</span>
 <span class="co">#&gt; Location(s): </span>
 <span class="co">#&gt;   x: -121.469</span>
 <span class="co">#&gt;   y: 38.594</span>
-<span class="co">#&gt; Variable(s): NA</span>
-<span class="co">#&gt; Temporal aggregration period(s): NA</span>
-<span class="co">#&gt; GCM(s): NA</span>
-<span class="co">#&gt; Scenario(s): NA</span>
 <span class="co">#&gt; Slug(s): pr_year_livneh</span>
-<span class="co">#&gt; Dates: NA</span>
-<span class="co">#&gt; Options: NA</span>
+<span class="co">#&gt; Dates: 1980-01-01 to 2010-12-31</span>
 <span class="co">#&gt; </span>
 </pre></div>
-<p>Fetch the values:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
+<p>Fetch values:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="kw">sac_precip_tbl</span> <span class="op">&lt;-</span> <span class="kw">sac_precip_cap</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span>()
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">sac_precip_tbl</span>)
 <span class="co">#&gt; # A tibble: 6 x 5</span>
 <span class="co">#&gt;      id slug           spag  dt               val</span>
 <span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;fct&gt; &lt;chr&gt;           [mm]</span>
-<span class="co">#&gt; 1     1 pr_year_livneh none  1950-12-31 1.5772589</span>
-<span class="co">#&gt; 2     1 pr_year_livneh none  1951-12-31 1.0809340</span>
-<span class="co">#&gt; 3     1 pr_year_livneh none  1952-12-31 1.6848391</span>
-<span class="co">#&gt; 4     1 pr_year_livneh none  1953-12-31 0.7950504</span>
-<span class="co">#&gt; 5     1 pr_year_livneh none  1954-12-31 1.4136573</span>
-<span class="co">#&gt; 6     1 pr_year_livneh none  1955-12-31 1.5759532</span>
+<span class="co">#&gt; 1     1 pr_year_livneh none  1980-12-31 1.4778994</span>
+<span class="co">#&gt; 2     1 pr_year_livneh none  1981-12-31 1.6469387</span>
+<span class="co">#&gt; 3     1 pr_year_livneh none  1982-12-31 2.2625108</span>
+<span class="co">#&gt; 4     1 pr_year_livneh none  1983-12-31 2.5765164</span>
+<span class="co">#&gt; 5     1 pr_year_livneh none  1984-12-31 0.8227559</span>
+<span class="co">#&gt; 6     1 pr_year_livneh none  1985-12-31 0.9679347</span>
 </pre></div>
 <p>For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the ‘R Notebooks’ menu on the <a href="https://ucanr-igis.github.io/caladaptr/">website</a>.</p>
 </div>

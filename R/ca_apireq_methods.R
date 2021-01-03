@@ -66,30 +66,51 @@ format.ca_apireq <- function(x, ...) {
   }
   loc_str <- paste0(loc1, loc2, "\n")
 
-  vars_str <- paste0(accent2("Variable(s): "), paste(x$cvar, collapse = ", "), "\n")
+  if (identical(x$cvar, NA)) {
+    vars_str <- ""
+  } else {
+    vars_str <- paste0(accent2("Variable(s): "), paste(x$cvar, collapse = ", "), "\n")
+  }
 
-  gcm_str <- paste0(accent2("GCM(s): "), paste(x$gcm, collapse = ", "), "\n")
+  if (identical(x$gcm, NA)) {
+    gcm_str <- ""
+  } else {
+    gcm_str <- paste0(accent2("GCM(s): "), paste(x$gcm, collapse = ", "), "\n")
+  }
 
-  scen_str <- paste0(accent2("Scenario(s): "), paste(x$scenario, collapse = ", "), "\n")
+  if (identical(x$scenario, NA)) {
+    scen_str <- ""
+  } else {
+    scen_str <- paste0(accent2("Scenario(s): "), paste(x$scenario, collapse = ", "), "\n")
+  }
 
-  per_str <- paste0(accent2("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
+  if (identical(x$period, NA)) {
+    per_str <- ""
+  } else {
+    per_str <- paste0(accent2("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
+  }
 
-  slug_str <- paste0(accent2("Slug(s): "), paste(x$slug, collapse = ", "), "\n")
+  if (identical(x$slug, NA)) {
+    slug_str <- ""
+  } else {
+    slug_str <- paste0(accent2("Slug(s): "), paste(x$slug, collapse = ", "), "\n")
+  }
 
   if (identical(x$dates, NA)) {
-    dates_val <- "NA"
+    dates_str <- ""
   } else {
-    dates_val <- paste(x$dates$start, "to", x$dates$end)
+    dates_str <- paste0(accent2("Dates: "), x$dates$start, " to ", x$dates$end, "\n")
   }
-  dates_str <- paste0(accent2("Dates: "), dates_val, "\n")
 
   if (identical(x$options, NA)) {
-    opt_obj <- "NA"
+    options_str <- ""
   } else {
-    opt_obj <- paste0("\n  spatial ag: ", paste(x$options$spatial_ag, collapse = ", "),
-                      "\n  temporal ag (add'l): ", x$options$temporal_ag)
+    options_str <- paste0(accent2("Options:\n  spatial ag: "),
+                          paste(x$options$spatial_ag, collapse = ", "),
+                          "\n")
+    # NOT IN USE:
+    # "\n  temporal ag (add'l): ", x$options$temporal_ag,
   }
-  options_str <- paste0(accent2("Options: "), opt_obj, "\n")
 
   invisible(paste0(loc_str, vars_str, per_str, gcm_str, scen_str, slug_str, dates_str, options_str))
 
@@ -213,7 +234,7 @@ plot.ca_apireq <- function(x,
     } else {   ## point layer
       api_map <- tm_shape(loc_webmerc) +
         tm_basemap(basemap) +
-        tm_symbols(col = "red", alpha = 0.8, size = 0.2) +
+        tm_symbols(col = "red", alpha = 0.8, size = 0.2, group = "Query Location(s)") +
         tm_view(symbol.size.fixed = TRUE)
     }
 
@@ -223,7 +244,7 @@ plot.ca_apireq <- function(x,
       bbox_sf <- st_as_sfc(st_bbox(loc_webmerc)) %>% st_buffer(dist = 10000)
       api_map <- api_map +
         tm_shape(locagrid_sf[bbox_sf, ]) +
-        tm_borders(col="dimgray")
+        tm_borders(col="dimgray", group = "LOCA grid")
     }
 
     api_map

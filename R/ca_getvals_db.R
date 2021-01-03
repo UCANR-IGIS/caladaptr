@@ -59,7 +59,7 @@
 #' @seealso \code{\link{ca_db_info}}, \code{\link{ca_db_indices}}
 #'
 #' @import crayon
-#' @importFrom httr GET content modify_url accept_json http_error stop_for_status warn_for_status
+#' @importFrom httr GET content modify_url accept_json http_error stop_for_status warn_for_status http_status
 #' @importFrom utils txtProgressBar setTxtProgressBar packageVersion
 #' @importFrom dplyr select mutate left_join tbl sql bind_rows
 #' @importFrom curl has_internet

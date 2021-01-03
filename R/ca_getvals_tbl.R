@@ -8,7 +8,7 @@
 #' @return A tibble
 #'
 #' @import crayon
-#' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status
+#' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status http_status
 #' @importFrom utils txtProgressBar setTxtProgressBar packageVersion
 #' @importFrom units set_units
 #' @importFrom dplyr select mutate left_join slice
@@ -67,11 +67,6 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
   ## There should be one file name for each feature (row)
   if (aoi_sf) {
 
-    # features_hashes <- apicalls_lst$loc_sf %>%
-    #   st_geometry() %>%
-    #   st_as_text() %>%
-    #   digest(algo = "crc32", file = FALSE)
-
     features_hashes <- unname(sapply(apicalls_lst$loc_sf %>%
                                        st_geometry() %>% st_as_text(),
                                      digest,
@@ -129,12 +124,41 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
         spatial_ag <- as.character(api_tbl[i, "spag", drop = TRUE])
       }
 
-      body_flds_lst <- list(features = upload_file(gjsn_fn),
-                            start = start_dt,
-                            end = end_dt,
-                            stat = spatial_ag)
+      if (FALSE) {
 
-      # format = "json" - not using any more
+        ## I COULDN'T GET THE FOLLOWING TO WORK. IT WAS AN ATTEMPT TO GENERATE THE
+        ## GEOJSON STRING IN MEMORY AND PASS THAT AS THE FEATURES ELEMENT IN THE
+        ## BODY LIST. IT KEPT RETURNING A 400 ERROR. I SUSPECT PERHAPS
+        ## BECAUSE THE SERVER NEEDS THE CONTENT_TYPE FOR GEOJSON
+        ## Content-Type: application/vnd.geo+json
+        ## WHICH ISN'T PASSED WHEN BODY IS A NAMED LIST.
+        ##
+        ## OR PERHAPS THERE'S SOMETHING ABOUT HOW THE GEOJSON IS RETURNED BY
+        ## sf_geojson.
+        ## I CAN'T USE THE g PARAMETER WITH atomise = TRUE, because we need to
+        ## SUPPORT MULTIEPART POLYGONS.
+
+        onepoly_gjsn <- geojsonsf::sf_geojson(apicalls_lst$loc_sf %>%
+                                                slice(api_tbl[i, "loc_qry", drop = TRUE]),
+                                              atomise = FALSE)
+
+        onepoly_gjsn <- geojsonsf::sf_geojson(apicalls_lst$loc_sf, atomise = FALSE)
+
+        # onepoly_gjsn <- readClipboard()
+        #onepoly_gjsn <- paste(readLines(gjsn_fn), collapse = "")
+
+        body_flds_lst <- list(features = onepoly_gjsn,
+                              start = start_dt,
+                              end = end_dt,
+                              stat = spatial_ag)
+
+      }
+
+      body_flds_lst <- list(features = upload_file(gjsn_fn),
+                           start = start_dt,
+                           end = end_dt,
+                           stat = spatial_ag)
+                        # format = "json" - not using any more
 
       post_url <- api_tbl[i, "api_url", drop = TRUE]
 
@@ -154,7 +178,6 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
     } else {   ## SEND A GET REQUEST
 
       api_url_full <- api_tbl[i, "api_url", drop = TRUE]
-      # api_url_short <- as.character(substring(api_url_full, 30, nchar(api_url_full)))
 
       if (debug) message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
 
@@ -194,7 +217,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
         ## Get the data values (one per date)
         these_vals <- unlist(qry_content$data)
 
-        ## Convert units
+        ## Set units
         if (!is.na(api_tbl[i, "rs_units", drop = TRUE])) {
           these_vals <- set_units(these_vals,
                                   value = api_tbl[i, "rs_units", drop = TRUE],

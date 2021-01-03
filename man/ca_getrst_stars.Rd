@@ -7,7 +7,8 @@
 ca_getrst_stars(
   x,
   out_dir = NULL,
-  merge_geoms = TRUE,
+  mask = TRUE,
+  merge_geoms = FALSE,
   sidecar_write = TRUE,
   stop_on_err = TRUE,
   quiet = FALSE,
@@ -17,9 +18,11 @@ ca_getrst_stars(
 \arguments{
 \item{x}{A Cal-Adapt API request}
 
-\item{out_dir}{Where the output tif files should be written}
+\item{out_dir}{Where the output TIF files should be written}
 
-\item{merge_geoms}{Whether to merge geoms (not currently used)}
+\item{mask}{Mask pixels outside the location of interest with NA values}
+
+\item{merge_geoms}{Whether to merge geometries, see Details}
 
 \item{sidecar_write}{Save a small sidecar file with the TIF file containing additional attribute info}
 
@@ -36,8 +39,12 @@ A vector of TIF file names
 Download a cropped raster for an API request
 }
 \details{
-This will download cropped multi-layer raster(s) for your study area, convert them to stars objects, and export them
-as tif files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle (i.e., smaller than
+This will download time series cropped raster(s) for your study area, convert them to stars objects, and export them
+as tif files. If \code{mask = TRUE}, pixels values outside the area of interest will be set to \code{NA} (\code{mask} is ignored
+for point locations). To get a single raster per dataset that encompasses all the locations,
+pass \code{merge_geoms = TRUE}.
+
+Note this will only work for areas-of-interest small enough for the Cal-Adapt API to handle (i.e., smaller than
 San Bernadino County). If you want to download
 rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 Cal-Adapt \href{http://albers.cnr.berkeley.edu/data/}{data server}.
@@ -47,5 +54,9 @@ attributes of a space-time-array not preserved by tifs. You can import the tif f
 with \code{\link{ca_read_stars}}.
 
 This function merely downloads the cropped rasters to disk and returns the filenames. To work with cropped rasters
-as stars objects within R, import them using \code{\link{ca_read_stars}}.
+as stars objects within R, import them using \code{\link{ca_read_stars}}. You can also import the TIF files with other
+packages or software.
+}
+\seealso{
+\code{\link{ca_read_stars}}
 }

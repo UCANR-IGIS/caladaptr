@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.5</span>
       </span>
     </div>
 
@@ -172,7 +172,8 @@
     <pre class="usage"><span class='fu'>ca_getrst_stars</span>(
   <span class='kw'>x</span>,
   out_dir = <span class='kw'>NULL</span>,
-  merge_geoms = <span class='fl'>TRUE</span>,
+  mask = <span class='fl'>TRUE</span>,
+  merge_geoms = <span class='fl'>FALSE</span>,
   sidecar_write = <span class='fl'>TRUE</span>,
   stop_on_err = <span class='fl'>TRUE</span>,
   quiet = <span class='fl'>FALSE</span>,
@@ -188,11 +189,15 @@
     </tr>
     <tr>
       <th>out_dir</th>
-      <td><p>Where the output tif files should be written</p></td>
+      <td><p>Where the output TIF files should be written</p></td>
+    </tr>
+    <tr>
+      <th>mask</th>
+      <td><p>Mask pixels outside the location of interest with NA values</p></td>
     </tr>
     <tr>
       <th>merge_geoms</th>
-      <td><p>Whether to merge geoms (not currently used)</p></td>
+      <td><p>Whether to merge geometries, see Details</p></td>
     </tr>
     <tr>
       <th>sidecar_write</th>
@@ -217,8 +222,11 @@
     <p>A vector of TIF file names</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This will download cropped multi-layer raster(s) for your study area, convert them to stars objects, and export them
-as tif files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle (i.e., smaller than
+    <p>This will download time series cropped raster(s) for your study area, convert them to stars objects, and export them
+as tif files. If <code>mask = TRUE</code>, pixels values outside the area of interest will be set to <code>NA</code> (<code>mask</code> is ignored
+for point locations). To get a single raster per dataset that encompasses all the locations,
+pass <code>merge_geoms = TRUE</code>.</p>
+<p>Note this will only work for areas-of-interest small enough for the Cal-Adapt API to handle (i.e., smaller than
 San Bernadino County). If you want to download
 rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 Cal-Adapt <a href='http://albers.cnr.berkeley.edu/data/'>data server</a>.</p>
@@ -226,7 +234,11 @@ Cal-Adapt <a href='http://albers.cnr.berkeley.edu/data/'>data server</a>.</p>
 attributes of a space-time-array not preserved by tifs. You can import the tif file back into R as a stars object
 with <code><a href='ca_read_stars.html'>ca_read_stars</a></code>.</p>
 <p>This function merely downloads the cropped rasters to disk and returns the filenames. To work with cropped rasters
-as stars objects within R, import them using <code><a href='ca_read_stars.html'>ca_read_stars</a></code>.</p>
+as stars objects within R, import them using <code><a href='ca_read_stars.html'>ca_read_stars</a></code>. You can also import the TIF files with other
+packages or software.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='ca_read_stars.html'>ca_read_stars</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

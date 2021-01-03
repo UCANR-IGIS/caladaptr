@@ -3,15 +3,20 @@
 #' Download a cropped raster for an API request
 #'
 #' @param x A Cal-Adapt API request
-#' @param out_dir Where the output tif files should be written
-#' @param merge_geoms Whether to merge geoms (not currently used)
+#' @param out_dir Where the output TIF files should be written
+#' @param mask Mask pixels outside the location of interest with NA values
+#' @param merge_geoms Whether to merge geometries, see Details
 #' @param sidecar_write Save a small sidecar file with the TIF file containing additional attribute info
 #' @param stop_on_err Stop if the server returns an error
 #' @param quiet Suppress messages
 #' @param debug Print additional output at the console
 #'
-#' @details This will download cropped multi-layer raster(s) for your study area, convert them to stars objects, and export them
-#' as tif files. Note this will only work for areas-of-interest small enough for the Cal-Adapt to handle (i.e., smaller than
+#' @details This will download time series cropped raster(s) for your study area, convert them to stars objects, and export them
+#' as tif files. If \code{mask = TRUE}, pixels values outside the area of interest will be set to \code{NA} (\code{mask} is ignored
+#' for point locations). To get a single raster per dataset that encompasses all the locations,
+#' pass \code{merge_geoms = TRUE}.
+#'
+#' Note this will only work for areas-of-interest small enough for the Cal-Adapt API to handle (i.e., smaller than
 #' San Bernadino County). If you want to download
 #' rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 #' Cal-Adapt \href{http://albers.cnr.berkeley.edu/data/}{data server}.
@@ -21,34 +26,39 @@
 #' with \code{\link{ca_read_stars}}.
 #'
 #' This function merely downloads the cropped rasters to disk and returns the filenames. To work with cropped rasters
-#' as stars objects within R, import them using \code{\link{ca_read_stars}}.
+#' as stars objects within R, import them using \code{\link{ca_read_stars}}. You can also import the TIF files with other
+#' packages or software.
 #'
 #' @return A vector of TIF file names
 #'
+#' @seealso \code{\link{ca_read_stars}}
+#'
 #' @import crayon
-#' @importFrom httr GET POST content user_agent upload_file accept_json accept http_error write_disk progress stop_for_status warn_for_status
-#' @importFrom utils packageVersion
+#' @importFrom httr GET POST content user_agent upload_file accept_json accept http_error write_disk progress stop_for_status warn_for_status http_status
+#' @importFrom utils packageVersion URLencode
 #' @importFrom units set_units
-#' @importFrom dplyr select mutate slice filter
+#' @importFrom dplyr select mutate slice filter sym
 #' @importFrom curl has_internet
-#' @importFrom sf st_write st_geometry st_as_text
+#' @importFrom sf st_write st_geometry st_as_text st_bbox st_as_sfc st_sf st_geometry_type st_buffer
 #' @importFrom digest digest
 #' @importFrom stars read_stars write_stars st_set_dimensions
 #' @importFrom stats setNames
+#' @importFrom geojsonsf sf_geojson
+#' @importFrom zip zip_list
 #' @export
 
-ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
+ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
                             sidecar_write = TRUE, stop_on_err = TRUE,
                             quiet = FALSE, debug = FALSE) {
 
-  ## TODO How to save units in the dimensions table?
-  ## TEST ERROR CASES - OUT OF EXTENT FOR EXAMPLE
+  ## TODO How to record units in the stars object?
+  ## TODO TEST ERROR CASES - OUT OF EXTENT FOR EXAMPLE
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
-  if (x$loc$type == "pt") stop("Sorry, you can't download rasters for point query")
   if (is.null(out_dir)) stop("out_dir is a required argument")
   if (!file.exists(out_dir)) stop("out_dir does not exist")
 
+  ## Get the function(s) we'll use to style messages
   accent2 <- getOption("ca_accent2", paste0)
 
   if (!identical(x$options, NA)) {
@@ -65,25 +75,135 @@ ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
   ## Check for an internet connection
   if (!has_internet()) stop("No internet connection detected")
 
+  ## If we are querying an AOI preset, and either merge = TRUE or mask = FALSE,
+  ## get the vector layer because we're going to need it below
+  if (x$loc$type == "aoipreset" && (merge_geoms || !mask)) {
+    preset_feats_sf <- ca_aoipreset_geom(x$loc$val$type, quiet = TRUE) %>%
+      st_transform(4326) %>%
+      select(!!sym(x$loc$val$idfld))
+  }
+
+  ## To merge geoms, we modify the location element of x
+  if (merge_geoms) {
+
+    ## If its an AOI preset, grab the features, union them, and compute the bounding box
+    if (x$loc$type == "aoipreset") {
+
+      ## Get the features so we can merge them
+      feats_sf <- preset_feats_sf %>%
+        filter(!!sym(x$loc$val$idfld) %in% !!x$loc$val$idval)
+
+      if (mask) {
+        ## Union all the features into one
+        aoi_new_sf <- st_sf(data.frame(id = 1,
+                                      geom = feats_sf %>%
+                                        st_union(by_feature = FALSE)))
+      } else {
+        ## Create a polygon sf data frame out of the bounding box
+        aoi_new_sf <- st_sf(data.frame(id = 1,
+                                      geom = feats_sf %>%
+                                        st_bbox() %>%
+                                        st_as_sfc()))
+      }
+
+      ## Change the location value of x to the merged geom
+      x <- ca_loc_sf(x, aoi_new_sf, idfld = "id", idval = NULL)
+
+
+    } else if (x$loc$type == "sf") {
+
+      ## If this is a point layer, we do not want to mask
+      if (TRUE %in% (as.character(st_geometry_type(x$loc$val$loc)) %in% c("POINT", "MULTIPOINT"))) {
+        mask <- FALSE
+      }
+
+      if (mask) {
+        ## Union all the features into one
+        aoi_new_sf <- st_sf(data.frame(id = 1,
+                                  geom = x$loc$val$loc %>%
+                                    st_union(by_feature = FALSE)))
+
+      } else {
+        ## Mask = FALSE, create a new sf data frame from the bounding box
+        aoi_new_sf <- st_sf(data.frame(id = 1,
+                                       geom = x$loc$val$loc %>%
+                                         st_bbox() %>%
+                                         st_as_sfc()))
+      }
+
+      ## Change the location value of x to the merged geom
+      x <- ca_loc_sf(x, aoi_new_sf, idfld = "id", idval = NULL)
+
+    } else if (x$loc$type == "pt") {
+
+      if (nrow(x$loc$val) > 1) {
+
+        ## Create a rectangle that encloses all points
+        x_rng <- range(x$loc$val[,2])
+        y_rng <- range(x$loc$val[,3])
+        xs <- x_rng[c(1,2,2,1,1)]
+        ys <- y_rng[c(2,2,1,1,2)]
+        poly_mat <- matrix(c(xs,ys), ncol = 2)
+
+        aoi_new_sfc <- list(poly_mat) %>%
+          st_polygon(dim = "XY") %>%
+          st_sfc(crs = 4326)
+
+        aoi_new_sf <- st_sf(data.frame(id = 1, geom = aoi_new_sfc))
+
+        ## When merging points, we don't want to mask
+        ## (otherwise you can get NA values on the edges)
+        mask <- FALSE
+
+        ## Change the location value of x to the merged geom
+        x <- ca_loc_sf(x, aoi_new_sf, idfld = "id", idval = NULL)
+
+      } else {
+
+        ## We have a single point - nothing to merge
+        ## Do nothing
+
+      }
+
+
+    } else {
+      stop(paste0("Unknown location type: ", x$loc$type))
+    }
+
+  } else {
+    ## We are not merging features
+
+    ## If this is a point sf data frame, set mask to TRUE
+    if (x$loc$type == "sf") {
+      if (TRUE %in% (as.character(st_geometry_type(x$loc$val$loc)) %in% c("POINT", "MULTIPOINT"))) {
+        mask <- TRUE
+      }
+    }
+
+  }
+
+  ## If mask == FALSE, we're going to need the locagrid
+  if (!mask) {
+    locagrid_sf <- ca_locagrid_geom(quiet = TRUE)
+  }
+
+  ## Right here is where I would add code to tile a large AOI
+
   ## Get a tibble with the individual API calls
   apicalls_lst <- ca_apicalls(x, ignore_spag = TRUE)
-  api_tbl <- apicalls_lst$api_tbl
+
   idfld <- apicalls_lst$idfld
 
-  ## Create a reduced version of the API calls
-  api_tbl_use <- api_tbl %>%
+  ## Create a reduced version of the API calls including a new column for the TIF filename
+  api_tbl_use <- apicalls_lst$api_tbl %>%
     select(feat_id, loc_type, loc_preset, loc_qry, period, start, end, slug, rs_name,
            rs_units, rs_begin, rs_end, tres) %>%
-    mutate(tif_out_base = paste0(slug, "_", idfld, feat_id))
+    mutate(tif_out_base = paste0(slug, "_", idfld, "-", feat_id))
 
-  ## Get the cache dir to save temporary geojson files
-  ## (we save them here rather than tempdir so httptest will
-  ## generate the same hash for the API call each time)
-  ca_cache_dir <- ca_getcache()
-
-  if (length(unique(api_tbl_use$rs_units)) > 1) {
-    # stop("Can not process this API request: Raster series have different units")
-  }
+  # Check unit consistency (not required for downloading rasters)
+  # if (length(unique(api_tbl_use$rs_units)) > 1) {
+  #   # stop("Can not process this API request: Raster series have different units")
+  # }
 
   ## Define the user agent
   caladaptr_ua <- user_agent(paste0("caladaptr_v", packageVersion("caladaptr")))
@@ -93,27 +213,6 @@ ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
 
   ## Determine if this set of API calls uses sf objects
   aoi_sf <- inherits(apicalls_lst$loc_sf, "sf")
-
-  ## Compute the file names which will be used to export individual features to temporary geojson files
-  ## There should be one file name for each feature (row)
-  if (aoi_sf) {
-
-    stop("Sorry, downloading data via a sf object is not yet working")
-
-    ## THIS IS WHERE I COULD MERGE THE GEOMS
-
-    features_hashes <- unname(sapply(apicalls_lst$loc_sf %>%
-                                st_geometry() %>% st_as_text(),
-                              digest,
-                              algo = "crc32",
-                              file = FALSE))
-
-    gjsn_all_fn <- file.path(ca_cache_dir,
-                             paste0("~ca_", features_hashes, ".geojson"))
-
-    if (anyDuplicated(gjsn_all_fn) > 0) warning(red("Duplicate feature hashes(s) encountered"))
-
-  }
 
   ## Loop through calls
   if (debug) message(silver(paste0(" - going to make ", nrow(api_tbl_use), " api calls")))
@@ -130,7 +229,11 @@ ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
     tres <- api_tbl_use[i, "tres", drop = TRUE]
     slug <- api_tbl_use[i, "slug", drop = TRUE]
 
-    use_date_slice <- !is.na(dt_start) && (tres == "annual")
+    ## Can we use date slicing syntax (to filter by date on the server)?
+    use_date_slice <- !is.na(dt_start) &&
+      (tres == "annual" || tres == "monthly") &&
+      !identical(getOption("ca_date_slice", NA), FALSE)
+    if (debug) message(silver(paste0(" - date slicing with URL: ", use_date_slice)))
 
     if (use_date_slice) {
       rast_or_dates <- paste0(api_tbl_use[i, "start", drop = TRUE], "/",
@@ -139,24 +242,59 @@ ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
       rast_or_dates <- "rasters"
     }
 
-
+    ## If the AOI is a sf data frame, we have to use a POST request
     if (aoi_sf) {
 
-      #browser()
+      this_feat_sf <- apicalls_lst$loc_sf %>%
+        slice(api_tbl_use[i, "loc_qry", drop = TRUE])
 
-      ## Get the temporary geojson file name for this row (which is stored in the loc_qry column)
-      gjsn_fn <- gjsn_all_fn[api_tbl_use[i, "loc_qry", drop = TRUE]]
+      if (mask) {
+        ## Generate the geojson text to pass in the POST request
+        geojson_chr <- this_feat_sf %>%
+          sf_geojson(atomise = TRUE)
 
-      if (!file.exists(gjsn_fn)) {
-        if (debug) message(silver(paste0(" - saving temp geojson: ", basename(gjsn_fn))))
-        st_write(apicalls_lst$loc_sf %>%
-                   slice(api_tbl_use[i, "loc_qry", drop = TRUE]),
-                 dsn = gjsn_fn,
-                 quiet = TRUE)
+      } else {    ## NO MASK
+
+        ## The Cal-Adapt API returns all grid cells that intersect the polygon,
+        ## but pixels on the edges will have NA values unless the feature
+        ## overlaps the grid center. To prevent this, instead of passing the
+        ## polygon, we find the actual loca grid cells that intersect, and
+        ## send the bounding box of those (with a small internal buffer to
+        ## prevent extra pixels on the edges)
+
+        ## Get the locagrids that intersect this feature
+        suppressMessages(
+          locagrid_intersects_sf <- locagrid_sf[this_feat_sf, , drop = FALSE]
+        )
+
+        ## Get the bounding box of the intersecting locagrids, and take
+        ## a small internal buffer (to avoid getting extra pixels on the outside)
+        suppressMessages(
+          suppressWarnings(
+            locagrids_bb_sfc <- locagrid_intersects_sf %>%
+              st_bbox() %>%
+              st_as_sfc() %>%
+              st_buffer(-0.001)
+          )
+        )
+
+        ## Turn this rectangle sfc into a sf data frame
+        ## (we *do* need an attribute table)
+        onepoly_bb_sf = st_sf(data.frame(id = 1, geom = locagrids_bb_sfc))
+
+        ## Generate the geojson text
+        geojson_chr <- sf_geojson(onepoly_bb_sf, atomise = TRUE)
+
       }
 
-      body_flds_lst <- list(features = upload_file(gjsn_fn))
+      ## Create the body list
+      ## All we need in the body is the geometry. stat is not needed for rasters
+      ## If dates were specified for annual date, we'll put them in the URL, not in the body.
+      ## Note also we're using the 'g' parameter instead of the 'features' parameter
+      ## because the API doesn't support the features parameter when requesting a TIF
+      body_flds_lst <- list(g = geojson_chr)
 
+      ## Construct the POST URL
       post_url <- paste0(ca_baseurl, "series/", api_tbl_use[i, "slug", drop = TRUE],
                              "/", rast_or_dates, "/")
 
@@ -166,44 +304,86 @@ ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
       }
 
       ## Make the POST request
-      # browser()
-      # zip_fn <- "c:/temp/pinnacles02.zip"
       qry_resp <- POST(url = post_url,
                        body = body_flds_lst,
                        encode = "multipart",
                        accept("application/zip"),
                        caladaptr_ua, progress())
 
-      ## Troubleshoot direction #1: Verify there are some values to return using a traditional json query
-      ## The result that comes back is not clipped to the features
+    } else if (api_tbl_use[i, "loc_type", drop = TRUE] == "aoipreset" && !mask) {
 
-      if (FALSE) {
-        qry_resp <- POST(url = post_url,
-                         body = body_flds_lst,
-                         body = c(body_flds_lst, list(stat = "mean")),
-                         encode = "multipart",
-                         accept_json(),
-                         httr::verbose(),
-                         caladaptr_ua, progress())
-        qry_resp$status_code
+      ## This is an AOI preset but unmasked. Hence we need to pass the bounding box
+      ## of this feature as a sf object
 
-        ## Good response. Convert content to a list
-        # qry_content <- content(qry_resp, type = "application/json")
-        # qry_content$count #95
-        # qry_content$results
-        # these_vals <- unlist(qry_content$data)
-        # these_vals
+      ## Create a sfc object from the bounding box
+      onepoly_bb_sfc <- preset_feats_sf %>%
+        filter(!!sym(idfld) == !!api_tbl_use[i, "feat_id", drop = TRUE]) %>%
+        st_bbox() %>%
+        st_as_sfc()
+
+      ## Get the locagrids that intersect this feature
+      suppressMessages(
+        locagrid_intersects_sf <- locagrid_sf[onepoly_bb_sfc, , drop = FALSE]
+      )
+
+      ## Get the bounding box of the intersecting locagrids, and take
+      ## a small internal buffer (to avoid getting extra pixels on the outside)
+      suppressMessages(
+        suppressWarnings(
+          locagrids_bb_sfc <- locagrid_intersects_sf %>%
+            st_bbox() %>%
+            st_as_sfc() %>%
+            st_buffer(-0.001)
+        )
+      )
+
+      ## Turn it into a sf data frame
+      onepoly_bb_sf = st_sf(data.frame(geom = locagrids_bb_sfc))
+      onepoly_bb_sf[[idfld]] <- api_tbl_use[i, "feat_id", drop = TRUE]
+
+      ## Generate the geojson text
+      geojson_chr <- sf_geojson(onepoly_bb_sf, atomise = TRUE)
+
+      ## Create the body list
+      body_flds_lst <- list(g = geojson_chr)
+
+      ## Construct the POST URL
+      post_url <- paste0(ca_baseurl, "series/", api_tbl_use[i, "slug", drop = TRUE],
+                         "/", rast_or_dates, "/")
+
+      if (debug) {
+        message(silver(paste0(" - (", i, "/", nrow(api_tbl_use), ") PUT ", post_url, ". (", idfld, "=",
+                              feat_id, ", start='", dt_start, "', end='", dt_end, "')")))
       }
 
-    } else {   ## SEND A GET REQUEST
+      ## Make the POST request
+      qry_resp <- POST(url = post_url,
+                       body = body_flds_lst,
+                       encode = "multipart",
+                       accept("application/zip"),
+                       caladaptr_ua, progress())
+
+
+    } else if (api_tbl_use[i, "loc_type", drop = TRUE] == "pt" ||
+               api_tbl_use[i, "loc_type", drop = TRUE] == "aoipreset" && mask) {
+
+      ## Either loc_type == "pt", or AOI Preset (without mask). We can use a GET request
+
+      ## Querying using the ref=___ URL will return a masked TIF
+      ## We can't use
 
       api_url_full <- paste0(ca_baseurl, "series/", api_tbl_use[i, "slug", drop = TRUE],
                              "/", rast_or_dates, "/?",
-                             api_tbl_use[i, "loc_qry", drop = TRUE])
+                             api_tbl_use[i, "loc_qry", drop = TRUE]) %>% URLencode()
 
       if (debug) message(silver(paste0(" - (", i, "/", nrow(api_tbl_use), ") ", api_url_full)))
 
       qry_resp <- GET(api_url_full, accept("application/zip"), caladaptr_ua, progress())
+
+      # qry_resp <- GET(utils::URLencode(api_url_full), caladaptr_ua)
+
+    } else {
+      stop("Don't know how to handle this location type")
 
     }
 
@@ -230,124 +410,183 @@ ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
 
     } else {
 
-      # Good response
-      ## Convert response to raw
-      qry_content_raw <- content(qry_resp, type = "application/zip")
-      writeBin(qry_content_raw, zip_fn)
+      # Good response (hopefully a zip file). Write it to a temp file.
+      writeBin(content(qry_resp, type = "application/zip"), zip_fn)
 
-      ## No server error
+      ## Did it work?
       if (file.exists(zip_fn)) {
 
-        ## Right here I need to check if the zip file is empty (which is what will happen if no returns were returned)
-        # browser()
+        ## Are there actually tifs in the zip file?
+        if (nrow(zip_list(zip_fn)) > 0) {
 
-        layer_name <- paste0(slug, "_", idfld, feat_id)
+          ## Construct a name for the layer
+          layer_name <- paste0(slug, "_", idfld, "-", feat_id)
 
-        ## Got a zip file
-        if (use_date_slice) {
+          ## Process tif(s) depending on whether we used date slicing or not.
+          if (use_date_slice) {
 
-          ## Yearly data come down as individual tifs
-          tifs_unzipped <- unzip(zip_fn, exdir = tempdir(), junkpaths = TRUE)
+            ## Yearly and monthly rasters come down as individual tifs
+            tifs_unzipped <- unzip(zip_fn, exdir = tempdir(), junkpaths = TRUE)
 
-          ## The TIFs have already been time filtered.
-          ## Define the along list which is used to set the temporal dimension
-          if (tres == "annual") {
-            year1 <- as.POSIXlt(dt_start)$year + 1900
-            year2 <- as.POSIXlt(dt_end)$year + 1900
-            along_lst <- list(year = year1:year2)
+            ## Because we used date slicing, the TIFs have already been date filtered.
+            ## But we have to define the "along list" which we'll use when converting to stars
+            ## to set the temporal dimension.
+
+            ## We can assume that dt_start and dt_end have values (otherwise we wouldn't be using a date slicing URL)
+
+            if (tres == "annual") {
+              year1 <- as.POSIXlt(dt_start)$year + 1900
+              year2 <- as.POSIXlt(dt_end)$year + 1900
+              along_lst <- list(year = year1:year2)
+
+            } else {
+              if (as.POSIXlt(dt_start)$mday != 1) {
+                warning("When getting a monthly dataset, the start date should be the first of the month")
+              }
+              ## Construct a vector of POSIXct values for the first day of every month in the date range
+              along_lst <- list(month = seq(dt_start, dt_end, by = "month"))
+            }
+
+            ## Read the tifs as a stars object
+            my_stars <- read_stars(tifs_unzipped, along = along_lst) %>% setNames(layer_name)
+
+            ## Write the stars objects as TIF
+            tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
+            write_stars(my_stars, dsn = tif_fn_out, layer = names(my_stars)[1])
+
+            ## Write the attribute data as a sidecar
+            sidecar_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".attr.rds"))
+            saveRDS(attributes(my_stars)[c("names", "dimensions")], file = sidecar_fn_out)
+
+            res <- c(res, tif_fn_out)
+            unlink(tifs_unzipped)
 
           } else {
-            stop(paste0("Sorry, ", tres, " is not yet supported for date slicing. Please email the package author or start a GitHub issue to have it added"))
-          }
 
-          my_stars <- read_stars(tifs_unzipped, along = along_lst) %>% setNames(layer_name)
+            ## There was no date slicing. If this is daily data, then it is probably a single tif with thousands of layers.
+            ## If it is monthly or annual data, then it should be one single-band tif per date point
 
-          ## Write the stars objects as TIF
-          tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
-          write_stars(my_stars, dsn = tif_fn_out, layer = names(my_stars)[1])
+            ## Gat a list of tifs in the zip file
+            tifs_in_zip <- unzip(zip_fn, list = TRUE)$Name
 
-          ## Write the attribute data as a sidecar
-          sidecar_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".attr.rds"))
-          saveRDS(attributes(my_stars)[c("names", "dimensions")], file = sidecar_fn_out)
+            ## Get the begin and end dates for the entire raster series
+            rs_begin_dt <- api_tbl_use[i, "rs_begin", drop = TRUE] %>% substring(1,10) %>% as.Date()
+            rs_end_dt <- api_tbl_use[i, "rs_end", drop = TRUE] %>% substring(1,10) %>% as.Date()
 
-          res <- c(res, tif_fn_out)
-          unlink(tifs_unzipped)
+            if (tres == "daily") {
 
-        } else {
+              if (length(tifs_in_zip) == 1) {   ## this is expected - a single tif with one layer for each day
 
-          ## There was no date slicing. If this is daily data, then it is probably a single tif with thousands of layers.
-          ## If it is month or annual data, then it should be one single-band tif per date point
+                ## Unzip the single tif file
+                tif_unzipped <- unzip(zip_fn, exdir = tempdir(), junkpaths = TRUE)
 
-          ## Gat a list of tifs in the zip file
-          tifs_in_zip <- unzip(zip_fn, list = TRUE)$Name
+                ## Create a stars raster (can not use along argument, because there is only one TIF coming in)
+                my_stars <- read_stars(tif_unzipped) %>% setNames(layer_name)
 
-          ## Get the begin and end dates for the entire raster series
-          rs_begin_dt <- api_tbl_use[i, "rs_begin", drop = TRUE] %>% substring(1,10) %>% as.Date()
-          rs_end_dt <- api_tbl_use[i, "rs_end", drop = TRUE] %>% substring(1,10) %>% as.Date()
+                ## Create a sequence of daily dates for the entire raster series
+                days_dates <- seq(rs_begin_dt, rs_end_dt, by = "day")
 
-          if (tres == "daily") {
+                if (length(days_dates) == dim(my_stars)[3]) {
 
-            if (length(tifs_in_zip) == 1) {   ## this is expected - a single tif with one layer for each day
+                  ## We're in good shape. Each layer represents a date
 
-              ## Unzip the single tif file
-              tif_unzipped <- unzip(zip_fn, exdir = tempdir(), junkpaths = TRUE)
+                  ##############################################################################
+                  ## We need to adjust the 'band' dimension, giving it a new name and values.
+                  ## When all is said and done, it should look like the following:
+                  ## from   to     offset   delta refsys point values
+                  ## x       1    2     -121.5  0.0625 WGS 84 FALSE   NULL [x]
+                  ## y       1    2       40.5 -0.0625 WGS 84 FALSE   NULL [y]
+                  ## date    1 1827 2070-01-01  1 days   Date    NA   NULL
+                  ##############################################################################
 
-              ## Create a stars raster (can not use along argument, because there is only one TIF coming in)
-              my_stars <- read_stars(tif_unzipped) %>% setNames(layer_name)
+                  my_stars <- st_set_dimensions(my_stars, which = "band", names = "date", values = days_dates)
 
-              ## Create a sequence of daily dates for the entire raster series
-              days_dates <- seq(rs_begin_dt, rs_end_dt, by = "day")
-
-              if (length(days_dates) == dim(my_stars)[3]) {
-
-                ## We're in good shape. Each layer represents a date
-
-                ##############################################################################
-                ## We need to adjust the 'band' dimension, giving it a new name and values.
-                ## When all is said and done, it should look like the following:
-                ## from   to     offset   delta refsys point values
-                ## x       1    2     -121.5  0.0625 WGS 84 FALSE   NULL [x]
-                ## y       1    2       40.5 -0.0625 WGS 84 FALSE   NULL [y]
-                ## date    1 1827 2070-01-01  1 days   Date    NA   NULL
-                ##############################################################################
-
-                my_stars <- st_set_dimensions(my_stars, which = "band", names = "date", values = days_dates)
-
-                if (FALSE) {
-                  ## THIS WAS AN EFFORT TO PREENT THE STRANGE ERROR MESSAGE WITH FILTER. IT TURNED OUT
-                  ## TO NOT BE NECESSARY BECAUSE THAT ERROR MESSAGE HAD NOTHING TO DO WITH THE DATES
-                  my_stars <- st_set_dimensions(my_stars, names = c("x", "y", "date"))
-                  ## We have to modify the values of the third dimension
-                  d3 <- attributes(my_stars)$dimensions[[3]]
-                  d3$values <- days_dates
-                  d3$refsys <- "Date"
-                  attributes(my_stars)$dimensions[[3]] <- d3
-                }
-
-                ## Filter by date if needed
-                if (!is.na(dt_start)) {
-
-                  if (1 %in% dim(my_stars)[1:2]) {
-                    ## If the x or y dimension are 1, the filter() function generates an error:
-                    ## "Error in set_dimension_values "cannot derive cell boundaries from a single center: specify start and end"
-                    ## So instead we use square bracket notation. This works but it doesn't update the
-                    ## the offset value so is harder to read
-                    keep_idx <- which(days_dates >= dt_start & days_dates <= dt_end)
-                    my_stars <- my_stars[ , , , keep_idx]
-                    if (!quiet) message(" - this tif has a single row or single column, which may prevent the filter() function from working")
-
-                  } else {
-                    ## Filter by date
-                    my_stars <- my_stars %>%
-                      filter(date >= dt_start) %>%
-                      filter(date <= dt_end)
+                  if (FALSE) {
+                    ## THIS WAS AN EFFORT TO PREENT THE STRANGE ERROR MESSAGE WITH FILTER. IT TURNED OUT
+                    ## TO NOT BE NECESSARY BECAUSE THAT ERROR MESSAGE HAD NOTHING TO DO WITH THE DATES
+                    my_stars <- st_set_dimensions(my_stars, names = c("x", "y", "date"))
+                    ## We have to modify the values of the third dimension
+                    d3 <- attributes(my_stars)$dimensions[[3]]
+                    d3$values <- days_dates
+                    d3$refsys <- "Date"
+                    attributes(my_stars)$dimensions[[3]] <- d3
                   }
 
+                  ## Filter by date if needed
+                  if (!is.na(dt_start)) {
+
+                    if (1 %in% dim(my_stars)[1:2]) {
+                      ## If the x or y dimension are 1, the filter() function generates an error:
+                      ## "Error in set_dimension_values "cannot derive cell boundaries from a single center: specify start and end"
+                      ## So instead we use square bracket notation. This works but it doesn't update the
+                      ## the offset value so is harder to read
+                      keep_idx <- which(days_dates >= dt_start & days_dates <= dt_end)
+                      my_stars <- my_stars[ , , , keep_idx]
+                      if (!quiet) message(" - this tif has a single row or single column, which may prevent the filter() function from working")
+
+                    } else {
+                      ## Filter by date
+                      my_stars <- my_stars %>%
+                        filter(date >= dt_start) %>%
+                        filter(date <= dt_end)
+                    }
+
+                  }
+
+                  if (!quiet) message(accent2(" - converting rasters to stars"))
+
+                  ## Write my_stars to disk as TIF
+                  tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
+                  if (!quiet) message(accent2(paste0(" - saving to ", tif_fn_out)))
+                  write_stars(my_stars, dsn = tif_fn_out, layer = names(my_stars)[1])
+
+                  if (sidecar_write) {
+                    ## Write the attribute data as a sidecar
+                    sidecar_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".attr.rds"))
+                    saveRDS(attributes(my_stars)[c("names", "dimensions")], file = sidecar_fn_out)
+                  }
+
+                  res <- c(res, tif_fn_out)
+
+                } else {
+                  warning("NUmber of layers in the tif does not match the expected number of time steps. Skipping.")
+                }
+
+                ## Done with the tif
+                unlink(tif_unzipped)
+
+              } else {
+                stop(paste0("Expected one tif and received ", length(tifs_in_zip), ". Don't know how to proceed."))
+              }
+
+            } else if (tres == "monthly") {
+
+              ## Need to figure out 1) which single tifs to unzip, and 2) compute values for the dimensions
+
+              ## First construct a vector of POSIXct values for the first day of every month in the raster series.
+              month_dates <- seq(rs_begin_dt, rs_end_dt, by = "month")
+
+              if (length(tifs_in_zip) == length(month_dates)) {
+                ## We're in good shape. The expected number of TIF files was returned. We
+                ## can assume that each tif is for a single month
+
+                if (is.na(dt_start)) {
+                  keep_idx <- 1:length(tifs_in_zip)
+                } else {
+                  keep_idx <- which(month_dates >= dt_start & month_dates <= dt_end)
                 }
 
                 if (!quiet) message(accent2(" - converting rasters to stars"))
 
-                ## Write the stars object to disk as TIF
+                ## Yearly data come down as individual tifs
+                tifs_unzipped <- unzip(zip_fn, files = tifs_in_zip[keep_idx],
+                                       exdir = tempdir(), junkpaths = TRUE)
+
+                along_lst <- list(date = month_dates[keep_idx])
+
+                my_stars <- read_stars(tifs_unzipped, along = along_lst) %>% setNames(layer_name)
+
+                ## Write the stars objects as TIF
                 tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
                 if (!quiet) message(accent2(paste0(" - saving to ", tif_fn_out)))
                 write_stars(my_stars, dsn = tif_fn_out, layer = names(my_stars)[1])
@@ -359,131 +598,86 @@ ca_getrst_stars <- function(x, out_dir = NULL, merge_geoms = TRUE,
                 }
 
                 res <- c(res, tif_fn_out)
+                unlink(tifs_unzipped)
 
               } else {
-                warning("NUmber of layers in the tif does not match the expected number of time steps. Skipping.")
+                if (!quiet) message(red(paste0(" - unexpected number of TIF files, can't convert to stars")))
               }
 
-              ## Done with the tif
-              unlink(tif_unzipped)
+            } else if (tres == "annual") {
 
-            } else {
-              stop(paste0("Expected one tif and received ", length(tifs_in_zip), ". Don't know how to proceed."))
-            }
+              ## No date slicing + annual data probably means the API request didn't have a start and end date
 
-          } else if (tres == "monthly") {
+              year_dates <- seq(rs_begin_dt, rs_end_dt, by = "year")
 
-            ## Need to figure out 1) which single tifs to unzip, and 2) compute values for the dimensions
+              if (length(tifs_in_zip) == length(year_dates)) {
+                ## We're in good shape. The expected number of TIF files was returned.
 
-            ## First construct a vector of POSIXct values for the first day of every month in the raster series.
-            month_dates <- seq(rs_begin_dt, rs_end_dt, by = "month")
+                if (is.na(dt_start)) {
+                  keep_idx <- 1:length(tifs_in_zip)
+                } else {
+                  keep_idx <- which(year_dates >= dt_start & year_dates <= dt_end)
+                }
 
-            if (length(tifs_in_zip) == length(month_dates)) {
-              ## We're in good shape. The expected number of TIF files was returned. We
-              ## can assume that each tif is for a single month
+                if (!quiet) message(accent2(" - converting rasters to stars"))
 
-              if (is.na(dt_start)) {
-                keep_idx <- 1:length(tifs_in_zip)
+                ## Yearly data come down as individual tifs
+                tifs_unzipped <- unzip(zip_fn, files = tifs_in_zip[keep_idx],
+                                       exdir = tempdir(), junkpaths = TRUE)
+
+                year_nums <- as.POSIXlt(year_dates)$year + 1900
+                along_lst <- list(year = year_nums[keep_idx])
+
+                my_stars <- read_stars(tifs_unzipped, along = along_lst) %>% setNames(layer_name)
+
+                ## Write the stars objects as TIF
+                tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
+                if (!quiet) message(accent2(paste0(" - saving to ", tif_fn_out)))
+                write_stars(my_stars, dsn = tif_fn_out, layer = names(my_stars)[1])
+
+                if (sidecar_write) {
+                  ## Write the attribute data as a sidecar
+                  sidecar_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".attr.rds"))
+                  saveRDS(attributes(my_stars)[c("names", "dimensions")], file = sidecar_fn_out)
+                }
+
+                res <- c(res, tif_fn_out)
+                unlink(tifs_unzipped)
+
               } else {
-                keep_idx <- which(month_dates >= dt_start & month_dates <= dt_end)
+                stop("Unepxected")
               }
 
-              if (!quiet) message(accent2(" - converting rasters to stars"))
-
-              ## Yearly data come down as individual tifs
-              tifs_unzipped <- unzip(zip_fn, files = tifs_in_zip[keep_idx],
-                                     exdir = tempdir(), junkpaths = TRUE)
-
-              along_lst <- list(date = month_dates[keep_idx])
-
-              my_stars <- read_stars(tifs_unzipped, along = along_lst) %>% setNames(layer_name)
-
-              ## Write the stars objects as TIF
-              tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
-              if (!quiet) message(accent2(paste0(" - saving to ", tif_fn_out)))
-              write_stars(my_stars, dsn = tif_fn_out, layer = names(my_stars)[1])
-
-              if (sidecar_write) {
-                ## Write the attribute data as a sidecar
-                sidecar_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".attr.rds"))
-                saveRDS(attributes(my_stars)[c("names", "dimensions")], file = sidecar_fn_out)
-              }
-
-              res <- c(res, tif_fn_out)
-              unlink(tifs_unzipped)
-
-            } else {
-              if (!quiet) message(red(paste0(" - unexpected number of TIF files, can't convert to stars")))
             }
 
-          } else if (tres == "annual") {
-
-            ## No date slicing + annual data probably means the API request didn't have a start and end date
-
-            year_dates <- seq(rs_begin_dt, rs_end_dt, by = "year")
-
-            if (length(tifs_in_zip) == length(year_dates)) {
-              ## We're in good shape. The expected number of TIF files was returned.
-
-              if (is.na(dt_start)) {
-                keep_idx <- 1:length(tifs_in_zip)
-              } else {
-                keep_idx <- which(year_dates >= dt_start & year_dates <= dt_end)
-              }
-
-              if (!quiet) message(accent2(" - converting rasters to stars"))
-
-              ## Yearly data come down as individual tifs
-              tifs_unzipped <- unzip(zip_fn, files = tifs_in_zip[keep_idx],
-                                     exdir = tempdir(), junkpaths = TRUE)
-
-              year_nums <- as.POSIXlt(year_dates)$year + 1900
-              along_lst <- list(year = year_nums[keep_idx])
-
-              my_stars <- read_stars(tifs_unzipped, along = along_lst) %>% setNames(layer_name)
-
-              ## Write the stars objects as TIF
-              tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
-              if (!quiet) message(accent2(paste0(" - saving to ", tif_fn_out)))
-              write_stars(my_stars, dsn = tif_fn_out, layer = names(my_stars)[1])
-
-              if (sidecar_write) {
-                ## Write the attribute data as a sidecar
-                sidecar_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".attr.rds"))
-                saveRDS(attributes(my_stars)[c("names", "dimensions")], file = sidecar_fn_out)
-              }
-
-              res <- c(res, tif_fn_out)
-              unlink(tifs_unzipped)
-
-            } else {
-              stop("Unepxected")
-            }
 
           }
 
+          ## We're done with the zip file
+          unlink(zip_fn)
+
+
+        } else {   ##  if nrow(zip::zip_list(zip_fn)) > 0
+
+          if (debug) message(silver(" - empty zip file. This is not supposed to happen. Please contact the package author or create a GitHub issue."))
+
+          ## We're done with the zip file
+          unlink(zip_fn)
 
         }
 
-        ## We're done with the zip file
-        unlink(zip_fn)
 
       } else {
-        ## Nothing returned - date fell outside of range? location outside extent?
-        if (debug) message(silver(" - no raster returned"))
+        ## Nothing returned - maybe the date fell outside of range? location outside extent?
+        if (debug) message(silver(" - no zip file returned from server. This is not supposed to happen. Please contact the package author or create a GitHub issue."))
       }
 
     }
 
-  } ## for (i in 1:nrow(api_tbl)) {
+  } ## for (i in 1:nrow(api_tbl_use)) {
 
-  ## Delete any temporary geojson files created (including this run and previous runs)
-  if (aoi_sf) {
-    tmp_jsn_fn <- list.files(ca_cache_dir, pattern = "^\\~ca_(.*).geojson$", full.names = TRUE)
-    if (length(tmp_jsn_fn) > 0) {
-      if (debug) message(silver(paste0(" - deleting ", length(tmp_jsn_fn), " temp geojson files")))
-      unlink(tmp_jsn_fn)
-    }
+  if (!quiet && length(res) > 0) {
+    message(silver(" - Done. Read TIFs in with `ca_read_stars`"))
   }
 
   invisible(res)

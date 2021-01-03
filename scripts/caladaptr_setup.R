@@ -13,9 +13,9 @@
 ## Define the required packages (these are all on CRAN)
 
 req_pkg <- c("assertthat", "backports", "chillR", "conflicted","crayon", "curl", "DBI",
-             "dbplyr", "digest", "dplyr", "fastmatch", "ggplot2", "httr", "lubridate",
-             "magrittr", "purrr", "remotes", "rmarkdown", "RSQLite", "sf", "stars", "stringr",
-             "tibble", "tidyr", "tmap", "units", "usethis")
+             "dbplyr", "digest", "dplyr", "fastmatch", "ggplot2", "httr", "geojsonsf", "lubridate",
+             "magrittr", "purrr", "remotes", "rmarkdown", "RSQLite", "scales", "sf", "stars", "stringr",
+             "tibble", "tidyr", "tmap", "units", "usethis", "zip")
 
 ## Install a fresh version of *all* required packages (recommended)
 ##  - if it asks you to restart R more than once, select 'no'.

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# caladaptR <img src="man/figures/caladaptr-beta_logo.svg" align="right" width="240" />
+# caladaptR <a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" /></a>
 
 <!-- badges: start -->
 
@@ -11,7 +11,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 See also: <https://ucanr-igis.github.io/caladaptr/>
 
-# Main Features
+# Features
 
 `caladaptr` is an API client that makes it easier to work with data from
 [Cal-Adapt.org](https://cal-adapt.org/) in R. The niche of `caladaptr`
@@ -43,9 +43,7 @@ and analyze:
   - retrieve values by point, a preset area-of-interest (e.g., census
     tract), or a user-provided polygon ✔  
   - cache large queries in a local SQLite database ✔  
-  - download cropped rasters by a preset area-of-interest ✔  
-  - download cropped rasters by a user-supplied polygon - *coming
-    soon*  
+  - download cropped rasters (small to medium size areas) ✔  
   - download full rasters - *not currently planned*  
   - import station data (e.g., sea level rise) - *not currently planned*
 
@@ -97,7 +95,7 @@ annual maximum temperature for a point location:
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.4.4)
+#> caladaptr (version 0.4.5)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a location
@@ -118,9 +116,7 @@ sac_tasmax_cap
 #> Temporal aggregration period(s): year
 #> GCM(s): HadGEM2-ES, CNRM-CM5, CanESM2, MIROC5, ACCESS1-0, CCSM4, CESM1-BGC, CMCC-CMS, GFDL-CM3, HadGEM2-CC
 #> Scenario(s): rcp45, rcp85
-#> Slug(s): NA
 #> Dates: 2040-01-01 to 2070-12-31
-#> Options: NA
 #> 
 ```
 
@@ -226,20 +222,15 @@ the Livneh dataset (slug = `pr_year_livneh`):
 
 ``` r
 sac_precip_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%  ## Sacramento
-  ca_slug("pr_year_livneh")                                      ## Livneh yearly average precipitation historical
+  ca_slug("pr_year_livneh") %>%                                  ## Livneh yearly average precipitation historical
   ca_years(start = 1980, end = 2010)                             ## Start and end dates
 sac_precip_cap
 #> Cal-Adapt API Request
 #> Location(s): 
 #>   x: -121.469
 #>   y: 38.594
-#> Variable(s): NA
-#> Temporal aggregration period(s): NA
-#> GCM(s): NA
-#> Scenario(s): NA
 #> Slug(s): pr_year_livneh
-#> Dates: NA
-#> Options: NA
+#> Dates: 1980-01-01 to 2010-12-31
 #> 
 ```
 
@@ -251,12 +242,12 @@ head(sac_precip_tbl)
 #> # A tibble: 6 x 5
 #>      id slug           spag  dt               val
 #>   <int> <chr>          <fct> <chr>           [mm]
-#> 1     1 pr_year_livneh none  1950-12-31 1.5772589
-#> 2     1 pr_year_livneh none  1951-12-31 1.0809340
-#> 3     1 pr_year_livneh none  1952-12-31 1.6848391
-#> 4     1 pr_year_livneh none  1953-12-31 0.7950504
-#> 5     1 pr_year_livneh none  1954-12-31 1.4136573
-#> 6     1 pr_year_livneh none  1955-12-31 1.5759532
+#> 1     1 pr_year_livneh none  1980-12-31 1.4778994
+#> 2     1 pr_year_livneh none  1981-12-31 1.6469387
+#> 3     1 pr_year_livneh none  1982-12-31 2.2625108
+#> 4     1 pr_year_livneh none  1983-12-31 2.5765164
+#> 5     1 pr_year_livneh none  1984-12-31 0.8227559
+#> 6     1 pr_year_livneh none  1985-12-31 0.9679347
 ```
 
   
