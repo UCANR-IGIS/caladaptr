@@ -4,6 +4,7 @@
 #' @param quiet Suppress messages
 #' @param debug Print additional output at the console
 #' @param stop_on_err Stop if the server returns an error
+#' @param shiny_progress A Shiny progress bar object, see Details.
 #'
 #' @return A tibble
 #'
@@ -15,9 +16,10 @@
 #' @importFrom curl has_internet
 #' @importFrom sf st_write st_geometry st_as_text
 #' @importFrom digest digest
+#' @importFrom shiny Progress
 #' @export
 
-ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) {
+ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, shiny_progress = NULL) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
@@ -80,16 +82,26 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
 
   }
 
-  ## If a progress bar is needed, set it up
-  use_pb <- !quiet && !debug && (nrow(api_tbl) > 3)
-  if (use_pb) pb <- txtProgressBar(min = 1, max = nrow(api_tbl), style = 3)
+  ## Do we need a progress bar?
+  use_pb <- !is.null(shiny_progress) || (!quiet && !debug && (nrow(api_tbl) > 3))
+
+  ## If a text progress bar is needed for the console, set it up
+  if (use_pb && is.null(shiny_progress)) {
+    pb <- txtProgressBar(min = 1, max = nrow(api_tbl), style = 3)
+  }
 
   ## Loop through calls
   if (debug) message(silver(paste0(" - going to make ", nrow(api_tbl), " api calls")))
 
   for (i in 1:nrow(api_tbl)) {
 
-    if (use_pb) setTxtProgressBar(pb, i)
+    if (use_pb) {
+      if (is.null(shiny_progress)) {
+        setTxtProgressBar(pb, i)
+      } else {
+        shiny_progress$inc(1/nrow(api_tbl))
+      }
+    }
 
     if (aoi_sf) {
 
@@ -158,7 +170,6 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
                            start = start_dt,
                            end = end_dt,
                            stat = spatial_ag)
-                        # format = "json" - not using any more
 
       post_url <- api_tbl[i, "api_url", drop = TRUE]
 
@@ -190,17 +201,17 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
     ## See if the server sent an error
     if (http_error(qry_resp)) {
 
+      ## Should we stop because there was a server error?
       if (stop_on_err) {
         stop_for_status(qry_resp)
 
       } else {
 
-        ## Don't stop - print a message or generate a warning
+        ## If not, generate message or warning
         if (quiet && !debug) {
           warn_for_status(qry_resp)
 
         } else {
-          ## quiet = FALSE or debug = TRUE
           message(red(paste0(" - Oh dear. ", http_status(qry_resp)$message)))
         }
 
@@ -241,7 +252,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE) 
   } ## for (i in 1:nrow(api_tbl)) {
 
   ## Close the progress bar
-  if (use_pb) close(pb)
+  if (use_pb && is.null(shiny_progress)) close(pb)
 
   ## Delete any temporary geojson files created (including this run and previous runs)
   if (aoi_sf) {

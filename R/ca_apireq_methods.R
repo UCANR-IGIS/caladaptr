@@ -38,7 +38,7 @@ format.ca_apireq <- function(x, ...) {
         idvals_str <- "all"
       } else {
         idvals_str <- paste0(paste(head(x$loc$val$idval, n=3), collapse=", "),
-                             ifelse(length(x$loc$val$idval) > 3, ", ...", ""))
+                             ifelse(length(x$loc$val$idval) > 3, paste0(", (+ ", length(x$loc$val$idval) - 3, " more)"), ""))
       }
       loc2 <- paste0("\n  AOI Preset: ", x$loc$val$type,
                      "\n  ", x$loc$val$idfld, "(s): ", idvals_str)
@@ -51,7 +51,7 @@ format.ca_apireq <- function(x, ...) {
     } else if (x$loc$type == "pt") {
 
       if (nrow(x$loc$val) > 3) {
-        str_dotdotdot <- ", ..."
+        str_dotdotdot <- paste0(", (+ ", nrow(x$loc$val) - 3, " more)")
       } else {
         str_dotdotdot <- ""
       }
@@ -165,7 +165,7 @@ plot.ca_apireq <- function(x,
 
     api_map <- tm_shape(pts_sf) +
       tm_basemap(basemap) +
-      tm_symbols(col = "red", alpha = 0.8, size = 0.2) +
+      tm_symbols(col = "red", alpha = 0.8, size = 0.2, group = "Query Location(s)") +
       tm_view(symbol.size.fixed = TRUE)
 
     if (locagrid) {
@@ -173,7 +173,7 @@ plot.ca_apireq <- function(x,
       bbox_sf <- st_as_sfc(st_bbox(pts_sf)) %>% st_buffer(dist = 15000)
       api_map <- api_map +
         tm_shape(locagrid_sf[bbox_sf, ]) +
-        tm_borders(col="dimgray")
+        tm_borders(col="dimgray", group = "LOCA grid")
     }
 
     api_map
@@ -206,14 +206,14 @@ plot.ca_apireq <- function(x,
 
       api_map <- tm_shape(polyuse_sf) +
         tm_basemap(basemap) +
-        tm_polygons(col = "red", alpha = 0.2)
+        tm_polygons(col = "red", alpha = 0.2, group = "Query Location(s)")
 
       if (locagrid) {
         ## Get the bounding box of the features, buffer by 10km
         bbox_sf <- st_as_sfc(st_bbox(polyuse_sf)) %>% st_buffer(dist = 10000)
         api_map <- api_map +
           tm_shape(locagrid_sf[bbox_sf, ]) +
-          tm_borders(col="dimgray")
+          tm_borders(col="dimgray", group = "LOCA grid")
       }
 
       api_map
@@ -227,9 +227,10 @@ plot.ca_apireq <- function(x,
 
     if (unique(as.character(st_geometry_type(loc_webmerc))) %in% c("POLYGON", "MULTIPOLYGON")) {
 
+      ## Polygon layer
       api_map <- tm_shape(loc_webmerc) +
         tm_basemap(basemap) +
-        tm_polygons(col = "red", alpha = 0.2)
+        tm_polygons(col = "red", alpha = 0.2, group = "Query Location(s)")
 
     } else {   ## point layer
       api_map <- tm_shape(loc_webmerc) +

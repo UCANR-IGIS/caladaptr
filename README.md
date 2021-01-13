@@ -95,7 +95,7 @@ annual maximum temperature for a point location:
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.4.5)
+#> caladaptr (version 0.4.6)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a location

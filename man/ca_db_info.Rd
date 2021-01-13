@@ -2,18 +2,18 @@
 % Please edit documentation in R/ca_db_info.R
 \name{ca_db_info}
 \alias{ca_db_info}
-\title{Check the properties of a Cal-Adapt values databases}
+\title{View properties of a Cal-Adapt values databases}
 \usage{
 ca_db_info(x)
 }
 \arguments{
-\item{x}{Either a remote tibble or a SQLite database file name}
+\item{x}{Either a Cal-Adapt values remote tibble or a SQLite database file name}
 }
 \value{
 A list object with info about \code{x}, including the tables, fields, and indices.
 }
 \description{
-Check the properties of a Cal-Adapt values databases
+View properties of a Cal-Adapt values databases
 }
 \details{
 \code{x} can be either a remote tibble returned by \code{\link{ca_getvals_db}}, or a SQLite

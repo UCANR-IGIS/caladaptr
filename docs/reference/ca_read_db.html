@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fetch a new copy of the Cal-Adapt raster series catalog — ca_catalog_fetch • caladaptr</title>
+<title>Read a Cal-Adapt values database SQLite file — ca_read_db • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Fetch a new copy of the Cal-Adapt raster series catalog — ca_catalog_fetch" />
-<meta property="og:description" content="Fetch a new copy of the Cal-Adapt raster series catalog" />
+<meta property="og:title" content="Read a Cal-Adapt values database SQLite file — ca_read_db" />
+<meta property="og:description" content="Read a Cal-Adapt values database SQLite file" />
 
 
 
@@ -172,44 +172,68 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fetch a new copy of the Cal-Adapt raster series catalog</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_catalog_fetch.R'><code>R/ca_catalog_fetch.R</code></a></small>
-    <div class="hidden name"><code>ca_catalog_fetch.Rd</code></div>
+    <h1>Read a Cal-Adapt values database SQLite file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_read_db.R'><code>R/ca_read_db.R</code></a></small>
+    <div class="hidden name"><code>ca_read_db.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Fetch a new copy of the Cal-Adapt raster series catalog</p>
+    <p>Read a Cal-Adapt values database SQLite file</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_catalog_fetch</span>(quiet = <span class='fl'>FALSE</span>, save_to_cache = <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_read_db</span>(
+  <span class='kw'>x</span>,
+  val_tbl = <span class='kw'>NULL</span>,
+  join_lookup_tbls = <span class='fl'>TRUE</span>,
+  all_tables = <span class='fl'>FALSE</span>,
+  exclude_hash_tables = <span class='fl'>TRUE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>quiet</th>
-      <td><p>Suppress messages, logical</p></td>
+      <th>x</th>
+      <td><p>A Cal-Adapt values remote tibble or SQLite file name</p></td>
     </tr>
     <tr>
-      <th>save_to_cache</th>
-      <td><p>Save the catalog to the cache directory, logical</p></td>
+      <th>val_tbl</th>
+      <td><p>The name of table which contains climate data, ignored if all_tables = TRUE</p></td>
+    </tr>
+    <tr>
+      <th>join_lookup_tbls</th>
+      <td><p>Join lookup tables if present in the remote tibble</p></td>
+    </tr>
+    <tr>
+      <th>all_tables</th>
+      <td><p>Return all tables, logical</p></td>
+    </tr>
+    <tr>
+      <th>exclude_hash_tables</th>
+      <td><p>Exclude tables that contain search hashes, ignored if all_tables = FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The raster series catalog as a tibble</p>
+    <p>A remote tibble with climate values if all_tables = FALSE, otherwise a list of remote tibbles if all_tables = TRUE</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function will download a list of all raster series available through the Cal-Adapt API.
-If <code>save_to_cache = TRUE</code>, the catalog will be saved as a csv file in the caladaptR's cache folder
-and used for subsequent calls to <code><a href='ca_catalog_rs.html'>ca_catalog_rs</a></code>.</p>
-<p>A copy of the raster series catalog is also included with caladaptR. You can run <code>ca_catalog_fetch()</code>
-to update the catalog when new raster series are published on Cal-Adapt. The best way to
-find out when new data are published on Cal-Adapt is to subscribe to the Cal-Adapt newsletter.</p>
+    <p>This will 'mount' a SQLite database created by <code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>, and return a remote
+tibble (i.e., a tibble connected to a database). <code>x</code> can be either a SQLite file name or a
+remote tibble returned by <code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>.</p>
+<p><code>val_tbl</code> should be the name of the table in the database that contains the climate values (i.e., the
+same table you specified when you ran <code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>). If <code>val_tbl = NULL</code> and a sidecar
+text file for the SQLite database exists, it will search the sidecar file for the name of a values table and
+use the first one. if <code>join_lookup_tbls = TRUE</code> and lookup tables were used when fetching the data,
+the remote tibble returned will be based on a SQL expression that joins the lookup tables to the values table.
+Joining lookup tables is only possible if a sidecar text file exists.</p>
+<p>If <code>all_tables = TRUE</code>, a list of remote tibbles for all the tables in the database will be returned. In this case,
+<code>val_tbl</code> and <code>join_lookup_tbls</code> are ignored. If <code>exclude_hash_tables = TRUE</code>, tables that store search
+hashes will be excluded in the returned list.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='ca_catalog_rs.html'>ca_catalog_rs</a></code>, <code><a href='ca_getcache.html'>ca_getcache</a></code>, <code><a href='ca_getcache.html'>ca_setcache</a></code></p></div>
+    <div class='dont-index'><p><code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>, <code><a href='ca_db_info.html'>ca_db_info</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -1,8 +1,14 @@
+# caladaptr 0.4.6 (2021-01-12)
+
+* `ca_db_info()`: returned result is no longer invisible
+* `ca_getvals_tbl()`: `shiny_progress` argument added to show a progress bar in Shiny apps
+* `ca_getvals_db()`: added `write_sidecar` argument - writes a sidecar file next to the SQLite file
+* `ca_read_db()`: imports a SQLite file created by `ca_getvals_db()`, returning a remote tibble
+* `shiny` added to imports
+
 # caladaptr 0.4.5 (2021-01-02)
 
-The highlight of this update is improvements to `ca_getrst_stars()`. You can now download cropped rasters
-for user-defined sf data frames as well, points, and preset areas of interest. Rasters can also be masked to the
-polygon boundary.
+The highlight of this update is improvements to `ca_getrst_stars()`. You can now download cropped rasters for user-defined sf data frames as well, points, and preset areas of interest. Rasters can also be masked to the polygon boundary.
 
 * `ca_getrst_stars()`: added support sf data frames and point locations; added `mask` and `merge_geom` arguments
 * `geojsonsf` and `zip` added to imports

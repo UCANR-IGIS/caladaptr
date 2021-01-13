@@ -4,7 +4,13 @@
 \alias{ca_getvals_tbl}
 \title{Get values from an API request object as a tibble}
 \usage{
-ca_getvals_tbl(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE)
+ca_getvals_tbl(
+  x,
+  quiet = FALSE,
+  debug = FALSE,
+  stop_on_err = TRUE,
+  shiny_progress = NULL
+)
 }
 \arguments{
 \item{x}{A Cal-Adapt API request}
@@ -14,6 +20,8 @@ ca_getvals_tbl(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE)
 \item{debug}{Print additional output at the console}
 
 \item{stop_on_err}{Stop if the server returns an error}
+
+\item{shiny_progress}{A Shiny progress bar object, see Details.}
 }
 \value{
 A tibble

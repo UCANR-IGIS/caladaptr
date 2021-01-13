@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.6</span>
       </span>
     </div>
 
@@ -181,7 +181,13 @@
     <p>Get values from an API request object as a tibble</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_getvals_tbl</span>(<span class='kw'>x</span>, quiet = <span class='fl'>FALSE</span>, debug = <span class='fl'>FALSE</span>, stop_on_err = <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_getvals_tbl</span>(
+  <span class='kw'>x</span>,
+  quiet = <span class='fl'>FALSE</span>,
+  debug = <span class='fl'>FALSE</span>,
+  stop_on_err = <span class='fl'>TRUE</span>,
+  shiny_progress = <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,6 +207,10 @@
     <tr>
       <th>stop_on_err</th>
       <td><p>Stop if the server returns an error</p></td>
+    </tr>
+    <tr>
+      <th>shiny_progress</th>
+      <td><p>A Shiny progress bar object, see Details.</p></td>
     </tr>
     </table>
 

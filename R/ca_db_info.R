@@ -1,6 +1,6 @@
-#' Check the properties of a Cal-Adapt values databases
+#' View properties of a Cal-Adapt values databases
 #'
-#' @param x Either a remote tibble or a SQLite database file name
+#' @param x Either a Cal-Adapt values remote tibble or a SQLite database file name
 #'
 #' @details
 #' \code{x} can be either a remote tibble returned by \code{\link{ca_getvals_db}}, or a SQLite
@@ -14,6 +14,7 @@
 #' @importFrom DBI dbConnect dbDisconnect dbListTables dbGetQuery dbListFields
 #' @importFrom RSQLite SQLite
 #' @importFrom dbplyr sql_render
+#' @importFrom dplyr if_else mutate pull
 #' @export
 
 ca_db_info <- function(x) {
@@ -106,7 +107,9 @@ ca_db_info <- function(x) {
 
   ## Return
   class(res) <- c("ca_db_info", "list")
-  invisible(res)
+
+  res
+
 
 }
 

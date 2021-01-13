@@ -288,10 +288,10 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
       mutate(api_url = sapply(paste0(ca_baseurl, "series/", slug, "/events/"), URLencode))
 
   } else {
+
     api_tbl <- api_tbl %>%
       mutate(api_url = sapply(paste0(ca_baseurl, "series/", slug, "/events/?",
-                                     loc_qry, dt_qry, stat_qry),
-                              URLencode))
+                                     loc_qry, dt_qry, stat_qry), URLencode))
 
   }
 

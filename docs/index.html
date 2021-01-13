@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.6</span>
       </span>
     </div>
 
@@ -195,7 +195,7 @@
 <p>To get data from one of the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections from Scripps</a>, there are a number of ‘<em>constructor</em>’ functions you can mix and match to create an API request object. Here we’ll grab 30 years of projected annual maximum temperature for a point location:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span>)
-<span class="co">#&gt; caladaptr (version 0.4.5)</span>
+<span class="co">#&gt; caladaptr (version 0.4.6)</span>
 <span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
 <span class="co">#&gt; Bug reports: https://github.com/ucanr-igis/caladaptr/issues</span>
 <span class="kw">sac_tasmax_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span>(coords = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span>)) <span class="op">%&gt;%</span>     <span class="co">## specify a location</span>

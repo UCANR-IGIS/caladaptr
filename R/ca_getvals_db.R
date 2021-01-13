@@ -10,6 +10,7 @@
 #' @param lookup_ret_joined Return a table with lookup table fields, ignored if lookup_tbls = FALSE. See Details.
 #' @param pause_n Number of API calls after which a built-in pause is triggered. See Details.
 #' @param pause_secs Number of seconds to pause. See Details.
+#' @param write_sidecar Save table metadata in a separate file. See Details.
 #' @param stop_on_err Stop if the server returns an error
 #' @param quiet Suppress messages
 #' @param debug Print additional output at the console
@@ -63,7 +64,7 @@
 #' @importFrom utils txtProgressBar setTxtProgressBar packageVersion
 #' @importFrom dplyr select mutate left_join tbl sql bind_rows
 #' @importFrom curl has_internet
-#' @importFrom DBI dbConnect dbDisconnect dbWriteTable dbListTables dbCreateTable dbReadTable dbExecute dbIsValid
+#' @importFrom DBI dbConnect dbDisconnect dbWriteTable dbListTables dbCreateTable dbReadTable dbExecute dbIsValid dbListFields
 #' @importFrom RSQLite SQLite dbBegin dbCommit
 #' @importFrom fastmatch `%fin%`
 #' @export
@@ -71,7 +72,7 @@
 ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE,
                           trans_len = 100, lookup_tbls = TRUE, lookup_ret_joined = TRUE,
                           pause_n = 1000, pause_secs = 60,
-                          stop_on_err = TRUE, quiet = FALSE, debug = TRUE) {
+                          write_sidecar = TRUE, stop_on_err = TRUE, quiet = FALSE, debug = TRUE) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
@@ -271,13 +272,6 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
       }
 
       ## At this point all the lookup tables should be in the database!!
-      # browser()
-      # dbListTables(mydb)
-      # message(("At this point all the lookup tables should be in the database!!"))
-      # res <- dbSendQuery(mydb, "PRAGMA foreign_keys")
-      # message((paste0("foreign_keys = ", dbFetch(res)[1,1])))
-      # dbClearResult(res)
-
 
     } else {
       ## Create the lookup tables for slug and spag
@@ -324,6 +318,14 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   }
   ## Done creating the sqlite database and all lookup tables
   #####################################################################
+
+  ## If the values table already exists, cross-check that it has all the required fields.
+  ## (If not, it could have been created with a different value for lookup_tbls)
+  if (db_tbl %in% all_tbls) {
+    if (FALSE %in% (apicall_cols_keep %in% dbListFields(mydb, db_tbl))) {
+      stop(paste0(db_tbl, " already exists, but doesn't have the required fields. Specify a different database or a different values table."))
+    }
+  }
 
   ## Start the first database write transaction
   if (trans_len > 0) {
@@ -638,6 +640,69 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   } else {
     if (debug) message(silver(paste0(" - returning a remote tbl based on SQL: \"", tbl_sql, "\"")))
     res <- tbl(mydb, sql(tbl_sql))
+  }
+
+  if (write_sidecar) {
+    val_tbl_info <- paste0("val_tbl: ", db_tbl, "\n",
+                      db_tbl, "_sql: ", tbl_sql, "\n\n")
+
+    sidecar_fn <- paste0(db_fn, ".txt") %>% gsub("\\\\", "/", .)
+
+    if (file.exists(sidecar_fn)) {
+
+      ## The sidecar file already exists. We need to scan it and see if there's a line:
+      ## val_tbl: sac_pts_tbl
+      ## If yes - do nothing
+      ## If no - append it
+
+      tbl_found <- FALSE
+      fcon <- file(sidecar_fn, open = "r")
+
+      ## Loop thru the lines of the sidecar file
+      while (TRUE) {
+        one_line <- readLines(fcon, n = 1, warn = FALSE)
+
+        ## If this is the last line, stop
+        if (length(one_line) == 0 ) break
+
+        ## Determine if this line is comment
+        first_char <- trimws(substr(one_line, 1, 1))
+        if (first_char != "#" && first_char != "/") {
+
+          ## Look for a colon
+          colon_pos <- regexpr(":", one_line)
+          if (colon_pos > 0) {
+
+            ## Get the key and value
+            ln_key <- trimws(substring(one_line, 1, colon_pos - 1)[1])
+            ln_val <- gsub("\"", "'", trimws(substring(one_line, colon_pos + 1)[1]))
+
+            if (ln_key == "val_tbl" && ln_val == db_tbl) {
+              tbl_found <- TRUE
+              break
+            }
+
+          }
+        }
+
+      }  ## while TRUE
+      close(fcon)
+
+      if (!tbl_found) {
+        cat(val_tbl_info, file = sidecar_fn, append = TRUE)
+        # message("JUST APPENDED A NEW TABLE INFO")
+      } else {
+        # message("TABLE INFO IS ALREADY IN THE SIDECAR, SKIPPPING")
+      }
+
+    } else {
+      cat("# Table metadata for: ", db_fn, "\n\n",
+          val_tbl_info,
+          file = sidecar_fn,
+          sep = "")
+
+    }
+
   }
 
   class(res) <- c(class(res), "ca_db")

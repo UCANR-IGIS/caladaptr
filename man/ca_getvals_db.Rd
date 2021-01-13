@@ -15,6 +15,7 @@ ca_getvals_db(
   lookup_ret_joined = TRUE,
   pause_n = 1000,
   pause_secs = 60,
+  write_sidecar = TRUE,
   stop_on_err = TRUE,
   quiet = FALSE,
   debug = TRUE
@@ -40,6 +41,8 @@ ca_getvals_db(
 \item{pause_n}{Number of API calls after which a built-in pause is triggered. See Details.}
 
 \item{pause_secs}{Number of seconds to pause. See Details.}
+
+\item{write_sidecar}{Save table metadata in a separate file. See Details.}
 
 \item{stop_on_err}{Stop if the server returns an error}
 
