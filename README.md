@@ -9,8 +9,6 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-See also: <https://ucanr-igis.github.io/caladaptr/>
-
 # Features
 
 `caladaptr` is an API client that makes it easier to work with data from
