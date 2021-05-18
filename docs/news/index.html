@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -154,7 +154,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ucanr-igis/caladaptr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -175,6 +175,24 @@
       <small>Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="caladaptr-050-2021-05-17" class="section level1">
+<h1 class="page-header" data-toc-text="0.5.0">
+<a href="#caladaptr-050-2021-05-17" class="anchor"></a>caladaptr 0.5.0 (2021-05-17)</h1>
+<ul>
+<li>
+<code><a href="../reference/ca_catalog_fetch.html">ca_catalog_fetch()</a></code>: trapped an error when tres property is missing</li>
+<li>
+<code><a href="../reference/ca_apireq.html">ca_apireq()</a></code>: added element for livneh</li>
+<li>
+<code><a href="../reference/ca_livneh.html">ca_livneh()</a></code>: new function to specify a Livneh dataset</li>
+<li>
+<code>cvars</code>: expanded to include more VIC variables</li>
+<li>
+<code><a href="../reference/ca_apicalls.html">ca_apicalls()</a></code>: added additional error checks; support for livneh dataset</li>
+<li>
+<code><a href="../reference/ca_preflight.html">ca_preflight()</a></code>: new function to check an API request for errors</li>
+</ul>
+</div>
     <div id="caladaptr-046-2021-01-12" class="section level1">
 <h1 class="page-header" data-toc-text="0.4.6">
 <a href="#caladaptr-046-2021-01-12" class="anchor"></a>caladaptr 0.4.6 (2021-01-12)</h1>
@@ -182,7 +200,11 @@
 <li>
 <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code>: returned result is no longer invisible</li>
 <li>
-<code>c_getvals_tbl()</code>: <code>shiny_progress</code> argument added to show a progress bar in Shiny apps</li>
+<code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>: <code>shiny_progress</code> argument added to show a progress bar in Shiny apps</li>
+<li>
+<code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>: added <code>write_sidecar</code> argument - writes a sidecar file next to the SQLite file</li>
+<li>
+<code><a href="../reference/ca_read_db.html">ca_read_db()</a></code>: imports a SQLite file created by <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, returning a remote tibble</li>
 <li>
 <code>shiny</code> added to imports</li>
 </ul>
@@ -373,7 +395,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

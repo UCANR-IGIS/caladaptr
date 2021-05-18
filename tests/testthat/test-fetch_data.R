@@ -37,7 +37,9 @@ with_mock_api({
   #####################################################################################
 
   ## this works but only after I manually change the json file created by capture_request()
-  ## need to keep investigating, might have something to do with the name of the temporary geojson file?
+  ## need to keep investigating, might have something to do with the name of the temporary geojson file
+  ## or a random string that is inserted as part of the POST request
+  ## Consider pulling this one out, and telling it to not use httptest caching.
 
   if (FALSE) {
   test_that("Fetching data for a one-feature sf polygon", {

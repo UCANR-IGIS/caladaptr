@@ -1,3 +1,12 @@
+# caladaptr 0.5.0 (2021-05-17)
+
+* `ca_catalog_fetch()`: trapped an error when tres property is missing
+* `ca_apireq()`: added element for livneh
+* `ca_livneh()`: new function to specify a Livneh dataset
+* `cvars`: expanded to include more VIC variables
+* `ca_apicalls()`: added additional error checks; support for livneh dataset
+* `ca_preflight()`: new function to check an API request for errors
+
 # caladaptr 0.4.6 (2021-01-12)
 
 * `ca_db_info()`: returned result is no longer invisible

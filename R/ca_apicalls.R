@@ -5,41 +5,60 @@
 #' @param x A Cal-Adapt API request
 #' @param slug_check Cross check the slug against the raster series catalog
 #' @param date_check Cross check the start and end date against the raster series catalog
+#' @param loc_check Check to make sure the location is within the Cal-Adapt coverage area
+#' @param units_check Check for consistent units
 #' @param ignore_spag Ignore the spatial aggregation option
+#' @param preflight Run as a preflight check only, logical
 #'
 #' @details This function generates the URLs that fulfill an API request. It is used internally
 #' but can be useful for debugging. Let \code{ignore_spag = TRUE}
 #' if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
 #'
+#' If \code{preflight = TRUE}, all the checks will be tested and if no errors are found x will be returned.
+#'
 #' @importFrom dplyr select mutate left_join right_join pull
 #' @importFrom tibble tibble
-#' @importFrom sf st_as_text st_point st_transform st_simplify
+#' @importFrom sf st_as_text st_point st_transform st_simplify st_read st_intersects st_as_sf
 #' @importFrom httr modify_url
 #' @importFrom crayon green yellow
 #' @importFrom utils URLencode
 #' @importFrom digest digest2int digest
 #' @export
 
-ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = FALSE) {
+ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRUE,
+                        units_check = TRUE, ignore_spag = FALSE, preflight = FALSE) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
   ## Error checks on the API request (to be moved to its own function)
   if (identical(x$loc, NA)) stop("A location must be specified")
 
-  ## Verify that either slug *or* gcm+per+scenario+cvar were passed
+  ## Verify that either slug *or* gcm+per+scenario+cvar were passed *or* livneh+per+cvar
   if (identical(x$slug, NA)) {
-    if (identical(x$gcm, NA)) stop("A gcm must be specified")
-    if (identical(x$scenario, NA)) stop("An emissions scenario must be specified")
+
     if (identical(x$per, NA)) stop("A period must be specified")
     if (identical(x$cvar, NA)) stop("Climate variable must be provided")
 
-  } else {
-
-    if (!identical(x$gcm, NA) || !identical(x$scenario, NA) || !identical(x$per, NA) || !identical(x$cvar, NA)) {
-      stop("In an API request, slug can not be combined with gcm, period, scenario, or cvar. Specify the raster series with one approach or the other.")
+    if (identical(x$livneh, TRUE)) {
+      if (!identical(x$gcm, NA)) stop("An API request can't specify both Livneh and a GCM.")
+      if (!identical(x$scenario, NA)) stop("An API request can't specify both Livneh and an emissions scenario.")
+    } else {
+      if (identical(x$gcm, NA)) stop("A gcm must be specified")
+      if (identical(x$scenario, NA)) stop("An emissions scenario must be specified")
     }
 
+  } else {
+
+    if (!identical(x$gcm, NA) || !identical(x$scenario, NA) || !identical(x$per, NA) || !identical(x$cvar, NA) ||
+        ifelse(is.null(x$livneh), FALSE, !identical(x$livneh, NA))) {
+      stop("In an API request, slug can not be combined with gcm, period, scenario, cvar, or livneh. Specify the raster series with one approach or the other.")
+    }
+
+  }
+
+  ## Load the loca grid area
+  if (loc_check) {
+    loca_area_sf <- st_read(system.file("extdata", "loca_area.geojson", package = "caladaptr"), quiet = TRUE)
   }
 
   ## THE FIRST THING WE DO IS CREATE A TIBBLE FOR ALL THE LOCATIONS, WITH COLUMNS THAT WILL BE NEEDED
@@ -56,6 +75,17 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
                       loc_qry = paste0("g=",
                                        sapply(1:nrow(x$loc$val),
                                               function(i) st_as_text(st_point(as.numeric(x$loc$val[i, c(2,3)]))))))
+
+    ## Verify the point(s) are in the Cal-Adapt area
+    if (loc_check) {
+      qry_pts_sf <- st_as_sf(x$loc$val[ ,2:3], coords = c("x","y"), crs = 4326)
+      suppressMessages({
+        pts_in_loca_area_mat <- qry_pts_sf %>% st_intersects(loca_area_sf, sparse = FALSE)
+      })
+      if (FALSE %in% pts_in_loca_area_mat) {
+        stop("One or more points fall outside the area covered by Cal-Adapt")
+      }
+    }
 
     idfld_name <- names(x$loc$val)[1]
     loc_sf <- NA
@@ -87,8 +117,6 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
                       loc_preset = factor(preset),
                       loc_fld = factor(idfld),
                       loc_qry = paste0("ref=/api/", preset, "/", api_ids, "/"))
-
-    ## loc_qry = lapply(1:length(x$loc$val$idval), function(i)  list(ref = paste0("/api/", preset, "/", api_ids[i], "/") )))
 
     loc_sf <- NA
     sf_hash <- ""
@@ -125,6 +153,17 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
                       loc_fld = factor(idfld_name),
                       loc_qry = 1:nrow(x$loc$val$loc))
 
+    ## Verify the features intersect in the Cal-Adapt area
+    if (loc_check) {
+      suppressMessages({
+        feats_within_loca_area_mat <- x$loc$val$loc %>% st_within(loca_area_sf, sparse = FALSE)
+      })
+      if (FALSE %in% feats_within_loca_area_mat) {
+        stop("One or more features are not within the area covered by Cal-Adapt")
+      }
+    }
+
+
     ## We create a hash string of the sf object which will be incorporated when computing the hash for each API call.
     ## This is to differentiate API calls for two different SF objects that have identical id field names and values
     sf_hash <- digest(loc_sf, serialize = TRUE)
@@ -155,12 +194,22 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
                                gcm = factor(x$gcm),
                                scenario = factor(x$scenario),
                                slug = as.character(x$slug),
+                               livneh = identical(x$livneh, TRUE),
                                stringsAsFactors = FALSE))
 
   ## If the API request does not specify slug(s), construct those now
   if (identical(x$slug, NA)) {
+
+    ## Construct a list of the slug 'suffix' for Livneh layers
+    ## This is to mimic how these slugs were constructed on Cal-Adapt
+    slug_suffix_lst <- setNames(as.list(rep("", length(cvars))), cvars)
+    slug_suffix_lst[!names(slug_suffix_lst) %in% c("pr", "tasmax", "tasmin")] <- "_vic"
+
     rs_tbl <- rs_tbl %>%
-      mutate(slug = paste(cvar, period, gcm, scenario, sep="_"))
+      mutate(slug = if_else(livneh,
+                            paste0(paste(cvar, period, "livneh", sep="_"), slug_suffix_lst[as.character(cvar)]),
+                            paste(cvar, period, gcm, scenario, sep="_")))
+
   }
 
   ## Add a lower case version of the slug for joining to the raster series data catalog
@@ -187,6 +236,12 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
     mutate(rs_idx = 1:nrow(rs_tbl)) %>%
     left_join(rs_catinfo_df, by = "slug_lower")
 
+  ## Check that all API calls return the same units
+  if (units_check) {
+    if (length(unique(rs_tbl$rs_units)) > 1) stop(paste0("The variables in this API request return different units (",
+    paste(unique(rs_tbl$rs_units), collapse = ", "), "). The variables must all use the same units."))
+  }
+
   ## Prep the dates. These will be the same for all API calls.
   if (identical(x$dates, NA)) {
     start_dt <- NA
@@ -200,7 +255,7 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
                      "&end=", format(end_dt, format = "%Y-%m-%d"))
   }
 
-  ## Check the query dates againts the raster series dates
+  ## Check the query dates against the raster series dates
   if (date_check && !identical(x$dates, NA)) {
     rs_latest_begin_dt <- max(as.Date(substr(rs_tbl_matches$rs_begin, 1, 10), format = "%Y-%m-%d"))
     rs_earliest_end_dt <- min(as.Date(substr(rs_tbl_matches$rs_end, 1, 10), format = "%Y-%m-%d"))
@@ -295,13 +350,21 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, ignore_spag = F
 
   }
 
-  ## Prepare a list to return containing the api table and the sf object
-  res <- list(api_tbl = api_tbl,
-              loc_sf = loc_sf,
-              idfld = idfld_name)
-
   # message(silver(" - TODO: cross-check raster series period vs period"))
   # message(silver(" - TODO: cross-check location against raster series extent"))
+  # message(silver(" - TODO: warning if multiple units being queried"))
+
+  if (preflight) {
+    ## This is just a test. If no errors were found, return x
+    res <- x
+
+  } else {
+    ## Prepare a list to return containing the api table and the sf object
+    res <- list(api_tbl = api_tbl,
+                loc_sf = loc_sf,
+                idfld = idfld_name)
+
+  }
 
   invisible(res)
 

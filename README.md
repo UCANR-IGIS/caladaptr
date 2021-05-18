@@ -93,7 +93,7 @@ annual maximum temperature for a point location:
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.4.6)
+#> caladaptr (version 0.5.0)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a location
@@ -124,7 +124,9 @@ To help you pass arguments for the various constructor functions,
 ``` r
 ## Climate Variables 
 cvars
-#> [1] "tasmax" "tasmin" "pr"     "swe"
+#>  [1] "tasmax"     "tasmin"     "pr"         "swe"        "baseflow"  
+#>  [6] "ET"         "rainfall"   "runoff"     "snowfall"   "soilMoist1"
+#> [11] "Tair"
 
 ## Global Climate Models
 ## Note: the first 4 are the 'priority' models recommended under California's 4th Climate Change Assessment.
@@ -259,21 +261,3 @@ the [website](https://ucanr-igis.github.io/caladaptr/).
   - Plotting an API Request object shows the query’s location.  
   - You can view the Cal-Adapt catalog of raster series
     `ca_catalog_rs()`
-
-# caladaptR betaR Club
-
-The **caladaptR betaR** club is **now accepting members\!** If you would
-like to be part of this elite cadre of `caladaptr` early adopters, you
-should join our beta testing program. Benefits of joining the
-**caladaptR betaR** club include:
-
-  - early notification of **package updates**  
-  - 24/7 **priority support**  
-  - **exclusive invitations** to `caladaptr` tutorials and user feedback
-    sessions
-  - an **email forum** to bounce ideas around with other caladaptR users
-    and the package developer
-
-To join the **caladaptR betaR** club, please subscribe yourself to the
-[caladaptR email
-list](https://lists.ucdavis.edu/sympa/subscribe/caladaptr).

@@ -7,8 +7,11 @@
 #' These sample API requests can be used in demos, documentation, and tests.
 #'
 #' n = 1: Basic API request - one point, two CGMs, 20 years of annual data.
+#'
 #' n = 2: Three Congressional districts, monthly data, 4 years
+#'
 #' n = 3: sf data frame with one feature, 1 GCM, 1 scenario, 2 years of daily data
+#'
 #' n = 4: Simple feature data frame with two multipolygons, 1 GCM, 1 scenario, 20 years of annual data
 #'
 #' @importFrom sf st_read st_sf

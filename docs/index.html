@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -111,7 +111,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/ucanr-igis/caladaptr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -134,7 +134,6 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>See also: <a href="https://ucanr-igis.github.io/caladaptr/" class="uri">https://ucanr-igis.github.io/caladaptr/</a></p>
 </div>
 <div id="features" class="section level1">
 <h1 class="hasAnchor">
@@ -195,7 +194,7 @@
 <p>To get data from one of the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections from Scripps</a>, there are a number of ‘<em>constructor</em>’ functions you can mix and match to create an API request object. Here we’ll grab 30 years of projected annual maximum temperature for a point location:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span>)
-<span class="co">#&gt; caladaptr (version 0.4.6)</span>
+<span class="co">#&gt; caladaptr (version 0.5.0)</span>
 <span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
 <span class="co">#&gt; Bug reports: https://github.com/ucanr-igis/caladaptr/issues</span>
 <span class="kw">sac_tasmax_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span>(coords = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span>)) <span class="op">%&gt;%</span>     <span class="co">## specify a location</span>
@@ -223,7 +222,9 @@
 <div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="co">## Climate Variables </span>
 <span class="kw">cvars</span>
-<span class="co">#&gt; [1] "tasmax" "tasmin" "pr"     "swe"</span>
+<span class="co">#&gt;  [1] "tasmax"     "tasmin"     "pr"         "swe"        "baseflow"  </span>
+<span class="co">#&gt;  [6] "ET"         "rainfall"   "runoff"     "snowfall"   "soilMoist1"</span>
+<span class="co">#&gt; [11] "Tair"</span>
 
 <span class="co">## Global Climate Models</span>
 <span class="co">## Note: the first 4 are the 'priority' models recommended under California's 4th Climate Change Assessment.</span>
@@ -264,7 +265,7 @@
 <span class="co">## Add a column with Fahrenheit units</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/r-quantities/units">units</a></span>)
-<span class="kw">sac_tasmax_tbl2</span> <span class="op">&lt;-</span> <span class="kw">sac_tasmax_tbl</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(temp_f = <span class="fu"><a href="https://rdrr.io/pkg/units/man/set_units.html">set_units</a></span>(<span class="kw">val</span>, <span class="kw">degF</span>))
+<span class="kw">sac_tasmax_tbl2</span> <span class="op">&lt;-</span> <span class="kw">sac_tasmax_tbl</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(temp_f = <span class="fu"><a href="https://rdrr.io/pkg/units/man/units.html">set_units</a></span>(<span class="kw">val</span>, <span class="kw">degF</span>))
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">sac_tasmax_tbl2</span>)
 <span class="co">#&gt; # A tibble: 6 x 9</span>
 <span class="co">#&gt;      id cvar   period gcm        scenario spag  dt              val   temp_f</span>
@@ -278,7 +279,7 @@
 </pre></div>
 <p>Now we can make a plot:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span>)
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(data = <span class="kw">sac_tasmax_tbl2</span>, 
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="kw">dt</span>), y = <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw">temp_f</span>))) <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(color=<span class="kw">gcm</span>)) <span class="op">+</span>
@@ -337,21 +338,6 @@
 </li>
 </ul>
 </div>
-<div id="caladaptr-betar-club" class="section level1">
-<h1 class="hasAnchor">
-<a href="#caladaptr-betar-club" class="anchor"></a>caladaptR betaR Club</h1>
-<p>The <strong>caladaptR betaR</strong> club is <strong>now accepting members!</strong> If you would like to be part of this elite cadre of <code>caladaptr</code> early adopters, you should join our beta testing program. Benefits of joining the <strong>caladaptR betaR</strong> club include:</p>
-<ul>
-<li>early notification of <strong>package updates</strong><br>
-</li>
-<li>24/7 <strong>priority support</strong><br>
-</li>
-<li>
-<strong>exclusive invitations</strong> to <code>caladaptr</code> tutorials and user feedback sessions</li>
-<li>an <strong>email forum</strong> to bounce ideas around with other caladaptR users and the package developer</li>
-</ul>
-<p>To join the <strong>caladaptR betaR</strong> club, please subscribe yourself to the <a href="https://lists.ucdavis.edu/sympa/subscribe/caladaptr">caladaptR email list</a>.</p>
-</div>
 
   </div>
 
@@ -400,7 +386,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

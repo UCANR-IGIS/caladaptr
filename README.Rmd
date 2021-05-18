@@ -175,18 +175,6 @@ For more examples, including retrieving data for a preset area-of-interest (i.e.
 - Plotting an API Request object shows the query's location.  
 - You can view the Cal-Adapt catalog of raster series `ca_catalog_rs()`  
 
-# caladaptR betaR Club
-
-The **caladaptR betaR** club is **now accepting members!** If you would like to be part of this elite cadre of `caladaptr` early adopters, you should join our beta testing program. Benefits of joining the **caladaptR betaR** club include:
-
-- early notification of **package updates**  
-- 24/7 **priority support**  
-- **exclusive invitations** to `caladaptr` tutorials and user feedback sessions
-- an **email forum** to bounce ideas around with other caladaptR users and the package developer
-
-To join the **caladaptR betaR** club, please subscribe yourself to the [caladaptR email list](https://lists.ucdavis.edu/sympa/subscribe/caladaptr).
-
-
 ```{r, include=FALSE}
 # end_vignette()
 ```

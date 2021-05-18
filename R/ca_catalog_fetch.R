@@ -17,7 +17,7 @@
 #'
 #' @seealso \code{\link{ca_catalog_rs}}, \code{\link{ca_getcache}}, \code{\link{ca_setcache}}
 #'
-#' @importFrom purrr map_chr map
+#' @importFrom purrr map_chr map map_dbl
 #' @importFrom tibble tibble
 #' @importFrom httr http_error stop_for_status content GET accept_json
 #' @importFrom curl has_internet
@@ -127,8 +127,8 @@ ca_catalog_fetch <- function(quiet = FALSE, save_to_cache = TRUE) {
       begin = map_chr(., "begin"),
       end = map_chr(., "end"),
       num_rast = sapply(map(rs_catalog_lst, "rasters"), length),
-      tres = map_chr(., "tres"),
-      units = map_chr(., "units"),
+      tres = map_chr(., "tres", .default = ""),
+      units = map_chr(., "units", .default = ""),
       xmin = map_dbl(., "xmin"),
       xmax = map_dbl(., "xmax"),
       ymin = map_dbl(., "ymin"),

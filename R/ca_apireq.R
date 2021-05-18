@@ -8,19 +8,21 @@
 #' @param scenario A vector of scenario names (see `scenarios`)
 #' @param period A vector of period names (see `periods`)
 #' @param cvar A vector of climate variables (see `climvars`)
+#' @param livneh Use Livneh dataset, logical
 #' @param slug A vector of slugs
 #' @param options A list of options for querying the API
 #'
 #' @export
 
 ca_apireq <- function(loc = NA, dates = NA, gcm = NA, scenario = NA, period = NA, cvar = NA,
-                      slug = NA, options = NA) {
+                      livneh = NA, slug = NA, options = NA) {
   res <- list(loc = loc,
               dates = dates,
               gcm = gcm,
               scenario = scenario,
               period = period,
               cvar = cvar,
+              livneh = livneh,
               slug = slug,
               options = options)
 

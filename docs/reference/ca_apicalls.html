@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -155,7 +155,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ucanr-igis/caladaptr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -181,7 +181,15 @@
     <p>Constructs a tibble of individual API calls for an API request</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_apicalls</span>(<span class='kw'>x</span>, slug_check = <span class='fl'>TRUE</span>, date_check = <span class='fl'>TRUE</span>, ignore_spag = <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_apicalls</span>(
+  <span class='kw'>x</span>,
+  slug_check = <span class='fl'>TRUE</span>,
+  date_check = <span class='fl'>TRUE</span>,
+  loc_check = <span class='fl'>TRUE</span>,
+  units_check = <span class='fl'>TRUE</span>,
+  ignore_spag = <span class='fl'>FALSE</span>,
+  preflight = <span class='fl'>FALSE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -199,8 +207,20 @@
       <td><p>Cross check the start and end date against the raster series catalog</p></td>
     </tr>
     <tr>
+      <th>loc_check</th>
+      <td><p>Check to make sure the location is within the Cal-Adapt coverage area</p></td>
+    </tr>
+    <tr>
+      <th>units_check</th>
+      <td><p>Check for consistent units</p></td>
+    </tr>
+    <tr>
       <th>ignore_spag</th>
       <td><p>Ignore the spatial aggregation option</p></td>
+    </tr>
+    <tr>
+      <th>preflight</th>
+      <td><p>Run as a preflight check only, logical</p></td>
     </tr>
     </table>
 
@@ -209,6 +229,7 @@
     <p>This function generates the URLs that fulfill an API request. It is used internally
 but can be useful for debugging. Let <code>ignore_spag = TRUE</code>
 if the goal is to retrieve rasters (for which spatial aggregation is not relevant).</p>
+<p>If <code>preflight = TRUE</code>, all the checks will be tested and if no errors are found x will be returned.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -225,7 +246,7 @@ if the goal is to retrieve rasters (for which spatial aggregation is not relevan
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

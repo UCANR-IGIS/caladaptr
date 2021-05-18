@@ -90,6 +90,12 @@ format.ca_apireq <- function(x, ...) {
     per_str <- paste0(accent2("Temporal aggregration period(s): "), paste(x$period, collapse = ", "), "\n")
   }
 
+  if (identical(x$livneh, NA)) {
+    livneh_str <- ""
+  } else {
+    livneh_str <- paste0(accent2("Livneh data: "), "True", "\n")
+  }
+
   if (identical(x$slug, NA)) {
     slug_str <- ""
   } else {
@@ -112,7 +118,7 @@ format.ca_apireq <- function(x, ...) {
     # "\n  temporal ag (add'l): ", x$options$temporal_ag,
   }
 
-  invisible(paste0(loc_str, vars_str, per_str, gcm_str, scen_str, slug_str, dates_str, options_str))
+  invisible(paste0(loc_str, vars_str, per_str, livneh_str, gcm_str, scen_str, slug_str, dates_str, options_str))
 
 }
 

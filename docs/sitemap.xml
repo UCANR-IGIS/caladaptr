@@ -55,6 +55,9 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getvals_tbl.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_livneh.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_locagrid_geom.html</loc>
   </url>
   <url>
@@ -71,6 +74,9 @@
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_period.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_preflight.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_read_db.html</loc>

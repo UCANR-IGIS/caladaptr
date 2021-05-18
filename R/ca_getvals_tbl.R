@@ -229,9 +229,11 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
         these_vals <- unlist(qry_content$data)
 
         ## Set units
-        if (!is.na(api_tbl[i, "rs_units", drop = TRUE])) {
+        rs_units_chr <- api_tbl[i, "rs_units", drop = TRUE]
+        if (!is.na(rs_units_chr)) {
+          if (rs_units_chr == "C") {rs_units_chr <- "celsius"}
           these_vals <- set_units(these_vals,
-                                  value = api_tbl[i, "rs_units", drop = TRUE],
+                                  value = rs_units_chr,
                                   mode = "standard")
         }
 

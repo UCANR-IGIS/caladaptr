@@ -4,7 +4,15 @@
 \alias{ca_apicalls}
 \title{Creates a tibble of individual API calls}
 \usage{
-ca_apicalls(x, slug_check = TRUE, date_check = TRUE, ignore_spag = FALSE)
+ca_apicalls(
+  x,
+  slug_check = TRUE,
+  date_check = TRUE,
+  loc_check = TRUE,
+  units_check = TRUE,
+  ignore_spag = FALSE,
+  preflight = FALSE
+)
 }
 \arguments{
 \item{x}{A Cal-Adapt API request}
@@ -13,7 +21,13 @@ ca_apicalls(x, slug_check = TRUE, date_check = TRUE, ignore_spag = FALSE)
 
 \item{date_check}{Cross check the start and end date against the raster series catalog}
 
+\item{loc_check}{Check to make sure the location is within the Cal-Adapt coverage area}
+
+\item{units_check}{Check for consistent units}
+
 \item{ignore_spag}{Ignore the spatial aggregation option}
+
+\item{preflight}{Run as a preflight check only, logical}
 }
 \description{
 Constructs a tibble of individual API calls for an API request
@@ -22,4 +36,6 @@ Constructs a tibble of individual API calls for an API request
 This function generates the URLs that fulfill an API request. It is used internally
 but can be useful for debugging. Let \code{ignore_spag = TRUE}
 if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
+
+If \code{preflight = TRUE}, all the checks will be tested and if no errors are found x will be returned.
 }

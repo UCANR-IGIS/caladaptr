@@ -11,6 +11,7 @@ ca_apireq(
   scenario = NA,
   period = NA,
   cvar = NA,
+  livneh = NA,
   slug = NA,
   options = NA
 )
@@ -27,6 +28,8 @@ ca_apireq(
 \item{period}{A vector of period names (see `periods`)}
 
 \item{cvar}{A vector of climate variables (see `climvars`)}
+
+\item{livneh}{Use Livneh dataset, logical}
 
 \item{slug}{A vector of slugs}
 

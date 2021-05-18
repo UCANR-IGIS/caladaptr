@@ -36,7 +36,6 @@
 #' @import crayon
 #' @importFrom httr GET POST content user_agent upload_file accept_json accept http_error write_disk progress stop_for_status warn_for_status http_status
 #' @importFrom utils packageVersion URLencode
-#' @importFrom units set_units
 #' @importFrom dplyr select mutate slice filter sym
 #' @importFrom curl has_internet
 #' @importFrom sf st_write st_geometry st_as_text st_bbox st_as_sfc st_sf st_geometry_type st_buffer

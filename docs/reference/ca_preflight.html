@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Creates a new API request object — ca_apireq • caladaptr</title>
+<title>Run checks on an API request object — ca_preflight • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Creates a new API request object — ca_apireq" />
-<meta property="og:description" content="Creates a new API request object" />
+<meta property="og:title" content="Run checks on an API request object — ca_preflight" />
+<meta property="og:description" content="Run checks on an API request object" />
 
 
 
@@ -172,68 +172,63 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Creates a new API request object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_apireq.R'><code>R/ca_apireq.R</code></a></small>
-    <div class="hidden name"><code>ca_apireq.Rd</code></div>
+    <h1>Run checks on an API request object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_preflight.R'><code>R/ca_preflight.R</code></a></small>
+    <div class="hidden name"><code>ca_preflight.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Creates a new API request object</p>
+    <p>Run checks on an API request object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_apireq</span>(
-  loc = <span class='fl'>NA</span>,
-  dates = <span class='fl'>NA</span>,
-  gcm = <span class='fl'>NA</span>,
-  scenario = <span class='fl'>NA</span>,
-  period = <span class='fl'>NA</span>,
-  cvar = <span class='fl'>NA</span>,
-  livneh = <span class='fl'>NA</span>,
-  slug = <span class='fl'>NA</span>,
-  options = <span class='fl'>NA</span>
+    <pre class="usage"><span class='fu'>ca_preflight</span>(
+  <span class='kw'>x</span>,
+  slug_check = <span class='fl'>TRUE</span>,
+  date_check = <span class='fl'>TRUE</span>,
+  loc_check = <span class='fl'>TRUE</span>,
+  units_check = <span class='fl'>TRUE</span>,
+  ignore_spag = <span class='fl'>FALSE</span>,
+  quiet = <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>loc</th>
-      <td><p>A location object (see Details)</p></td>
+      <th>x</th>
+      <td><p>A Cal-Adapt API request</p></td>
     </tr>
     <tr>
-      <th>dates</th>
-      <td><p>A dates object (see Details)</p></td>
+      <th>slug_check</th>
+      <td><p>Cross check the slug against the raster series catalog</p></td>
     </tr>
     <tr>
-      <th>gcm</th>
-      <td><p>A vector of GCM abbreviations (see `gcms`)</p></td>
+      <th>date_check</th>
+      <td><p>Cross check the start and end date against the raster series catalog</p></td>
     </tr>
     <tr>
-      <th>scenario</th>
-      <td><p>A vector of scenario names (see `scenarios`)</p></td>
+      <th>loc_check</th>
+      <td><p>Check to make sure the location is within the Cal-Adapt coverage area</p></td>
     </tr>
     <tr>
-      <th>period</th>
-      <td><p>A vector of period names (see `periods`)</p></td>
+      <th>units_check</th>
+      <td><p>Check for consistent units</p></td>
     </tr>
     <tr>
-      <th>cvar</th>
-      <td><p>A vector of climate variables (see `climvars`)</p></td>
+      <th>ignore_spag</th>
+      <td><p>Ignore the spatial aggregation option</p></td>
     </tr>
     <tr>
-      <th>livneh</th>
-      <td><p>Use Livneh dataset, logical</p></td>
-    </tr>
-    <tr>
-      <th>slug</th>
-      <td><p>A vector of slugs</p></td>
-    </tr>
-    <tr>
-      <th>options</th>
-      <td><p>A list of options for querying the API</p></td>
+      <th>quiet</th>
+      <td><p>Suppress messages</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function checks an API request for errors.</p>
+<p>If a slug is not found, the variable may not be available for the temporal aggregation period.
+See <code><a href='ca_catalog_rs.html'>ca_catalog_rs</a></code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
