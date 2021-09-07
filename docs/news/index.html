@@ -190,30 +190,51 @@
     <div id="caladaptr-061-2021-09-06" class="section level1">
 <h1 class="page-header" data-toc-text="0.6.1">
 <a href="#caladaptr-061-2021-09-06" class="anchor"></a>caladaptr 0.6.1 (2021-09-06)</h1>
-<p>Version 0.6.1 is a pretty sizable update, with several new and improved functions especially for downloading and working with rasters, SQLite databases, improved preflight testing for API requests, data catalog searching, customizing messages with a package-wide color scheme, and making function names more consistent.</p>
+<p>Version 0.6.1 is a fairly significant update, with several new and improved functions especially for downloading and working with rasters, SQLite databases, improved preflight testing for API requests, data catalog searching, customizing messages with a package-wide color scheme, and making function names more consistent. Also 5 vignettes on API Requests, Large Queries, and Rasters Part I, II, and III.</p>
 <ul>
-<li><p><code>caladaptr</code> now depends on R version 3.6.</p></li>
-<li><p><code><a href="../reference/ca_getrst_stars.html">ca_getrst_stars()</a></code>: modified to save additional attribute data in the sidecar files (e.g., gcm, scenario, climate variable, etc.); progress bar disabled if quiet = TRUE (e.g., for rmd); <code>normalize_path</code> argument added; <code>overwrite</code> argument added; <code>sidecar_write</code> argument renamed <code>sidecar</code></p></li>
-<li><p><code><a href="../reference/ca_read_stars.html">ca_read_stars()</a></code>: deprecated (renamed <code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code>)</p></li>
-<li><p><code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code>: replacement of <code><a href="../reference/ca_read_stars.html">ca_read_stars()</a></code>, updated to accept a vector of TIF files names (instead of one), and return a list of stars objects; <code>read_sidecar</code> argument renamed <code>sidecar</code>; added <code>proxy</code> argument which imports the TIFs as stars proxy objects (i.e., disk pointers)</p></li>
-<li><p><code>ca_stars_index</code>: new function to create an index for a list of stars rasters downloaded by <code>ca_getrst_stars</code> and bundled into a list with <code>ca_read_stars</code></p></li>
-<li><p><code><a href="../reference/ca_stars_6d.html">ca_stars_6d()</a></code>: combines stars rasters for different climate variables, GCMs, and emissions scenarios into a single 6-dimensional raster (with x, y, and date being the other three dimensions)</p></li>
-<li><p><code><a href="../reference/ca_biggeom_blocks.html">ca_biggeom_blocks()</a></code>: new function that takes a large geom and returns a simple feature data frame of rectangular blocks each one small enough to download TIFFs from the Cal-Adapt API</p></li>
-<li><p><code><a href="../reference/ca_stars_mosaic.html">ca_stars_mosaic()</a></code>: new function to mosaic stars rasters</p></li>
-<li><p><code><a href="../reference/ca_preflight.html">ca_preflight()</a></code>: removed unused <code>quiet</code> argument; errors from ca_apicalls() now grouped and formatted</p></li>
-<li><p><code><a href="../reference/ca_settings.html">ca_settings()</a></code>: new function to customize package settings including the text output colors</p></li>
-<li><p><code><a href="../reference/ca_apicalls.html">ca_apicalls()</a></code>: <code>ignore_spag</code> renamed <code>spag_check</code>; new argument <code>check_for</code>; <code>preflight</code> renamed <code>pf</code></p></li>
-<li><p><code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>: modified how ca_apicalls() is called, <code>omit_col</code> argument added</p></li>
-<li><p><code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>: updated to support Cal-Adapt API requests for Livneh data; <code>omit_col</code> argument added</p></li>
-<li><p><code><a href="../reference/ca_catalog_search.html">ca_catalog_search()</a></code>: new function to search the raster series by slug and view properties</p></li>
-<li><p><code><a href="../reference/ca_catalog_rs.html">ca_catalog_rs()</a></code>: raster series data catalog updated (n=949)</p></li>
-<li><p><code><a href="../reference/ca_read_db.html">ca_read_db()</a></code>: deprecated and renamed <code><a href="../reference/ca_db_read.html">ca_db_read()</a></code> for a more consistent API</p></li>
-<li><p><code><a href="../reference/ca_db_read.html">ca_db_read()</a></code>: added <code>lkp_sql</code> and <code>vals_tbl</code> to the attributes of the result</p></li>
-<li><p><code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> and <code><a href="../reference/format.ca_db_info.html">format.ca_db_info()</a></code>: enhanced to read SQL statements from sidecar files, save and print multiple SQL statements</p></li>
 <li>
-<p><code><a href="../reference/ca_catalog_fetch.html">ca_catalog_fetch()</a></code>: now exported</p>
-<h1 id="five-new-vignettes-api-requests-large-queries-rasters-part-i-ii-and-iii" class="page-header" data-toc-text="0.6.1">five new vignettes: API Requests, Large Queries, Rasters Part I, II, and III</h1>
+<code>caladaptr</code> now depends on R version 3.6.</li>
+<li>
+<code><a href="../reference/ca_getrst_stars.html">ca_getrst_stars()</a></code>: modified to save additional attribute data in the sidecar files (e.g., gcm, scenario, climate variable, etc.); progress bar disabled if quiet = TRUE (e.g., for rmd); <code>normalize_path</code> argument added; <code>overwrite</code> argument added; <code>sidecar_write</code> argument renamed <code>sidecar</code>
 </li>
+<li>
+<code><a href="../reference/ca_read_stars.html">ca_read_stars()</a></code>: deprecated (renamed <code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code>)</li>
+<li>
+<code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code>: replacement of <code><a href="../reference/ca_read_stars.html">ca_read_stars()</a></code>, updated to accept a vector of TIF files names (instead of one), and return a list of stars objects; <code>read_sidecar</code> argument renamed <code>sidecar</code>; added <code>proxy</code> argument which imports the TIFs as stars proxy objects (i.e., disk pointers)</li>
+<li>
+<code>ca_stars_index</code>: new function to create an index for a list of stars rasters downloaded by <code>ca_getrst_stars</code> and bundled into a list with <code>ca_read_stars</code>
+</li>
+<li>
+<code><a href="../reference/ca_stars_6d.html">ca_stars_6d()</a></code>: combines stars rasters for different climate variables, GCMs, and emissions scenarios into a single 6-dimensional raster (with x, y, and date being the other three dimensions)</li>
+<li>
+<code><a href="../reference/ca_biggeom_blocks.html">ca_biggeom_blocks()</a></code>: new function that takes a large geom and returns a simple feature data frame of rectangular blocks each one small enough to download TIFFs from the Cal-Adapt API</li>
+<li>
+<code><a href="../reference/ca_stars_mosaic.html">ca_stars_mosaic()</a></code>: new function to mosaic stars rasters</li>
+<li>
+<code><a href="../reference/ca_preflight.html">ca_preflight()</a></code>: removed unused <code>quiet</code> argument; errors from ca_apicalls() now grouped and formatted</li>
+<li>
+<code><a href="../reference/ca_settings.html">ca_settings()</a></code>: new function to customize package settings including the text output colors</li>
+<li>
+<code><a href="../reference/ca_apicalls.html">ca_apicalls()</a></code>: <code>ignore_spag</code> renamed <code>spag_check</code>; new argument <code>check_for</code>; <code>preflight</code> renamed <code>pf</code>
+</li>
+<li>
+<code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>: modified how ca_apicalls() is called, <code>omit_col</code> argument added</li>
+<li>
+<code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>: updated to support Cal-Adapt API requests for Livneh data; <code>omit_col</code> argument added</li>
+<li>
+<code><a href="../reference/ca_catalog_search.html">ca_catalog_search()</a></code>: new function to search the raster series by slug and view properties</li>
+<li>
+<code><a href="../reference/ca_catalog_rs.html">ca_catalog_rs()</a></code>: raster series data catalog updated (n=949)</li>
+<li>
+<code><a href="../reference/ca_read_db.html">ca_read_db()</a></code>: deprecated and renamed <code><a href="../reference/ca_db_read.html">ca_db_read()</a></code> for a more consistent API</li>
+<li>
+<code><a href="../reference/ca_db_read.html">ca_db_read()</a></code>: added <code>lkp_sql</code> and <code>vals_tbl</code> to the attributes of the result</li>
+<li>
+<code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> and <code><a href="../reference/format.ca_db_info.html">format.ca_db_info()</a></code>: enhanced to read SQL statements from sidecar files, save and print multiple SQL statements</li>
+<li>
+<code><a href="../reference/ca_catalog_fetch.html">ca_catalog_fetch()</a></code>: now exported</li>
+<li>unit tests: new tests created for downloading rasters and saving data to SQLite; 68 in all</li>
+<li>five new vignettes: API Requests, Large Queries, Rasters Part I, II, and III</li>
 </ul>
 </div>
     <div id="caladaptr-050-2021-05-17" class="section level1">

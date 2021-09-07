@@ -377,7 +377,7 @@ If your stars objects are too big for memory, you can be selective about which l
   <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
            FUN <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    2.08    0.01    2.10</span>
+<span class="co">#&gt;    2.07    0.00    2.06</span>
 
 <span class="co">## With parallelization</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>
@@ -387,7 +387,7 @@ If your stars objects are too big for memory, you can be selective about which l
            FUN <span class="op">=</span> <span class="va">sd</span>,
            CLUSTER <span class="op">=</span> <span class="va">my_clust</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    0.54    0.20    1.33</span>
+<span class="co">#&gt;    0.50    0.24    1.06</span>
 <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html">stopCluster</a></span><span class="op">(</span><span class="va">my_clust</span><span class="op">)</span></code></pre></div>
 </div>
   </div>

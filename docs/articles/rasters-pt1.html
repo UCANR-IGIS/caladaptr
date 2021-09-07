@@ -530,10 +530,10 @@ p.indented2 {margin-left:2em;}
 <p>Note how the result includes the actual date values for the dimension fields (which is critical actually because they’re not regularly spaced). We can visually verify we only got March values by looking at a random sample of the date values. <code><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values()</a></code> return the values for a dimension:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="va">tasmin_tasmax_march</span>, which <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt;  [1] "2047-03-09" "2053-03-01" "2063-03-23" "2062-03-20" "2060-03-29"</span>
-<span class="co">#&gt;  [6] "2045-03-11" "2058-03-04" "2047-03-26" "2065-03-22" "2061-03-26"</span>
-<span class="co">#&gt; [11] "2045-03-10" "2062-03-18" "2062-03-12" "2065-03-18" "2050-03-15"</span>
-<span class="co">#&gt; [16] "2057-03-28" "2062-03-16" "2059-03-09" "2050-03-07" "2046-03-05"</span></code></pre></div>
+<span class="co">#&gt;  [1] "2060-03-29" "2056-03-26" "2051-03-16" "2064-03-14" "2045-03-12"</span>
+<span class="co">#&gt;  [6] "2046-03-13" "2058-03-26" "2056-03-25" "2059-03-23" "2046-03-17"</span>
+<span class="co">#&gt; [11] "2059-03-17" "2065-03-27" "2050-03-10" "2063-03-26" "2049-03-01"</span>
+<span class="co">#&gt; [16] "2047-03-21" "2064-03-08" "2065-03-17" "2061-03-08" "2059-03-11"</span></code></pre></div>
 </div>
 <div id="julian-day-filter" class="section level3">
 <h3 class="hasAnchor">

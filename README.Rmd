@@ -74,17 +74,18 @@ In general, there are three steps to retrieving Cal-Adapt data with `caladaptr`:
 
 ## Example: Projected Annual Temperature at a Point Location
 
-In this example, we'll get the projected maximum daily temperature for a point location near Sacramento, averaged by calendar year from 2040-2070, for 10 GCMs and 2 emssions scenarios. Then we'll plot them.
+In this example, we'll get the projected maximum daily temperature for a point location near Sacramento, averaged by calendar year from 2040-2070, for 10 GCMs and 2 emissions scenarios. Then we'll plot them.
 
-1\. Create an **API request object** 
+\
+
+**1\. Create an API request object**
 
 Creating an API request object is a bit like filling in an order form. The request is essentially a description of the data you want. 
 
-There are a number of constructor functions you can mix and match to create an API request object. Here we'll grab 30 years of  projected annual average maximum daily temperature from the [LOCA downscaled CMIP5 climate projections](https://berkeley-gif.github.io/caladapt-docs/data-catalog.html) from Scripps for a single point location.
+There are a number of constructor functions you can mix and match to create an API request object. Below we create a request for 30 years of  projected annual average maximum daily temperature from the [LOCA downscaled CMIP5 climate projections](https://berkeley-gif.github.io/caladapt-docs/data-catalog.html) from Scripps, for a single point location.
 
 ```{r cap1_create, cache = FALSE}
 library(caladaptr)
-# devtools::load_all("d:/github/cal-adapt/caladaptr")
 
 sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a location
   ca_gcm(c("HadGEM2-ES", "CNRM-CM5", "CanESM2","MIROC5",            ## select GCM(s)
@@ -98,7 +99,11 @@ sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a
 sac_tasmax_cap
 ```
 
-2\. Feed your API request into a function that **fetches data**, such as `ca_getvals_tbl()`. 
+\
+
+**2\. Fetch data**
+
+Functions that **fetch data** from Cal-Adapt include `ca_getvals_tbl()`, `ca_getvals_db()` (see *Large Queries* vignette), and `ca_getrst_stars()` (see *Rasters Part I* vignette). Below we'll fetch data into a tibble by passing the API request to `ca_getvals_tbl()`:
 
 ```{r cap1_getvals, cache = FALSE}
 sac_tasmax_tbl <- sac_tasmax_cap %>% ca_getvals_tbl(quiet = TRUE)
@@ -106,7 +111,11 @@ head(sac_tasmax_tbl)
 dim(sac_tasmax_tbl)
 ```
 
-3\. **Wrangle** the data as much as needed for your analysis or visualization. Here we'll add a column for Fahrenheit using a function from the [`units`](https://cran.r-project.org/package=units) package.
+\
+
+**3\. Wrangle Data**
+
+Depending what your goal it, you may need to add or delete columns, reshape the data, group rows, etc. Below we'll add a column for Fahrenheit using `set_units()` from the [`units`](https://cran.r-project.org/package=units) package.
 
 ```{r message = FALSE}
 ## Add a column with Fahrenheit units
@@ -118,7 +127,7 @@ head(sac_tasmax_tbl2)
 
 Now we can plot it:
 
-```{r}
+```{r sac_tasmax_tbl2_plot, out.width = 600}
 library(ggplot2)
 ggplot(data = sac_tasmax_tbl2, 
        aes(x = as.Date(dt), y = as.numeric(temp_f))) +
@@ -161,7 +170,7 @@ API request objects are constructed by stringing together functions that provide
 
 `ca_example_apireq()` is a convenience function that returns sample API requests for testing. You can use `ca_preflight()` to check an API request for errors. Plotting an API request will show the location(s), with an option to overlay the loca grid cells:
 
-```{r}
+```{r plot_samp_cap, out.width=360}
 samp_cap <- ca_example_apireq(3)
 samp_cap %>% ca_preflight()
 plot(samp_cap, locagrid = TRUE, static = TRUE)

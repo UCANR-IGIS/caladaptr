@@ -83,26 +83,27 @@ In general, there are three steps to retrieving Cal-Adapt data with
 
 In this example, we’ll get the projected maximum daily temperature for a
 point location near Sacramento, averaged by calendar year from
-2040-2070, for 10 GCMs and 2 emssions scenarios. Then we’ll plot them.
+2040-2070, for 10 GCMs and 2 emissions scenarios. Then we’ll plot them.
 
-1\. Create an **API request object**
+  
+
+**1. Create an API request object**
 
 Creating an API request object is a bit like filling in an order form.
 The request is essentially a description of the data you want.
 
 There are a number of constructor functions you can mix and match to
-create an API request object. Here we’ll grab 30 years of projected
-annual average maximum daily temperature from the [LOCA downscaled CMIP5
-climate
+create an API request object. Below we create a request for 30 years of
+projected annual average maximum daily temperature from the [LOCA
+downscaled CMIP5 climate
 projections](https://berkeley-gif.github.io/caladapt-docs/data-catalog.html)
-from Scripps for a single point location.
+from Scripps, for a single point location.
 
 ``` r
 library(caladaptr)
 #> caladaptr (version 0.6.1)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
-# devtools::load_all("d:/github/cal-adapt/caladaptr")
 
 sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a location
   ca_gcm(c("HadGEM2-ES", "CNRM-CM5", "CanESM2","MIROC5",            ## select GCM(s)
@@ -126,8 +127,14 @@ sac_tasmax_cap
 #> 
 ```
 
-2\. Feed your API request into a function that **fetches data**, such as
-`ca_getvals_tbl()`.
+  
+
+**2. Fetch data**
+
+Functions that **fetch data** from Cal-Adapt include `ca_getvals_tbl()`,
+`ca_getvals_db()` (see *Large Queries* vignette), and
+`ca_getrst_stars()` (see *Rasters Part I* vignette). Below we’ll fetch
+data into a tibble by passing the API request to `ca_getvals_tbl()`:
 
 ``` r
 sac_tasmax_tbl <- sac_tasmax_cap %>% ca_getvals_tbl(quiet = TRUE)
@@ -145,9 +152,14 @@ dim(sac_tasmax_tbl)
 #> [1] 620   8
 ```
 
-3\. **Wrangle** the data as much as needed for your analysis or
-visualization. Here we’ll add a column for Fahrenheit using a function
-from the [`units`](https://cran.r-project.org/package=units) package.
+  
+
+**3. Wrangle Data**
+
+Depending what your goal it, you may need to add or delete columns,
+reshape the data, group rows, etc. Below we’ll add a column for
+Fahrenheit using `set_units()` from the
+[`units`](https://cran.r-project.org/package=units) package.
 
 ``` r
 ## Add a column with Fahrenheit units
@@ -177,7 +189,7 @@ ggplot(data = sac_tasmax_tbl2,
   labs(title = "Annual Average Maximum Daily Temperature for Sacramento", x = "year", y = "temp (F)")
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-sac_tasmax_tbl2_plot-1.png" width="600" />
 
   
 
@@ -227,7 +239,7 @@ samp_cap %>% ca_preflight()
 plot(samp_cap, locagrid = TRUE, static = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-plot_samp_cap-1.png" width="360" />
 
 For more examples, including retrieving data for a preset
 area-of-interest (i.e., census tracts), see the *API Requests* vignette

@@ -196,16 +196,15 @@
 <div id="example-projected-annual-temperature-at-a-point-location" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-projected-annual-temperature-at-a-point-location" class="anchor"></a>Example: Projected Annual Temperature at a Point Location</h2>
-<p>In this example, we’ll get the projected maximum daily temperature for a point location near Sacramento, averaged by calendar year from 2040-2070, for 10 GCMs and 2 emssions scenarios. Then we’ll plot them.</p>
-<p>1. Create an <strong>API request object</strong></p>
+<p>In this example, we’ll get the projected maximum daily temperature for a point location near Sacramento, averaged by calendar year from 2040-2070, for 10 GCMs and 2 emissions scenarios. Then we’ll plot them.</p>
+<p><strong>1. Create an API request object</strong></p>
 <p>Creating an API request object is a bit like filling in an order form. The request is essentially a description of the data you want.</p>
-<p>There are a number of constructor functions you can mix and match to create an API request object. Here we’ll grab 30 years of projected annual average maximum daily temperature from the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections</a> from Scripps for a single point location.</p>
+<p>There are a number of constructor functions you can mix and match to create an API request object. Below we create a request for 30 years of projected annual average maximum daily temperature from the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections</a> from Scripps, for a single point location.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span><span class="op">)</span>
 <span class="co">#&gt; caladaptr (version 0.6.1)</span>
 <span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
 <span class="co">#&gt; Bug reports: https://github.com/ucanr-igis/caladaptr/issues</span>
-<span class="co"># devtools::load_all("d:/github/cal-adapt/caladaptr")</span>
 
 <span class="va">sac_tasmax_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>     <span class="co">## specify a location</span>
   <span class="fu"><a href="reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"HadGEM2-ES"</span>, <span class="st">"CNRM-CM5"</span>, <span class="st">"CanESM2"</span>,<span class="st">"MIROC5"</span>,            <span class="co">## select GCM(s)</span>
@@ -227,7 +226,8 @@
 <span class="co">#&gt; Scenario(s): rcp45, rcp85</span>
 <span class="co">#&gt; Dates: 2040-01-01 to 2070-12-31</span>
 <span class="co">#&gt; </span></code></pre></div>
-<p>2. Feed your API request into a function that <strong>fetches data</strong>, such as <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>.</p>
+<p><strong>2. Fetch data</strong></p>
+<p>Functions that <strong>fetch data</strong> from Cal-Adapt include <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, <code><a href="reference/ca_getvals_db.html">ca_getvals_db()</a></code> (see <em>Large Queries</em> vignette), and <code><a href="reference/ca_getrst_stars.html">ca_getrst_stars()</a></code> (see <em>Rasters Part I</em> vignette). Below we’ll fetch data into a tibble by passing the API request to <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sac_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="va">sac_tasmax_cap</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl</span><span class="op">)</span>
@@ -242,7 +242,8 @@
 <span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31  298.</span>
 <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl</span><span class="op">)</span>
 <span class="co">#&gt; [1] 620   8</span></code></pre></div>
-<p>3. <strong>Wrangle</strong> the data as much as needed for your analysis or visualization. Here we’ll add a column for Fahrenheit using a function from the <a href="https://cran.r-project.org/package=units"><code>units</code></a> package.</p>
+<p><strong>3. Wrangle Data</strong></p>
+<p>Depending what your goal it, you may need to add or delete columns, reshape the data, group rows, etc. Below we’ll add a column for Fahrenheit using <code><a href="https://rdrr.io/pkg/units/man/units.html">set_units()</a></code> from the <a href="https://cran.r-project.org/package=units"><code>units</code></a> package.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Add a column with Fahrenheit units</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
@@ -266,7 +267,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color<span class="op">=</span><span class="va">gcm</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Annual Average Maximum Daily Temperature for Sacramento"</span>, x <span class="op">=</span> <span class="st">"year"</span>, y <span class="op">=</span> <span class="st">"temp (F)"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<p><img src="reference/figures/README-sac_tasmax_tbl2_plot-1.png" width="600"></p>
 </div>
 <div id="constructing-api-requests" class="section level2">
 <h2 class="hasAnchor">
@@ -350,7 +351,7 @@
 <span class="co">#&gt; Issues for downloading rasters</span>
 <span class="co">#&gt;  - none found</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samp_cap</span>, locagrid <span class="op">=</span> <span class="cn">TRUE</span>, static <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
+<p><img src="reference/figures/README-plot_samp_cap-1.png" width="360"></p>
 <p>For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the <em>API Requests</em> vignette and ‘R Notebooks’ on the <a href="https://ucanr-igis.github.io/caladaptr/">website</a>.</p>
 </div>
 <div id="constants" class="section level2">

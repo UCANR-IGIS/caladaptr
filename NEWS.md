@@ -21,6 +21,7 @@ Version 0.6.1 is a fairly significant update, with several new and improved func
 * `ca_db_read()`: added `lkp_sql` and `vals_tbl` to the attributes of the result
 * `ca_db_info()` and `format.ca_db_info()`: enhanced to read SQL statements from sidecar files, save and print multiple SQL statements
 * `ca_catalog_fetch()`: now exported
+* unit tests: new tests created for downloading rasters and saving data to SQLite; 68 in all
 * five new vignettes: API Requests, Large Queries, Rasters Part I, II, and III
 
 # caladaptr 0.5.0 (2021-05-17)
