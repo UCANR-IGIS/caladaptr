@@ -1,6 +1,6 @@
 # caladaptr 0.6.1 (2021-09-06)
 
-Version 0.6.1 is a pretty sizable update, with several new and improved functions especially for downloading and working with rasters, SQLite databases, improved preflight testing for API requests, data catalog searching, customizing messages with a package-wide color scheme, and making function names more consistent.
+Version 0.6.1 is a fairly significant update, with several new and improved functions especially for downloading and working with rasters, SQLite databases, improved preflight testing for API requests, data catalog searching, customizing messages with a package-wide color scheme, and making function names more consistent. Also 5 vignettes on API Requests, Large Queries, and Rasters Part I, II, and III. 
 
 * `caladaptr` now depends on R version 3.6.
 * `ca_getrst_stars()`: modified to save additional attribute data in the sidecar files (e.g., gcm, scenario, climate variable, etc.); progress bar disabled if quiet = TRUE (e.g., for rmd); `normalize_path` argument added; `overwrite` argument added; `sidecar_write` argument renamed `sidecar`
@@ -21,7 +21,7 @@ Version 0.6.1 is a pretty sizable update, with several new and improved function
 * `ca_db_read()`: added `lkp_sql` and `vals_tbl` to the attributes of the result
 * `ca_db_info()` and `format.ca_db_info()`: enhanced to read SQL statements from sidecar files, save and print multiple SQL statements
 * `ca_catalog_fetch()`: now exported
-# five new vignettes: API Requests, Large Queries, Rasters Part I, II, and III
+* five new vignettes: API Requests, Large Queries, Rasters Part I, II, and III
 
 # caladaptr 0.5.0 (2021-05-17)
 
