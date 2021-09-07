@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -181,11 +193,11 @@
     <p>Specify processing options for a Cal-Adapt API call</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_options</span>(
-  x = <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span>(),
-  spatial_ag = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"mean"</span>, <span class='st'>"max"</span>, <span class='st'>"median"</span>, <span class='st'>"min"</span>, <span class='st'>"sum"</span>)[<span class='fl'>1</span>],
-  temporal_ag = <span class='fl'>NA</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ca_options</span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span><span class='op'>(</span><span class='op'>)</span>,
+  spatial_ag <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"none"</span>, <span class='st'>"mean"</span>, <span class='st'>"max"</span>, <span class='st'>"median"</span>, <span class='st'>"min"</span>, <span class='st'>"sum"</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
+  temporal_ag <span class='op'>=</span> <span class='cn'>NA</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

@@ -1,4 +1,4 @@
-#' @title Area-of-Interest Presets
+#' @title Area-of-interest presets
 #' @description Area of interest presets
 #' @docType data
 #' @usage data(aoipreset_types)
@@ -20,5 +20,5 @@
 #' @docType data
 #' @keywords aoipreset
 #' @usage data(aoipreset_idval)
-#' @format Named list of dataframes, with with one element per preset type
+#' @format Named list of data frames, with with one element per preset type
 "aoipreset_idval"

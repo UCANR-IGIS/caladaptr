@@ -29,7 +29,6 @@ ca_aoipreset_geom <- function(aoipreset, quiet = FALSE) {
   if (length(aoipreset) > 1) stop("Sorry, aoipreset can only accept a single value")
 
   if (!aoipreset %in% aoipreset_types) {
-    #stop(paste0("unknown preset(s): ", paste(aoipreset[!aoipreset %in% aoipreset_types], collapse=", ")))
     stop(paste0("unknown preset(s): ", aoipreset))
   }
 
@@ -42,8 +41,8 @@ ca_aoipreset_geom <- function(aoipreset, quiet = FALSE) {
   if (!file.exists(gpkg_fn)) {
     if (!has_internet()) stop("No internet connection")
     if (!quiet) {
-      msg <- getOption("ca_message", paste0)
-      message(msg(paste0("Downloading ", aoipreset, ".zip from GitHub")))
+      msg_fmt <- getOption("ca_message", I)
+      message(msg_fmt(paste0("Downloading ", aoipreset, ".zip from GitHub")))
     }
     ## Try to download it
     gpkg_url <- paste0("https://github.com/ucanr-igis/caladaptr-res/raw/main/geoms/", aoipreset, ".zip")
@@ -53,8 +52,8 @@ ca_aoipreset_geom <- function(aoipreset, quiet = FALSE) {
       unzip(tmp_zipfn, exdir = cache_dir)
       unlink(tmp_zipfn)
       if (!quiet) {
-        success <- getOption("ca_success", paste0)
-        message(success("Done"))
+        success_fmt <- getOption("ca_success", I)
+        message(success_fmt("Done"))
       }
 
     }

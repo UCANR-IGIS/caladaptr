@@ -93,7 +93,7 @@ format.ca_apireq <- function(x, ...) {
   if (identical(x$livneh, NA)) {
     livneh_str <- ""
   } else {
-    livneh_str <- paste0(accent2("Livneh data: "), "True", "\n")
+    livneh_str <- paste0(accent2("Livneh data: "), x$livneh, "\n")
   }
 
   if (identical(x$slug, NA)) {

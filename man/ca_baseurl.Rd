@@ -3,7 +3,7 @@
 \docType{data}
 \name{ca_baseurl}
 \alias{ca_baseurl}
-\title{Cal-Adapt Base URL}
+\title{Cal-Adapt base URL}
 \format{
 An character vector
 }

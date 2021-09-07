@@ -9,7 +9,8 @@ ca_getvals_tbl(
   quiet = FALSE,
   debug = FALSE,
   stop_on_err = TRUE,
-  shiny_progress = NULL
+  shiny_progress = NULL,
+  omit_col = NULL
 )
 }
 \arguments{
@@ -22,10 +23,23 @@ ca_getvals_tbl(
 \item{stop_on_err}{Stop if the server returns an error}
 
 \item{shiny_progress}{A Shiny progress bar object, see Details.}
+
+\item{omit_col}{Columns to exclude from the tibble}
 }
 \value{
 A tibble
 }
 \description{
 Get values from an API request object as a tibble
+}
+\details{
+\code{ca_getvals_tbl} fetches data via the Cal-Adapt API, returning a tibble. Everything is done in memory. To download Cal-Adapt into
+a local SQLite database, see \code{\link{ca_getvals_db}}. To download Cal-Adapt data as raster files, see \code{\link{ca_getrst_stars}}.
+
+A default set of columns will be returned based on how the dataset is specified (i.e., by slug, cvar+scen+gcm+per, livneh, etc). Some columns
+can be omitted by passing column names to \code{col_omit}. Three columns that can never be omitted are \code{feat_id} (location id value),
+\code{dt} (date), and \code{val} (the actual climate values).
+}
+\seealso{
+\code{\link{ca_getvals_db}}, \code{\link{ca_getrst_stars}}
 }

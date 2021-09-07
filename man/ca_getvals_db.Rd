@@ -8,6 +8,7 @@ ca_getvals_db(
   x,
   db_fn,
   db_tbl,
+  omit_col = NULL,
   indices = NULL,
   new_recs_only = TRUE,
   trans_len = 100,
@@ -18,7 +19,7 @@ ca_getvals_db(
   write_sidecar = TRUE,
   stop_on_err = TRUE,
   quiet = FALSE,
-  debug = TRUE
+  debug = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ ca_getvals_db(
 \item{db_fn}{File name of a SQLite database. See Details.}
 
 \item{db_tbl}{The name of a database table. See Details.}
+
+\item{omit_col}{Columns to exclude from the tibble}
 
 \item{indices}{Name of fields to index. See Details.}
 
@@ -57,11 +60,13 @@ A remote tibble linked to the SQLite database.
 Write values from an API request to a local database
 }
 \details{
-Use \code{ca_getvals_db} when retrieving large volumes of data (i.e., tens of thousands of values). This function
-writes the data to a SQLite database as they're received so you don't run the risk of exhausting your RAM. Another
-benefit is if the operation is interrupted before it finished (e.g., due to an internet hiccup), it will pick up
-where it left off. Note however for small amounts of data there is no advantage to putting it in a database
-as it will be slower to retrieve and work with.
+\code{ca_getvals_db} fetches data from the Cal-Adapt API and writes the data to a SQLite database as they're received. This
+allows you to fetch relatively large volumes of data in the background, and potentially over multiple sessions as it will
+pick up where it left off if interrupted. Saving the values in a database also reduces the risk of exhausting your RAM.
+
+Use \code{ca_getvals_db} to fetch large volumes of data (i.e., hundreds of thousands of values), or whenever you'd like
+to keep  a local copy of the data. Note however for small amounts of data there is no advantage to putting it in a database
+as it will be slighly slower to retrieve and work with.
 
 \code{db_fn} should be a file name with path to a SQLite database. A SQLIte database is a single file typically
 with a \emph{.db} or \emph{.sqlite} extension. If the database doesn't exist, it will be created. If it already
@@ -69,19 +74,23 @@ exists, the new data will be added to it.
 
 \code{db_tbl} should the name of a table within the database where the new data will be saved. The table name should not
 contain special characters and spaces are discouraged. If \code{new_recs_only = TRUE}, only new records will be
-added to the database. \code{trans_len} defines the number of API calls per
-\url{https://www.sqlitetutorial.net/sqlite-transaction/}{SQLite transaction} (i.e. how many API calls of data to
+added to the database.
+
+\code{trans_len} defines the number of API calls per
+\href{https://www.sqlitetutorial.net/sqlite-transaction/}{SQLite transaction} (i.e. how many API calls of data to
 accumulate before doing a write operation to the database). This can speed things up. Set it to 0 to disable transactions.
 
 If \code{lookup_tbls = TRUE}, the database will create lookup tables for categorical columns such as GCM, scenario,
 cvar, period, slug, etc. This can dramatically reduce the size of the SQLite database file and is generally recommended.
 id \code{lookup_ret_joined = TRUE}, the tibble returned will have the lookup tables joined (i.e., column names will
-be unaltered); if not the returned tibble will have id values for certain values.
+be unaltered); if not the returned tibble will have id values for certain values. A small text file is created for each SQLite
+database containing the names of the tables and SQL statement to join them (read automatically
+by \code{\link{ca_db_read}}).
 
-\code{indices} is a vector of column names that you'd like indexed (ignored if \code{lookup_tbls = FALSE}). Creating indices can
-improve the performance of filters and joins, but at the cost of a larger database file and slower write operations. Fields you can
-create indices on include \code{"feat_id"} (the location id value), \code{"cvar"}, \code{"gcm"}, \code{"scenario"}, \code{"period"},
-\code{"slug"}, and \code{"spag"}.
+\code{indices} is a vector of column names in \code{db_tbl} that you'd like indexed (ignored if \code{lookup_tbls = FALSE}).
+Creating indices can improve the performance of filters and joins when you generate summaries, but at the cost of a larger
+database file and slightly slower write operations. Fields you can create indices on include \code{"feat_id"} (the location id value),
+\code{"cvar"}, \code{"gcm"}, \code{"scenario"}, \code{"period"}, \code{"slug"}, and \code{"spag"}.
 
 Indices can also be added to a SQLite database after downloading is complete with \link{ca_db_indices}. For large queries (e.g. thousands of
 API calls), it is recommended to not build indices during the download process, and only add indices for those fields you
@@ -96,5 +105,5 @@ the results, but to retrieve the actual values you need to use `collect()`. For 
 see \url{https://dbplyr.tidyverse.org/articles/dbplyr.html}.
 }
 \seealso{
-\code{\link{ca_db_info}}, \code{\link{ca_db_indices}}
+\code{\link{ca_db_info}}, \code{\link{ca_db_indices}}, \code{\link{ca_db_read}},
 }

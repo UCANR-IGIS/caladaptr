@@ -1,4 +1,4 @@
-#' Assign Slug(s) to a Cal-Adapt API call
+#' Adds slug(s) to a Cal-Adapt API call
 #'
 #' Specify the raster series slug a Cal-Adapt API call should retrieve
 #'

@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -181,7 +193,7 @@
     <p>Specifies a sf data frame as the location for a Cal-Adapt API request</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_loc_sf</span>(x = <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span>(), <span class='kw'>loc</span>, idfld = <span class='kw'>NULL</span>, idval = <span class='kw'>NULL</span>, dTolerance = <span class='fl'>0</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_loc_sf</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>loc</span>, idfld <span class='op'>=</span> <span class='cn'>NULL</span>, idval <span class='op'>=</span> <span class='cn'>NULL</span>, dTolerance <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -213,7 +225,7 @@
     <p><code>loc</code> should be a simple feature data frame with point or polygon features.
 The sf object should have a valid CRS, but does not have to be geographic.
 Both 'single' and 'multipart' polygons can be used, but only simple point features are
-supported. To convert a multipoint feature layer into a single point layer, use <code><a href='https://rdrr.io/pkg/sf/man/st_cast.html'>st_cast</a></code>.</p>
+supported. To convert a multipoint feature layer into a single point layer, use <code><a href='https://r-spatial.github.io/sf/reference/st_cast.html'>st_cast</a></code>.</p>
 <p><code>idfld</code> should be the name of a column in <code>loc</code> containing unique values. When you
 fetch values from Cal-Adapt, this column will be returned in the results to help you
 join the values to other tables. Alternately, you can use <code>idfld</code> to pass the name of
@@ -225,7 +237,7 @@ query, use a filter expression as part of the value of <code>loc</code> (e.g., w
 <p>If <code>loc</code> is a polygon layer, you'll also need to specify how to spatially aggregate the queried
 values if a feature overlaps more than one pixel. See <code><a href='ca_options.html'>ca_options</a></code>.</p>
 <p><code>dTolerance</code> is a value in decimal degrees used to simplify polygons. If <code>dTolerance &gt; 0</code>,
-<code><a href='https://rdrr.io/pkg/sf/man/geos_unary.html'>geos_unary</a>{st_simplify}</code> will be called to remove polygon nodes within <code>dTolerance</code> of another node,
+<code><a href='https://r-spatial.github.io/sf/reference/geos_unary.html'>geos_unary</a>{st_simplify}</code> will be called to remove polygon nodes within <code>dTolerance</code> of another node,
 before fetching data. This can reduce the amount of spatial data that needs to be sent to the server,
 which can improve performance particularly when you have very fine grained polygons.
 Simplifying polygons can modify (generally reduce) the pixels that a polygon overlaps, so use with caution.

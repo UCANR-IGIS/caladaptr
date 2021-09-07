@@ -10,8 +10,11 @@ ca_apicalls(
   date_check = TRUE,
   loc_check = TRUE,
   units_check = TRUE,
-  ignore_spag = FALSE,
-  preflight = FALSE
+  spag_check = FALSE,
+  pf = FALSE,
+  check_for = c("getvals", "getrst"),
+  ignore_spag = deprecated(),
+  preflight = deprecated()
 )
 }
 \arguments{
@@ -25,17 +28,33 @@ ca_apicalls(
 
 \item{units_check}{Check for consistent units}
 
-\item{ignore_spag}{Ignore the spatial aggregation option}
+\item{spag_check}{Check spatial aggregation option}
 
-\item{preflight}{Run as a preflight check only, logical}
+\item{pf}{Run as a preflight check only, logical}
+
+\item{check_for}{Which operations or context to use}
+
+\item{ignore_spag}{Deprecated}
+
+\item{preflight}{Deprecated}
+}
+\value{
+If \code{pf = TRUE}, a list of three types of errors / issues discovered: i) general errors, ii) problems
+specific to querying values, and iii) problems specific to downloading rasters.
 }
 \description{
 Constructs a tibble of individual API calls for an API request
 }
 \details{
-This function generates the URLs that fulfill an API request. It is used internally
-but can be useful for debugging. Let \code{ignore_spag = TRUE}
-if the goal is to retrieve rasters (for which spatial aggregation is not relevant).
+This is an internal function which a) evaluates an API request and generates a tibble
+of individual API calls, and b) checks for errors. It is exported as it may have some use for
+trouble-shooting and developers.
 
-If \code{preflight = TRUE}, all the checks will be tested and if no errors are found x will be returned.
+This function is called in two contexts.
+
+a) by ca_preflight() which will report the errors to the user
+
+b) by data fetching functions (ca_getvals_tbl, ca_getvals_db, and ca_getrst_stars), which loop through the
+tibble returned to fetch the data
 }
+\keyword{internal}

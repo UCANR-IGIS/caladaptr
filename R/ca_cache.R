@@ -1,4 +1,4 @@
-#' Manage Cache Directory
+#' Manage cache directory
 #'
 #' View and set the directory for the data catalog
 #'
@@ -45,8 +45,8 @@ ca_getcache <- function(quiet=TRUE) {
 
   } else {
     if (!quiet) {
-      msg <- getOption("ca_message", paste0)
-      message(msg(paste0("Using cache directory: ", cache_dir)))
+      msg_fmt <- getOption("ca_message", I)
+      message(msg_fmt(paste0("Using cache directory: ", cache_dir)))
     }
     cache_dir
   }
@@ -66,11 +66,11 @@ ca_getcache <- function(quiet=TRUE) {
 
 ca_setcache <- function(cache_dir = NULL, make_dir = TRUE, save = TRUE, reset = FALSE, quiet = FALSE) {
 
-  msg <- getOption("ca_message", paste0)
+  msg_fmt <- getOption("ca_message", I)
 
   if (reset) {
     cache_dir_use <- R_user_dir("caladaptr", "cache") %>% gsub("\\\\", "/", .)
-    if (!quiet) message(msg(paste0(" - using default cache_dir: ", cache_dir_use)))
+    if (!quiet) message(msg_fmt(paste0(" - using default cache_dir: ", cache_dir_use)))
 
   } else if (is.null(cache_dir)) {   ## reset = FALSE, next check if cache_dir is NULL
     stop("cache_dir is required")
@@ -105,12 +105,12 @@ ca_setcache <- function(cache_dir = NULL, make_dir = TRUE, save = TRUE, reset = 
     cachedir_idx <- grep("^CALADAPTR_CACHE_DIR=", environ_lines)
 
     if (length(cachedir_idx) == 0) {
-      if (!quiet) message(msg(paste0(" - adding directory to ", environ_file)))
+      if (!quiet) message(msg_fmt(paste0(" - adding directory to ", environ_file)))
       environ_lines <- c(environ_lines, paste0("CALADAPTR_CACHE_DIR=", cache_dir_use))
       writeLines(environ_lines, environ_file)
 
     } else {
-      if (!quiet) message(msg(paste0(" - updating cache directory in ", environ_file)))
+      if (!quiet) message(msg_fmt(paste0(" - updating cache directory in ", environ_file)))
       environ_lines[cachedir_idx] <- paste0("CALADAPTR_CACHE_DIR=", cache_dir_use)
       writeLines(environ_lines, environ_file)
     }

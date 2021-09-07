@@ -19,10 +19,16 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_baseurl.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_biggeom_blocks.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_catalog_fetch.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_catalog_rs.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_catalog_search.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_cvar.html</loc>
@@ -35,6 +41,9 @@
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_db_info.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_db_read.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_example_apireq.html</loc>
@@ -88,7 +97,22 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_scenario.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_settings.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_slug.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_stars_6d.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_stars_index.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_stars_mosaic.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_stars_read.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_years.html</loc>
@@ -124,6 +148,18 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/scenarios.html</loc>
   </url>
   <url>
-    <loc>http://ucanr-igis.github.io/caladapt/articles/big-query.html</loc>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/api-requests.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/large-queries.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt1.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt2.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt3.html</loc>
   </url>
 </urlset>

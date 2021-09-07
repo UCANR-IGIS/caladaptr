@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt via the API
-Version: 0.5.0
-Date: 2021-05-17
+Version: 0.6.1
+Date: 2021-09-06
 Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
 URL: https://ucanr-igis.github.io/caladaptr
@@ -13,7 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     httr,
-    assertthat,
     sf,
     tibble,
     units,
@@ -33,16 +32,22 @@ Imports:
     stars,
     geojsonsf,
     zip,
-    shiny
+    shiny,
+    lifecycle
 RoxygenNote: 7.1.1
 Suggests: 
     chillR,
+    cubelyr,
+    ggplot2,
     lubridate,
     DiagrammeR,
     httptest,
     testthat,
     knitr,
+    parallel,
+    rmarkdown,
     roxygen2
 Depends: 
-    R (>= 3.0)
+    R (>= 3.6)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

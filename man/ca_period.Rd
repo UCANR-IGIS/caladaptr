@@ -12,7 +12,7 @@ ca_period(x = ca_apireq(), period)
 \item{period}{Period of temporal aggregation}
 }
 \description{
-Specifies the temporal aggregation periond a Cal-Adapt API call should retrieve
+Add a temporal aggregation period to a Cal-Adapt API request
 }
 \details{
 For valid options for \code{period}, run \code{\link{periods}}.

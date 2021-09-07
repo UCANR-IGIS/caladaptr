@@ -12,75 +12,80 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 # library(httptest)
+# ## start_vignette()
 # start_vignette("D:/GitHub/cal-adapt/caladaptr")
 ```
 
-# caladaptR <a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" /></a>
+# caladaptR <a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" style="padding:15px;"/></a>
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-# Features
+## Features
 
-`caladaptr` is an API client that makes it easier to work with data from [Cal-Adapt.org](https://cal-adapt.org/) in R. The niche of `caladaptr` is to bring data into R after which you can other packages to visualize and analyze:
+`caladaptr` is an API client that makes it easier to work with data from [Cal-Adapt.org](https://cal-adapt.org/) in R. The niche of `caladaptr` is to bring data into R after which you can use other packages for analysis and visualization:
 
-<p align="center"><img src="man/figures/caladaptr_role_460x340x256.png" width="460" height="340"/></p>
+<p align="center"><img src="man/figures/caladaptr_role_480x390x256.png" width="480" height="390"/></p>
 
-`caladaptr` functions are designed to: 
+`caladaptr` allows you to:
+
+- query any of Cal-Adapt's ~950 raster data layers
+- retrieve values by point, a preset area-of-interest (e.g., census tract), or a user-provided polygon
+- cache large queries in a local SQLite database
+- download cropped rasters as TIFs and import them into R as stars objects
+
+`caladaptr` functions have been designed to: 
 
 - be pipe friendly 
 - return tibbles for compatibility with tidyverse packages
 - return values with encoded units (managed by the [units](https://cran.r-project.org/package=units) package)
 - accept and return `sf` data frames where spatial objects are needed
-- return cropped rasters as [`stars`](https://r-spatial.github.io/stars/) objects for user-friendly space time manipulation
+- return rasters as spatiotemporal arrays ([`stars`](https://r-spatial.github.io/stars/) objects)
+
+`caladaptr` does not support downloading the original NetCDF rasters nor station data (e.g., sea level rise, stream gauges). For these data, see the Data Download tool or FTP server on [Cal-Adapt.org](https://cal-adapt.org/data/).
 
 \
 
-*Development Status*
-
-- query *any* of Cal-Adapt's ~850 raster data layers &#10004; 
-- retrieve values by point, a preset area-of-interest (e.g., census tract), or a user-provided polygon &#10004;  
-- cache large queries in a local SQLite database &#10004;  
-- download cropped rasters (small to medium size areas) &#10004;  
-- download full rasters - *not currently planned*  
-- import station data (e.g., sea level rise) - *not currently planned*
-
-*'Beta'* status means:
+*Beta status* status means:
 
 1) the package is still under development  
-2) the package is being updated fairly often  
-3) there's a possibility that updates will *not* be backward compatible  
-4) user feedback and input is extremely welcome! (please join the [caladaptR betaR](#caladaptr-betar-club) club)
+2) there's a small possibility that updates will *not* be backward compatible  
+3) user feedback and input is extremely welcome and will be used to guide future development!
 
-# Installation
+## Installation
 
-`caladaptr` is hosted on [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. To install it, you need the  `remotes` (or `devtools`) package. Windows users also need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} installed.
+`caladaptr` is available on [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. To install it, you need the  `remotes` (or `devtools`) package. Windows users also need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} installed.
 
-```{r install_caladaptr, eval = FALSE}
+```
 library(remotes)
 remotes::install_github("ucanr-igis/caladaptr")
 ```
 
-# General Workflow 
+## General Workflow 
 
-In general, there are three steps to getting data via the Cal-Adapt API:
+In general, there are three steps to retrieving Cal-Adapt data with `caladaptr`:
 
-1) Create a 'Cal-Adapt API Request' object
+1) Create an 'API request object'
 
-2) Feed the API Request object into a function that fetches data (either values or cropped rasters)
+2) Feed the API request into a function that fetches data (either values or rasters)
 
-3) Wrangle the data that comes back into the format you require
+3) Wrangle the data that comes back into the format required for your analysis
 
+## Example: Projected Annual Temperature at a Point Location
 
-## Example 1: Get Projected Annual Temperature at a Point Location
+In this example, we'll get the projected maximum daily temperature for a point location near Sacramento, averaged by calendar year from 2040-2070, for 10 GCMs and 2 emssions scenarios. Then we'll plot them.
 
-1) Create an **API request object** for a point location. Creating an API request object like filling in an order form. The request is essentially a description of the data you want, but by itself doesn't fetch any data. 
+1\. Create an **API request object** 
 
-To get data from one of the [LOCA downscaled CMIP5 climate projections from Scripps](https://berkeley-gif.github.io/caladapt-docs/data-catalog.html), there are a number of '*constructor*' functions you can mix and match to create an API request object. Here we'll grab 30 years of projected annual maximum temperature for a point location:
+Creating an API request object is a bit like filling in an order form. The request is essentially a description of the data you want. 
+
+There are a number of constructor functions you can mix and match to create an API request object. Here we'll grab 30 years of  projected annual average maximum daily temperature from the [LOCA downscaled CMIP5 climate projections](https://berkeley-gif.github.io/caladapt-docs/data-catalog.html) from Scripps for a single point location.
 
 ```{r cap1_create, cache = FALSE}
 library(caladaptr)
+# devtools::load_all("d:/github/cal-adapt/caladaptr")
+
 sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a location
   ca_gcm(c("HadGEM2-ES", "CNRM-CM5", "CanESM2","MIROC5",            ## select GCM(s)
            "ACCESS1-0", "CCSM4", "CESM1-BGC", 
@@ -93,7 +98,80 @@ sac_tasmax_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%     ## specify a
 sac_tasmax_cap
 ```
 
-To help you pass arguments for the various constructor functions, `caladpatr` provides the following constants:
+2\. Feed your API request into a function that **fetches data**, such as `ca_getvals_tbl()`. 
+
+```{r cap1_getvals, cache = FALSE}
+sac_tasmax_tbl <- sac_tasmax_cap %>% ca_getvals_tbl(quiet = TRUE)
+head(sac_tasmax_tbl)
+dim(sac_tasmax_tbl)
+```
+
+3\. **Wrangle** the data as much as needed for your analysis or visualization. Here we'll add a column for Fahrenheit using a function from the [`units`](https://cran.r-project.org/package=units) package.
+
+```{r message = FALSE}
+## Add a column with Fahrenheit units
+library(dplyr)
+library(units)
+sac_tasmax_tbl2 <- sac_tasmax_tbl %>% mutate(temp_f = set_units(val, degF))
+head(sac_tasmax_tbl2)
+```
+
+Now we can plot it:
+
+```{r}
+library(ggplot2)
+ggplot(data = sac_tasmax_tbl2, 
+       aes(x = as.Date(dt), y = as.numeric(temp_f))) +
+  geom_line(aes(color=gcm)) +
+  facet_grid(scenario ~ .) +
+  labs(title = "Annual Average Maximum Daily Temperature for Sacramento", x = "year", y = "temp (F)")
+```
+
+\
+
+## Constructing API Requests
+
+API request objects are constructed by stringing together functions that provide the key elements of the request, including the location(s), dataset(s), and time frame.
+
+
+**Location functions** (pick one):
+
+|Function             |Location Type|
+|---------------------|-------------|
+|`ca_loc_pt()`        | points in matrices|
+|`ca_loc_aoipreset()` | preset areas-of-interest|
+|`ca_loc_sf( )`       | user-supplied sf object (point or polygon)|
+
+
+**Date functions** (pick one):
+
+|Function             |Date Type|
+|---------------------|-------------|
+|`ca_dates()`|specific dates|
+|`ca_years()`|years|
+
+**Dataset functions** (pick one group):
+
+|Functions            |Dataset|
+|---------------------|-------------|
+|`ca_gcm()` + `ca_scenario()` + `ca_cvar()` + `ca_period()`|LOCA downscaled modeled climate data (including all Scripps and VIC)|
+|`ca_livneh()` + `ca_cvar()` + `ca_period()`|Livneh data (observed historical)|
+|`ca_slug()`|Everything else|
+
+
+`ca_example_apireq()` is a convenience function that returns sample API requests for testing. You can use `ca_preflight()` to check an API request for errors. Plotting an API request will show the location(s), with an option to overlay the loca grid cells:
+
+```{r}
+samp_cap <- ca_example_apireq(3)
+samp_cap %>% ca_preflight()
+plot(samp_cap, locagrid = TRUE, static = TRUE)
+```
+
+For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the *API Requests* vignette and 'R Notebooks' on the [website](https://ucanr-igis.github.io/caladaptr/). 
+
+## Constants
+
+To help you pass arguments for the various constructor functions, `caladaptr` provides the following constants:
 
 ```{r constants, cache = FALSE}
 ## Climate Variables 
@@ -110,70 +188,22 @@ scenarios
 periods
 ```
 
-2) Feed your API call into a function that **fetches data**, such as `ca_getvals_tbl()`. 
+## Data Catalog
 
-```{r cap1_getvals, cache = FALSE}
-sac_tasmax_tbl <- ca_getvals_tbl(sac_tasmax_cap)
-dim(sac_tasmax_tbl)
-head(sac_tasmax_tbl)
+`caladaptr` can not tell you which climate data you need for your project. Nor will it teach you how to use climate data appropriately or wisely. However it does have a copy of the Cal-Adapt raster series data catalog, so you can see what's available and specify the datasets you need.
+
+To view the entire data catalog in a RStudio Viewer pane, run the following. You can then use the filter button to find datasets that match a key word.
+
 ```
-
-3) **Wrangle** the data as much as needed for your visualization or analysis. Here we'll add a column for Fahrenheit which is more familiar than Kelvin.
-
-```{r message = FALSE}
-## Add a column with Fahrenheit units
-library(dplyr)
-library(units)
-sac_tasmax_tbl2 <- sac_tasmax_tbl %>% mutate(temp_f = set_units(val, degF))
-head(sac_tasmax_tbl2)
-```
-
-Now we can make a plot:
-
-```{r}
-library(ggplot2)
-ggplot(data = sac_tasmax_tbl2, 
-       aes(x = as.Date(dt), y = as.numeric(temp_f))) +
-  geom_line(aes(color=gcm)) +
-  facet_grid(scenario ~ .) +
-  labs(title = "Annual Maximum Temperature for Sacramento", x = "year", y = "temp (F)")
-```
-
-## Example 2: Query a Raster Series by its Slug
-
-To query a raster series which *isn't* one of the CMIP5 climate projections from Scripps, you have to specify the raster series "slug" (which is like an id key). 
-
-You can view all 850 raster series available thru the Cal-Adapt API and then use the filter button in the RStudio table viewer to find the slug of the dataset you want to query:
-
-```{r eval=FALSE}
 View(ca_catalog_rs())
-## From here you can use the filter buttons in RStudio viewer pane to find the slug you want.
 ```
 
-Here we'll get 30 years of historical observed annual precipitation from the Livneh dataset (slug = `pr_year_livneh`):
+You can also search for datasets using `ca_catalog_search()`, and download a fresh copy of the catalog from Cal-Adapt using `ca_catalog_fetch()`.
 
-```{r}
-sac_precip_cap <- ca_loc_pt(coords = c(-121.4687, 38.5938)) %>%  ## Sacramento
-  ca_slug("pr_year_livneh") %>%                                  ## Livneh yearly average precipitation historical
-  ca_years(start = 1980, end = 2010)                             ## Start and end dates
-sac_precip_cap
-```
+Most / all of the Cal-Adapt rasters series have been downscaled to approximately 6km (3.7 mi) using the LOCA downscaling method, and are available for the coverage area shown below. For a finer scale analysis, you can download the LOCA grid cells as a polygon layer using `ca_locagrid_geom()`.
 
-Fetch values:
+![](man/figures/loca-area_292x386x256.png)
 
-```{r}
-sac_precip_tbl <- sac_precip_cap %>% ca_getvals_tbl()
-head(sac_precip_tbl)
-```
-
-\
-
-For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the 'R Notebooks' menu on the [website](https://ucanr-igis.github.io/caladaptr/). 
-
-# Convenience Functions
-
-- Plotting an API Request object shows the query's location.  
-- You can view the Cal-Adapt catalog of raster series `ca_catalog_rs()`  
 
 ```{r, include=FALSE}
 # end_vignette()

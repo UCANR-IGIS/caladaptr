@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_loc_pt.R
 \name{ca_loc_pt}
 \alias{ca_loc_pt}
-\title{Assign point location to a Cal-Adapt API request}
+\title{Add point location(s) to a Cal-Adapt API request}
 \usage{
 ca_loc_pt(x = ca_apireq(), coords, id = NULL)
 }

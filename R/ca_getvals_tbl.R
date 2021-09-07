@@ -5,10 +5,20 @@
 #' @param debug Print additional output at the console
 #' @param stop_on_err Stop if the server returns an error
 #' @param shiny_progress A Shiny progress bar object, see Details.
+#' @param omit_col Columns to exclude from the tibble
+#'
+#' @details \code{ca_getvals_tbl} fetches data via the Cal-Adapt API, returning a tibble. Everything is done in memory. To download Cal-Adapt into
+#' a local SQLite database, see \code{\link{ca_getvals_db}}. To download Cal-Adapt data as raster files, see \code{\link{ca_getrst_stars}}.
+#'
+#' A default set of columns will be returned based on how the dataset is specified (i.e., by slug, cvar+scen+gcm+per, livneh, etc). Some columns
+#' can be omitted by passing column names to \code{col_omit}. Three columns that can never be omitted are \code{feat_id} (location id value),
+#' \code{dt} (date), and \code{val} (the actual climate values).
 #'
 #' @return A tibble
 #'
-#' @import crayon
+#' @seealso \code{\link{ca_getvals_db}}, \code{\link{ca_getrst_stars}}
+#'
+#' @importFrom crayon red
 #' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status http_status
 #' @importFrom utils txtProgressBar setTxtProgressBar packageVersion
 #' @importFrom units set_units
@@ -19,17 +29,19 @@
 #' @importFrom shiny Progress
 #' @export
 
-ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, shiny_progress = NULL) {
+ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, shiny_progress = NULL, omit_col = NULL) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
   ## Check for an internet connection
   if (!has_internet()) stop("No internet connection detected")
 
-  accent2 <- getOption("ca_accent2", paste0)
+  ## Get the functions to format messages
+  accent2 <- getOption("ca_accent2", I)
+  msg_fmt <- getOption("ca_message", I)
 
   ## Get a tibble with the individual API calls
-  apicalls_lst <- ca_apicalls(x)
+  apicalls_lst <- ca_apicalls(x, check_for = "getvals")
   api_tbl <- apicalls_lst$api_tbl
 
   ## Get the name of first column
@@ -47,14 +59,28 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
     stop("Can not process this API request: Raster series have different units")
   }
 
-  ## Define which columns to save in the output table (either in-memory tibble or db)
-  if (identical(x$slug, NA)) {
-    apicall_cols_keep <- c(names(api_tbl)[1], "cvar", "period", "gcm", "scenario", "spag")
+  ## Define which columns to save in the output table
+  if (!identical(x$slug, NA)) {
+    apicall_cols_default <- c(names(api_tbl)[1], "slug", "spag")
+
+  } else if (identical(x$livneh, TRUE)) {
+    apicall_cols_default <- c(names(api_tbl)[1], "cvar", "period", "slug", "spag")
 
   } else {
-    apicall_cols_keep <- c(names(api_tbl)[1], "slug", "spag")
+    apicall_cols_default <- c(names(api_tbl)[1], "cvar", "period", "gcm", "scenario", "spag")
 
   }
+
+  if (!is.null(omit_col)) {
+    if ("val" %in% omit_col) stop("Sorry, you can not omit the values column from the results")
+    if ("dt" %in% omit_col) stop("Sorry, you can not omit the date column from the results")
+    if (names(api_tbl)[1] %in% omit_col) {
+      stop("Sorry, you can not omit the location column from the results")
+    }
+  }
+
+  apicall_cols_keep <- setdiff(apicall_cols_default, omit_col)
+  ## cat("\napicall_cols_keep = ", paste(apicall_cols_keep, collapse = ", "), "\n")
 
   ## Define the user agent
   caladaptr_ua <- user_agent(paste0("caladaptr_v", packageVersion("caladaptr")))
@@ -91,7 +117,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
   }
 
   ## Loop through calls
-  if (debug) message(silver(paste0(" - going to make ", nrow(api_tbl), " api calls")))
+  if (debug) message(msg_fmt(paste0(" - going to make ", nrow(api_tbl), " api calls")))
 
   for (i in 1:nrow(api_tbl)) {
 
@@ -109,7 +135,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
       gjsn_fn <- gjsn_all_fn[api_tbl[i, "loc_qry", drop = TRUE]]
 
       if (!file.exists(gjsn_fn)) {
-        if (debug) message(silver(paste0(" - saving temp geojson: ", basename(gjsn_fn))))
+        if (debug) message(msg_fmt(paste0(" - saving temp geojson: ", basename(gjsn_fn))))
         ## loc_sf is already projected to 4326
         st_write(apicalls_lst$loc_sf %>%
                    slice(api_tbl[i, "loc_qry", drop = TRUE]),
@@ -136,36 +162,6 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
         spatial_ag <- as.character(api_tbl[i, "spag", drop = TRUE])
       }
 
-      if (FALSE) {
-
-        ## I COULDN'T GET THE FOLLOWING TO WORK. IT WAS AN ATTEMPT TO GENERATE THE
-        ## GEOJSON STRING IN MEMORY AND PASS THAT AS THE FEATURES ELEMENT IN THE
-        ## BODY LIST. IT KEPT RETURNING A 400 ERROR. I SUSPECT PERHAPS
-        ## BECAUSE THE SERVER NEEDS THE CONTENT_TYPE FOR GEOJSON
-        ## Content-Type: application/vnd.geo+json
-        ## WHICH ISN'T PASSED WHEN BODY IS A NAMED LIST.
-        ##
-        ## OR PERHAPS THERE'S SOMETHING ABOUT HOW THE GEOJSON IS RETURNED BY
-        ## sf_geojson.
-        ## I CAN'T USE THE g PARAMETER WITH atomise = TRUE, because we need to
-        ## SUPPORT MULTIEPART POLYGONS.
-
-        onepoly_gjsn <- geojsonsf::sf_geojson(apicalls_lst$loc_sf %>%
-                                                slice(api_tbl[i, "loc_qry", drop = TRUE]),
-                                              atomise = FALSE)
-
-        onepoly_gjsn <- geojsonsf::sf_geojson(apicalls_lst$loc_sf, atomise = FALSE)
-
-        # onepoly_gjsn <- readClipboard()
-        #onepoly_gjsn <- paste(readLines(gjsn_fn), collapse = "")
-
-        body_flds_lst <- list(features = onepoly_gjsn,
-                              start = start_dt,
-                              end = end_dt,
-                              stat = spatial_ag)
-
-      }
-
       body_flds_lst <- list(features = upload_file(gjsn_fn),
                            start = start_dt,
                            end = end_dt,
@@ -175,7 +171,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
 
       if (debug) {
         feat_id <- api_tbl[i, 1, drop = TRUE]
-        message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") PUT ", post_url, ". (", feat_id_fldname, "=",
+        message(msg_fmt(paste0(" - (", i, "/", nrow(api_tbl), ") PUT ", post_url, ". (", feat_id_fldname, "=",
                               feat_id, ", start='", start_dt, "', end='", end_dt, "', stat='", spatial_ag, "')")))
       }
 
@@ -187,13 +183,9 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
                        caladaptr_ua)
 
     } else {   ## SEND A GET REQUEST
-
       api_url_full <- api_tbl[i, "api_url", drop = TRUE]
-
-      if (debug) message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
-
+      if (debug) message(msg_fmt(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
       qry_resp <- GET(api_url_full, accept_json(), caladaptr_ua)
-
     }
 
     ## At this point we have a response object
@@ -245,7 +237,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
 
       } else {
         ## Nothing returned - date fell outside of range? location outside extent?
-        if (debug) message(silver(" - no values returned!"))
+        if (debug) message(msg_fmt(" - no values returned!"))
 
       }
 
@@ -260,7 +252,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
   if (aoi_sf) {
     tmp_jsn_fn <- list.files(ca_cache_dir, pattern = "^\\~ca_(.*).geojson$", full.names = TRUE)
     if (length(tmp_jsn_fn) > 0) {
-      if (debug) message(silver(paste0(" - deleting ", length(tmp_jsn_fn), " temp geojson files")))
+      if (debug) message(msg_fmt(paste0(" - deleting ", length(tmp_jsn_fn), " temp geojson files")))
       unlink(tmp_jsn_fn)
     }
   }

@@ -1,4 +1,4 @@
-#' Assign GCM(s) to a Cal-Adapt API call
+#' Adds GCM(s) to a Cal-Adapt API request
 #'
 #' Specifies GCM(s) a Cal-Adapt API call should retrieve
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_gcm.R
 \name{ca_gcm}
 \alias{ca_gcm}
-\title{Assign GCM(s) to a Cal-Adapt API call}
+\title{Adds GCM(s) to a Cal-Adapt API request}
 \usage{
 ca_gcm(x = ca_apireq(), gcm)
 }

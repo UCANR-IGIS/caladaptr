@@ -25,6 +25,7 @@ reference:
       - ca_scenario
       - ca_slug
       - ca_years
+      - ca_livneh
       - ca_dates
       - ca_options
       - ca_apireq
@@ -32,20 +33,25 @@ reference:
   - title: Fetching Data
     desc: Functions that fetch climate data using the Cal-Adapt API
     contents:
+      - ca_preflight
       - ca_getvals_tbl
       - ca_getvals_db
       - ca_getrst_stars
-      - ca_apicalls
       - ca_baseurl
   - title: Finding and Specifying Cal-Adapt Datasets
     desc: Constants and functions to help you identify and specify datasets when constructing an API request object
     contents:
-      - ca_catalog_rs
       - cvars
       - gcms
       - periods
       - scenarios
       - ca_locagrid_geom
+  - title: Using the Cal-Adapt data catalog
+    desc: Use a local copy of the Cal-Adapt catalog to find the data you're looking for
+    contents:
+      - ca_catalog_rs
+      - ca_catalog_fetch
+      - ca_catalog_search
   - title: Working with Area-of-Interest Presets
     desc: Constants and functions to help you specify an area-of-interest preset for an API request object, and get the geometry
     contents:
@@ -56,18 +62,23 @@ reference:
   - title: Managing SQLite databases
     desc: Working with local SQLite databases
     contents:
+      - ca_db_read
       - ca_db_info
       - ca_db_indices
-  - title: Managing Cropped Rasters
-    desc: Manage cropped rasters saved as TIF
+  - title: Managing Rasters
+    desc: Downloading and working with climate data as rasters
     contents:
-      - ca_read_stars
+      - ca_biggeom_blocks
+      - ca_stars_read
+      - ca_stars_index
+      - ca_stars_6d
+      - ca_stars_mosaic
   - title: Package Options
     desc: Manage package settings
     contents:
+      - ca_settings
       - ca_getcache
       - ca_setcache
-      - ca_catalog_fetch
 
 navbar:
   type: inverse

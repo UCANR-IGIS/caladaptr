@@ -1,4 +1,4 @@
-#' Assign point location to a Cal-Adapt API request
+#' Add point location(s) to a Cal-Adapt API request
 #'
 #' Specifies point location(s) a Cal-Adapt API call should retrieve
 #'

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manage Cache Directory — ca_getcache • caladaptr</title>
+<title>Manage cache directory — ca_getcache • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Manage Cache Directory — ca_getcache" />
+<meta property="og:title" content="Manage cache directory — ca_getcache" />
 <meta property="og:description" content="View and set the directory for the data catalog" />
 
 
@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -172,7 +184,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Manage Cache Directory</h1>
+    <h1>Manage cache directory</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_cache.R'><code>R/ca_cache.R</code></a></small>
     <div class="hidden name"><code>ca_getcache.Rd</code></div>
     </div>
@@ -181,15 +193,15 @@
     <p>View and set the directory for the data catalog</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_getcache</span>(quiet = <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>ca_getcache</span><span class='op'>(</span>quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
-<span class='fu'>ca_setcache</span>(
-  cache_dir = <span class='kw'>NULL</span>,
-  make_dir = <span class='fl'>TRUE</span>,
-  save = <span class='fl'>TRUE</span>,
-  reset = <span class='fl'>FALSE</span>,
-  quiet = <span class='fl'>FALSE</span>
-)</pre>
+<span class='fu'>ca_setcache</span><span class='op'>(</span>
+  cache_dir <span class='op'>=</span> <span class='cn'>NULL</span>,
+  make_dir <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  save <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  reset <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

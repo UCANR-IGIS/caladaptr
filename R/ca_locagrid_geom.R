@@ -1,6 +1,6 @@
-#' Get the geometry of the LOCA data set vector grid.
+#' Get the LOCA grid cells as a sf object
 #'
-#' Get the geometry of the LOCA data set vector grid.
+#' Get the geometry of the LOCA grid cells as a sf polygon object
 #'
 #' @param quiet Suppress messages
 #'
@@ -32,8 +32,8 @@ ca_locagrid_geom <- function(quiet = FALSE) {
     ## Try to download it
     if (!has_internet()) stop("No internet connection")
     if (!quiet) {
-      msg <- getOption("ca_message", paste0)
-      message(msg("Downloading locagrid.zip from GitHub"))
+      msg_fmt <- getOption("ca_message", I)
+      message(msg_fmt("Downloading locagrid.zip from GitHub"))
     }
     gpkg_url <- "https://github.com/ucanr-igis/caladaptr-res/raw/main/geoms/locagrid.zip"
     tmp_zipfn <- tempfile(fileext = ".zip")
@@ -43,8 +43,8 @@ ca_locagrid_geom <- function(quiet = FALSE) {
       unzip(tmp_zipfn, exdir = cache_dir)
       unlink(tmp_zipfn)
       if (!quiet) {
-        success <- getOption("ca_success", paste0)
-        message(success("Done"))
+        success_fmt <- getOption("ca_success", I)
+        message(success_fmt("Done"))
       }
     }
   }

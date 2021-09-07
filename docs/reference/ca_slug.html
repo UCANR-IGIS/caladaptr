@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Assign Slug(s) to a Cal-Adapt API call — ca_slug • caladaptr</title>
+<title>Adds slug(s) to a Cal-Adapt API call — ca_slug • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Assign Slug(s) to a Cal-Adapt API call — ca_slug" />
+<meta property="og:title" content="Adds slug(s) to a Cal-Adapt API call — ca_slug" />
 <meta property="og:description" content="Specify the raster series slug a Cal-Adapt API call should retrieve" />
 
 
@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -172,7 +184,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Assign Slug(s) to a Cal-Adapt API call</h1>
+    <h1>Adds slug(s) to a Cal-Adapt API call</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_slug.R'><code>R/ca_slug.R</code></a></small>
     <div class="hidden name"><code>ca_slug.Rd</code></div>
     </div>
@@ -181,7 +193,7 @@
     <p>Specify the raster series slug a Cal-Adapt API call should retrieve</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_slug</span>(x = <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span>(), <span class='kw'>slug</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_slug</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='ca_apireq.html'>ca_apireq</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>slug</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

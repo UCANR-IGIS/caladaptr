@@ -3,7 +3,7 @@
 \name{ca_getcache}
 \alias{ca_getcache}
 \alias{ca_setcache}
-\title{Manage Cache Directory}
+\title{Manage cache directory}
 \usage{
 ca_getcache(quiet = TRUE)
 

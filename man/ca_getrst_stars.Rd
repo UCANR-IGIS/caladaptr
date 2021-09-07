@@ -2,17 +2,20 @@
 % Please edit documentation in R/ca_getrst_stars.R
 \name{ca_getrst_stars}
 \alias{ca_getrst_stars}
-\title{Get a cropped raster}
+\title{Get cropped rasters}
 \usage{
 ca_getrst_stars(
   x,
   out_dir = NULL,
   mask = TRUE,
   merge_geoms = FALSE,
-  sidecar_write = TRUE,
+  sidecar = TRUE,
   stop_on_err = TRUE,
+  overwrite = FALSE,
+  normalize_path = FALSE,
+  debug = FALSE,
   quiet = FALSE,
-  debug = FALSE
+  write_sidecar = deprecated()
 )
 }
 \arguments{
@@ -24,16 +27,22 @@ ca_getrst_stars(
 
 \item{merge_geoms}{Whether to merge geometries, see Details}
 
-\item{sidecar_write}{Save a small sidecar file with the TIF file containing additional attribute info}
+\item{sidecar}{Save a small sidecar file with the TIF file containing additional attribute info}
 
 \item{stop_on_err}{Stop if the server returns an error}
 
-\item{quiet}{Suppress messages}
+\item{overwrite}{Re-download and overwrite existing files}
+
+\item{normalize_path}{Expand and normalize output file names}
 
 \item{debug}{Print additional output at the console}
+
+\item{quiet}{Suppress messages}
+
+\item{write_sidecar}{Deprecated}
 }
 \value{
-A vector of TIF file names
+A vector of TIF file names. If \code{normalize_path = TRUE} the output file names will be expanded (absolute) and use standard slashes for the OS (see normalizePath).
 }
 \description{
 Download a cropped raster for an API request
@@ -49,7 +58,7 @@ San Bernadino County). If you want to download
 rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 Cal-Adapt \href{http://albers.cnr.berkeley.edu/data/}{data server}.
 
-If \code{sidecar_write = TRUE}, a small file with the same base name as the tif will be saved. This sidecar file contains
+If \code{sidecar = TRUE}, a small file with the same base name as the tif will be saved. This sidecar file contains
 attributes of a space-time-array not preserved by tifs. You can import the tif file back into R as a stars object
 with \code{\link{ca_read_stars}}.
 

@@ -1,4 +1,4 @@
-#' Climate Variables
+#' Climate variables
 #'
 #' Climate variables available as raster series
 #'

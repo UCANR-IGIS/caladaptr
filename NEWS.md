@@ -1,3 +1,28 @@
+# caladaptr 0.6.1 (2021-09-06)
+
+Version 0.6.1 is a pretty sizable update, with several new and improved functions especially for downloading and working with rasters, SQLite databases, improved preflight testing for API requests, data catalog searching, customizing messages with a package-wide color scheme, and making function names more consistent.
+
+* `caladaptr` now depends on R version 3.6.
+* `ca_getrst_stars()`: modified to save additional attribute data in the sidecar files (e.g., gcm, scenario, climate variable, etc.); progress bar disabled if quiet = TRUE (e.g., for rmd); `normalize_path` argument added; `overwrite` argument added; `sidecar_write` argument renamed `sidecar`
+* `ca_read_stars()`: deprecated (renamed `ca_stars_read()`)
+* `ca_stars_read()`: replacement of `ca_read_stars()`, updated to accept a vector of TIF files names (instead of one), and return a list of stars objects; `read_sidecar` argument renamed `sidecar`; added `proxy` argument which imports the TIFs as stars proxy objects (i.e., disk pointers)
+* `ca_stars_index`: new function to create an index for a list of stars rasters downloaded by `ca_getrst_stars` and bundled into a list with `ca_read_stars`
+* `ca_stars_6d()`: combines stars rasters for different climate variables, GCMs, and emissions scenarios into a single 6-dimensional raster (with x, y, and date being the other three dimensions)
+* `ca_biggeom_blocks()`: new function that takes a large geom and returns a simple feature data frame of rectangular blocks each one small enough to download TIFFs from the Cal-Adapt API 
+* `ca_stars_mosaic()`: new function to mosaic stars rasters
+* `ca_preflight()`: removed unused `quiet` argument; errors from ca_apicalls() now grouped and formatted
+* `ca_settings()`: new function to customize package settings including the text output colors
+* `ca_apicalls()`: `ignore_spag` renamed `spag_check`; new argument `check_for`; `preflight` renamed `pf`
+* `ca_getvals_tbl()`: modified how ca_apicalls() is called, `omit_col` argument added
+* `ca_getvals_db()`: updated to support Cal-Adapt API requests for Livneh data; `omit_col` argument added
+* `ca_catalog_search()`: new function to search the raster series by slug and view properties
+* `ca_catalog_rs()`: raster series data catalog updated (n=949)
+* `ca_read_db()`: deprecated and renamed `ca_db_read()` for a more consistent API
+* `ca_db_read()`: added `lkp_sql` and `vals_tbl` to the attributes of the result
+* `ca_db_info()` and `format.ca_db_info()`: enhanced to read SQL statements from sidecar files, save and print multiple SQL statements
+* `ca_catalog_fetch()`: now exported
+# five new vignettes: API Requests, Large Queries, Rasters Part I, II, and III
+
 # caladaptr 0.5.0 (2021-05-17)
 
 * `ca_catalog_fetch()`: trapped an error when tres property is missing

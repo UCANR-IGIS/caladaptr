@@ -1,4 +1,4 @@
-#' Global Climate Models
+#' Global climate models
 #'
 #' Global Climate Models available through the Cal-Adapt API
 #'

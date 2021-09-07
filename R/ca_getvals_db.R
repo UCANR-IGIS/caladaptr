@@ -3,6 +3,7 @@
 #' @param x A Cal-Adapt API request
 #' @param db_fn File name of a SQLite database. See Details.
 #' @param db_tbl The name of a database table. See Details.
+#' @param omit_col Columns to exclude from the tibble
 #' @param trans_len Number of APIs calls per write transaction. See Details.
 #' @param indices Name of fields to index. See Details.
 #' @param new_recs_only Write new records only to the database. See Details.
@@ -17,11 +18,13 @@
 #'
 #' @details
 #'
-#' Use \code{ca_getvals_db} when retrieving large volumes of data (i.e., tens of thousands of values). This function
-#' writes the data to a SQLite database as they're received so you don't run the risk of exhausting your RAM. Another
-#' benefit is if the operation is interrupted before it finished (e.g., due to an internet hiccup), it will pick up
-#' where it left off. Note however for small amounts of data there is no advantage to putting it in a database
-#' as it will be slower to retrieve and work with.
+#' \code{ca_getvals_db} fetches data from the Cal-Adapt API and writes the data to a SQLite database as they're received. This
+#' allows you to fetch relatively large volumes of data in the background, and potentially over multiple sessions as it will
+#' pick up where it left off if interrupted. Saving the values in a database also reduces the risk of exhausting your RAM.
+#'
+#' Use \code{ca_getvals_db} to fetch large volumes of data (i.e., hundreds of thousands of values), or whenever you'd like
+#' to keep  a local copy of the data. Note however for small amounts of data there is no advantage to putting it in a database
+#' as it will be slighly slower to retrieve and work with.
 #'
 #' \code{db_fn} should be a file name with path to a SQLite database. A SQLIte database is a single file typically
 #' with a \emph{.db} or \emph{.sqlite} extension. If the database doesn't exist, it will be created. If it already
@@ -29,19 +32,23 @@
 #'
 #' \code{db_tbl} should the name of a table within the database where the new data will be saved. The table name should not
 #' contain special characters and spaces are discouraged. If \code{new_recs_only = TRUE}, only new records will be
-#' added to the database. \code{trans_len} defines the number of API calls per
-#' \url{https://www.sqlitetutorial.net/sqlite-transaction/}{SQLite transaction} (i.e. how many API calls of data to
+#' added to the database.
+#'
+#' \code{trans_len} defines the number of API calls per
+#' \href{https://www.sqlitetutorial.net/sqlite-transaction/}{SQLite transaction} (i.e. how many API calls of data to
 #' accumulate before doing a write operation to the database). This can speed things up. Set it to 0 to disable transactions.
 #'
 #' If \code{lookup_tbls = TRUE}, the database will create lookup tables for categorical columns such as GCM, scenario,
 #' cvar, period, slug, etc. This can dramatically reduce the size of the SQLite database file and is generally recommended.
 #' id \code{lookup_ret_joined = TRUE}, the tibble returned will have the lookup tables joined (i.e., column names will
-#' be unaltered); if not the returned tibble will have id values for certain values.
+#' be unaltered); if not the returned tibble will have id values for certain values. A small text file is created for each SQLite
+#' database containing the names of the tables and SQL statement to join them (read automatically
+#' by \code{\link{ca_db_read}}).
 #'
-#' \code{indices} is a vector of column names that you'd like indexed (ignored if \code{lookup_tbls = FALSE}). Creating indices can
-#' improve the performance of filters and joins, but at the cost of a larger database file and slower write operations. Fields you can
-#' create indices on include \code{"feat_id"} (the location id value), \code{"cvar"}, \code{"gcm"}, \code{"scenario"}, \code{"period"},
-#' \code{"slug"}, and \code{"spag"}.
+#' \code{indices} is a vector of column names in \code{db_tbl} that you'd like indexed (ignored if \code{lookup_tbls = FALSE}).
+#' Creating indices can improve the performance of filters and joins when you generate summaries, but at the cost of a larger
+#' database file and slightly slower write operations. Fields you can create indices on include \code{"feat_id"} (the location id value),
+#' \code{"cvar"}, \code{"gcm"}, \code{"scenario"}, \code{"period"}, \code{"slug"}, and \code{"spag"}.
 #'
 #' Indices can also be added to a SQLite database after downloading is complete with \link{ca_db_indices}. For large queries (e.g. thousands of
 #' API calls), it is recommended to not build indices during the download process, and only add indices for those fields you
@@ -57,7 +64,7 @@
 #'
 #' @return A remote tibble linked to the SQLite database.
 #'
-#' @seealso \code{\link{ca_db_info}}, \code{\link{ca_db_indices}}
+#' @seealso \code{\link{ca_db_info}}, \code{\link{ca_db_indices}}, \code{\link{ca_db_read}},
 #'
 #' @import crayon
 #' @importFrom httr GET content modify_url accept_json http_error stop_for_status warn_for_status http_status
@@ -69,17 +76,19 @@
 #' @importFrom fastmatch `%fin%`
 #' @export
 
-ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE,
+ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new_recs_only = TRUE,
                           trans_len = 100, lookup_tbls = TRUE, lookup_ret_joined = TRUE,
                           pause_n = 1000, pause_secs = 60,
-                          write_sidecar = TRUE, stop_on_err = TRUE, quiet = FALSE, debug = TRUE) {
+                          write_sidecar = TRUE, stop_on_err = TRUE, quiet = FALSE, debug = FALSE) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
   ## Check for an internet connection
   if (!has_internet()) stop("No internet connection detected")
 
-  accent2 <- getOption("ca_accent2", paste0)
+  ## Get the functions to format messages
+  accent2 <- getOption("ca_accent2", I)
+  msg_fmt <- getOption("ca_message", I)
 
   ## Check the table name for spaces
   if (grepl(" ", db_tbl)) stop("Please provide a table name that doesn't have spaces")
@@ -88,7 +97,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   if (pause_secs < 30) stop("The smallest value for `pause_secs` is 30")
 
   ## Get a tibble with the individual API calls
-  apicalls_lst <- ca_apicalls(x)
+  apicalls_lst <- ca_apicalls(x, check_for = "getvals")
   api_tbl <- apicalls_lst$api_tbl
 
   ## Get the name of first column
@@ -116,75 +125,80 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
     }
   }
 
-  ## API Request is based on gcm+scenario+cvar+period
-  if (identical(x$slug, NA)) {
+  #########################################################################################
+  ## Define which columns to save in the output table
+  if (!identical(x$slug, NA)) {
+    apicall_cols_default <- c(feat_id_fldname, "slug", "spag")
+  } else if (identical(x$livneh, TRUE)) {
+    apicall_cols_default <- c(feat_id_fldname, "cvar", "period", "slug", "spag")
+  } else {
+    apicall_cols_default <- c(feat_id_fldname, "cvar", "scenario", "gcm", "period", "spag")
+  }
 
-    if (lookup_tbls) {
-      ## 1) Create the tibbles for the lookup tables, 2) join them to api_tbl,
-      ## 3) Define the columns to save in the output table (either in-memory tibble or db), and
-      ## 4) create a SQL string in case lookup_ret_joined = TRUE
+  ## Remove any columns the user wants to omit
+  if (!is.null(omit_col)) {
+    if ("val" %in% omit_col) stop("Sorry, you can not omit the values column from the results")
+    if ("dt" %in% omit_col) stop("Sorry, you can not omit the date column from the results")
+    if (feat_id_fldname %in% omit_col) {
+      stop("Sorry, you can not omit the location column from the results")
+    }
+  }
+  apicall_cols_keep <- setdiff(apicall_cols_default, omit_col)
+  ###########################################################################################
 
-      ## Create lookup tibbles and join them to api_tbl
-      cvar_tbl <- tibble(cvar_id = 1:length(cvars), cvar = cvars)
-      period_tbl <- tibble(period_id = 1:length(periods), period = periods)
-      gcm_tbl <- tibble(gcm_id = 1:length(gcms), gcm = gcms)
-      scenario_tbl <- tibble(scenario_id = 1:length(scenarios), scenario = scenarios)
-      spag_vals <- c("none", "mean", "max", "median", "min", "sum")
-      spag_tbl <- tibble(spag_id = 1:length(spag_vals), spag = spag_vals)
+  ## Next we need to
+  ## 1) Create the tibbles for the lookup tables
+  ## 2) join them to api_tbl,
+  ## 3) Define the columns to save in the output table, and
+  ## 4) create a SQL string in case lookup_ret_joined = TRUE
 
-      api_tbl <- api_tbl %>%
-        left_join(cvar_tbl, by = "cvar") %>%
-        left_join(period_tbl, by = "period") %>%
-        left_join(gcm_tbl, by = "gcm") %>%
-        left_join(scenario_tbl, by = "scenario") %>%
-        left_join(spag_tbl, by = "spag")
+  if (lookup_tbls) {
 
-      apicall_cols_keep <- c(names(api_tbl)[1], "cvar_id", "period_id", "gcm_id", "scenario_id", "spag_id")
+    ## Create lookup tibbles so we can join them to api_tbl (as needed)
+    ## Even if we don't need them all, they're small and easy to generate
 
-      tbl_sql <- paste0("SELECT ", feat_id_fldname, ", cvar, gcm, period, scenario, spag, dt, val FROM ",
-                        db_tbl, " LEFT JOIN cvars ON ", db_tbl, ".cvar_id = cvars.cvar_id ",
-                        "LEFT JOIN gcms ON ", db_tbl, ".gcm_id = gcms.gcm_id ",
-                        "LEFT JOIN periods ON ", db_tbl, ".period_id = periods.period_id ",
-                        "LEFT JOIN scenarios ON ", db_tbl, ".scenario_id = scenarios.scenario_id ",
-                        "LEFT JOIN spags ON ", db_tbl, ".spag_id = spags.spag_id")
+    cvar_tbl <- tibble(cvar_id = 1:length(cvars), cvar = cvars)
+    period_tbl <- tibble(period_id = 1:length(periods), period = periods)
+    gcm_tbl <- tibble(gcm_id = 1:length(gcms), gcm = gcms)
+    scenario_tbl <- tibble(scenario_id = 1:length(scenarios), scenario = scenarios)
+    spag_vals <- c("none", "mean", "max", "median", "min", "sum")
+    spag_tbl <- tibble(spag_id = 1:length(spag_vals), spag = spag_vals)
 
-    } else {
-      ## No lookup tables
-      apicall_cols_keep <- c(names(api_tbl)[1], "cvar", "period", "gcm", "scenario", "spag")
-      tbl_sql <- NA
-
+    ## Left join lookup tables to api_tbl (all except slug)
+    stnd_lkp_tbls <- c("cvar", "period", "gcm", "scenario", "spag")
+    if (TRUE %in% (apicall_cols_keep %in% stnd_lkp_tbls)) {
+      left_joins_cmd <- "api_tbl <- api_tbl"
+      for (my_col in stnd_lkp_tbls) {     ## not doing slug right here, not sure why
+        if (my_col %in% apicall_cols_keep) {
+          left_joins_cmd <- paste0(left_joins_cmd,
+                                   paste0(" %>% left_join(", my_col, "_tbl, by=\"", my_col, "\")"))
+        }
+      }
+      eval(parse(text = left_joins_cmd))
     }
 
-
-  } else {   ## API request is based on slug(s)
-
-    if (lookup_tbls) {
-      ## 1) Create the tibbles for the lookup tables, 2) join them to api_tbl,
-      ## 3) Define the columns to save in the output table (either in-memory tibble or db), and
-      ## 4) create a SQL string in case lookup_ret_joined = TRUE
-
-      slug_all <- unique(api_tbl$slug)
-      #slug_tbl <- tibble(slug_id = 1:length(slug_all), slug = slug_all)   change this - use slug_id from ca_catalog_rs()
-
-      spag_vals <- c("none", "mean", "max", "median", "min", "sum")
-      spag_tbl <- tibble(spag_id = 1:length(spag_vals), spag = spag_vals)
-
-      #stop("RIGHT HERE I NEED TO UPDATE THIS SECTION FOR SLUG_IG AND SPAG_ID")
-      api_tbl <- api_tbl %>% left_join(spag_tbl, by = "spag")   ## we'll join slug_id below
-
-      apicall_cols_keep <- c(names(api_tbl)[1], "slug_id", "spag_id")
-
-      tbl_sql <- paste0("SELECT ", feat_id_fldname, ", slug, spag, dt, val FROM ",
-                        db_tbl, " LEFT JOIN slugs ON ", db_tbl, ".slug_id = slugs.slug_id ",
-                        "LEFT JOIN spags ON ", db_tbl, ".spag_id = spags.spag_id")
-
-
+    ## Construct the SQL for this table
+    if (length(apicall_cols_keep) == 1) {
+      tbl_sql <- paste0("SELECT ", feat_id_fldname, ", dt, val FROM ", db_tbl)
     } else {
-      # Not using lookup tables
-      apicall_cols_keep <- c(names(api_tbl)[1], "slug", "spag")
-      tbl_sql <- NA
+      tbl_sql <- paste0("SELECT ", feat_id_fldname, ", ",
+                        paste(apicall_cols_keep[2:length(apicall_cols_keep)], collapse = ", "),
+                        ", dt, val FROM ", db_tbl)
 
+      for (lkp_col in apicall_cols_keep[2:length(apicall_cols_keep)]) {
+        tbl_sql <- paste0(tbl_sql, " LEFT JOIN ", lkp_col, "s ON ", db_tbl,
+                          ".", lkp_col, "_id = ", lkp_col, "s.", lkp_col, "_id")
+      }
     }
+
+    ## Add '_id' to all elements of apicall_cols_keep after #1
+    if (length(apicall_cols_keep) > 1) {
+      apicall_cols_keep[2:length(apicall_cols_keep)] <- paste0(apicall_cols_keep[2:length(apicall_cols_keep)], "_id")
+    }
+
+  } else {
+    ## apicall_cols_keep - already defined, no changes needed
+    tbl_sql <- NA   ## No lookup tables
   }
 
   ## Close any open connections leftover from previous function calls that were interrupted.
@@ -193,12 +207,9 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   if (!is.null(getOption("ca_dbconn"))) {
 
     if (dbIsValid(getOption("ca_dbconn"))) {
-      if (debug) message(silver(" - found a leftover open database connection, will try to close it"))
+      if (debug) message(msg_fmt(" - found a leftover open database connection, will try to close it"))
       dbDisconnect(getOption("ca_dbconn"))
     }
-
-    # else {
-    # if (debug) message(yellow(" - Found a leftover connection but it isn't valid, ignoring"))
 
     options("ca_dbconn" = NULL)
   }
@@ -220,7 +231,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   ## Enforce referential integrity (this connection only)
   dbExecute(conn = mydb, "PRAGMA foreign_keys = ON")
 
-  if (debug) message(silver(paste0(" - new values will be saved to `", db_tbl, "` in: ", db_fn)))
+  if (debug) message(msg_fmt(paste0(" - new values will be saved to `", db_tbl, "` in: ", db_fn)))
 
   ## Get all tables currently in the database
   all_tbls <- dbListTables(mydb)
@@ -231,7 +242,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   ## If the hash_int table exists, get the list of saved hashes
   if (db_hashes_tbl %in% all_tbls) {
     hashes_already_in_db <- dbReadTable(mydb, db_hashes_tbl)[["hash_int"]]
-    if (debug) message(silver(paste0(" - found ", length(hashes_already_in_db), " API calls recorded in ", db_hashes_tbl)))
+    if (debug) message(msg_fmt(paste0(" - found ", length(hashes_already_in_db), " API calls recorded in ", db_hashes_tbl)))
 
   } else {
     ## If not, create the table now and initialize hashes_already_in_db
@@ -239,85 +250,76 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
                            db_hashes_tbl,
                            "` (hash_int INTEGER PRIMARY KEY);"))
     hashes_already_in_db <- integer(0)
-    if (debug) message(silver(paste0(" - created table: ", db_hashes_tbl)))
+    if (debug) message(msg_fmt(paste0(" - created table: ", db_hashes_tbl)))
   }
 
   ## If using lookup tables, create those now
   if (lookup_tbls) {
 
-    if (identical(x$slug, NA)) {
+    ## Get a like of lookup tables
+    lkp_tbl_names <- apicall_cols_keep[-1] %>% gsub("_id$", "", .)
 
-      ## Create the lookup tables for cvar, period, gcm, scenario, and spag
-      for (lkp in c("cvar", "period", "gcm", "scenario", "spag")) {
+    ## If needed, create the lookup tables for cvar, period, gcm, scenario, and spag.
+    ## (but not slug, which is treated separately1)
+    for (lkp in lkp_tbl_names[lkp_tbl_names != "slug"]) {
+      if (!paste0(lkp, "s") %in% all_tbls) {
 
-        if (!paste0(lkp, "s") %in% all_tbls) {
-
-          ## Create the table defining the primary key
-          dbExecute(mydb,
-                    paste0("CREATE TABLE ", lkp, "s ",
-                           "( ", lkp, "_id INTEGER PRIMARY KEY, ",
-                           lkp, " TEXT NOT NULL);")
-          )
-
-          ## Next, add rows from the corresponding tibble
-          dbWriteTable(mydb,
-                       name = paste0(lkp, "s"),
-                       value = get(paste0(lkp, "_tbl")),
-                       append = TRUE)
-
-          if (debug) message(silver(paste0(" - created lookup table: ", lkp, "s")))
-
-        }
-
-      }
-
-      ## At this point all the lookup tables should be in the database!!
-
-    } else {
-      ## Create the lookup tables for slug and spag
-
-      if (!"spags" %in% all_tbls) {
         ## Create the table defining the primary key
-        dbExecute(mydb, "CREATE TABLE spags ( spag_id INTEGER PRIMARY KEY, spag TEXT NOT NULL);")
+        dbExecute(mydb,
+                  paste0("CREATE TABLE ", lkp, "s ",
+                         "( ", lkp, "_id INTEGER PRIMARY KEY, ",
+                         lkp, " TEXT NOT NULL);")
+        )
 
         ## Next, add rows from the corresponding tibble
-        dbWriteTable(mydb, name = "spags", value = spag_tbl, append = TRUE)
+        dbWriteTable(mydb,
+                     name = paste0(lkp, "s"),
+                     value = get(paste0(lkp, "_tbl")),
+                     append = TRUE)
 
-        if (debug) message(silver(" - created lookup table: spags"))
+        if (debug) message(msg_fmt(paste0(" - created lookup table: ", lkp, "s")))
+
       }
+    }
 
+    ## Deal with slug lookup table
+    if ("slug" %in% lkp_tbl_names) {
+
+      ## Create the slugs table if its not already there
       if (!"slugs" %in% all_tbls) {
         ## Create the table defining the primary key
         dbExecute(mydb,
                   "CREATE TABLE slugs ( slug_id INTEGER PRIMARY KEY, slug TEXT NOT NULL);")
-        if (debug) message(silver(" - created lookup table: slugs"))
+        if (debug) message(msg_fmt(" - created lookup table: slugs"))
       }
 
-      ## Next, add rows from the corresponding tibble
-      saved_slugs <- dbReadTable(mydb, "slugs")
+      ## Read rows from the slugs tibble in the database (which could be brand new, or could have
+      ## slugs from previous calls)
+      saved_slugs_df <- dbReadTable(mydb, "slugs")
 
-      ## If there are some new slugs, write them to the database
-      new_slugs <- setdiff(slug_all, saved_slugs$slug)
+      ## If this API request includes some new slugs, write them to the database
+      new_slugs <- setdiff(unique(api_tbl$slug), saved_slugs_df$slug)
       if (length(new_slugs) > 0) {
-        new_slugs_tbl <- tibble(slug_id = (1:length(new_slugs)) + nrow(saved_slugs),
+        new_slugs_tbl <- tibble(slug_id = (1:length(new_slugs)) + nrow(saved_slugs_df),
                                 slug = new_slugs)
         dbWriteTable(mydb,
                      name = "slugs",
                      value = new_slugs_tbl,
                      append = TRUE)
 
-        saved_slugs <- saved_slugs %>% bind_rows(new_slugs_tbl)
+        saved_slugs_df <- saved_slugs_df %>% bind_rows(new_slugs_tbl)
 
       }
 
-      ## Add the slug id colunn
-      api_tbl <- api_tbl %>% left_join(saved_slugs, by = "slug")
+      ## Add the slug id colunn to api_tbl
+      api_tbl <- api_tbl %>% left_join(saved_slugs_df, by = "slug")
 
     }
 
   }
   ## Done creating the sqlite database and all lookup tables
   #####################################################################
+
 
   ## If the values table already exists, cross-check that it has all the required fields.
   ## (If not, it could have been created with a different value for lookup_tbls)
@@ -364,19 +366,16 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   if (use_pb) pb <- txtProgressBar(min = 1, max = nrow(api_tbl), style = 3)
 
   ## Loop through calls
-  if (debug) message(silver(paste0(" - going to make ", nrow(api_tbl), " api calls")))
+  if (debug) message(msg_fmt(paste0(" - going to make ", nrow(api_tbl), " api calls")))
 
   # num_vals_downloaded <- 0   ## not using this any more, pauses based on the number of API calls
+
+  ## Create a counter for the number of API calls made (used to determine when we need to pause)
+  calls_made <- 0
 
   for (i in 1:nrow(api_tbl)) {
 
     if (use_pb) {setTxtProgressBar(pb, i)}
-
-    ## Check if we need to do a pause
-    if (i %% pause_n == 0) {
-      if (!quiet) message(accent2(paste0(" - pausing for ", pause_secs, " seconds to let the server catch its breath!")))
-      Sys.sleep(pause_secs)
-    }
 
     ## First order of business - see if this API call has already been made
     hash_int <- api_tbl[i, "hash_int", drop = TRUE]
@@ -384,7 +383,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
 
     if (new_recs_only) {
       make_the_call <- !hash_in_db
-      if (debug && !make_the_call) message(silver(paste0(" - api call already run, skipping")))
+      if (debug && !make_the_call) message(msg_fmt(paste0(" - api call already run, skipping")))
     } else {
       make_the_call <- TRUE
     }
@@ -392,15 +391,21 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
     ## Next, call the API
     if (make_the_call) {
 
+      ## Check if we need to do a pause
+      calls_made <- calls_made + 1
+      if (calls_made %% pause_n == 0) {
+        if (!quiet) message(accent2(paste0(" - pausing for ", pause_secs, " seconds to let the server catch its breath!")))
+        Sys.sleep(pause_secs)
+      }
+
       if (aoi_sf) {
 
         ## Get the temporary geojson file name for this row (which is stored in the loc_qry column)
         gjsn_fn <- gjsn_all_fn[api_tbl[i, "loc_qry", drop = TRUE]]
 
-        #gjsn_fn <- file.path(tempdir(), api_tbl[i, "loc_preset", drop = TRUE])
 
         if (!file.exists(gjsn_fn)) {
-          if (debug) message(silver(paste0(" - saving temp geojson: ", basename(gjsn_fn))))
+          if (debug) message(msg_fmt(paste0(" - saving temp geojson: ", basename(gjsn_fn))))
           st_write(apicalls_lst$loc_sf %>%
                      slice(api_tbl[i, "loc_qry", drop = TRUE]),
                    dsn = gjsn_fn,
@@ -437,7 +442,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
 
         if (debug) {
           feat_id <- api_tbl[i, 1, drop = TRUE]
-          message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") PUT ", post_url, ". (", feat_id_fldname, "=",
+          message(msg_fmt(paste0(" - (", i, "/", nrow(api_tbl), ") PUT ", post_url, ". (", feat_id_fldname, "=",
                                 feat_id, ", start='", start_dt, "', end='", end_dt, "', stat='", spatial_ag, "')")))
         }
 
@@ -454,13 +459,12 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
 
         api_url_full <- api_tbl[i, "api_url", drop = TRUE]
 
-        if (debug) message(silver(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
+        if (debug) message(msg_fmt(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
 
         ## Make request
         qry_resp <- GET(api_url_full, accept_json(), caladaptr_ua)
 
       }
-
 
       ######################################################################
       ## AT THIS POINT, WE HAVE RESPONSE
@@ -476,9 +480,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
           ## Don't stop - print a message or generate a warning
           if (quiet && !debug) {
             warn_for_status(qry_resp)
-
           } else {
-            ## quiet = FALSE or debug = TRUE
             message(red(paste0(" - Oh dear. ", http_status(qry_resp)$message)))
           }
 
@@ -502,6 +504,8 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
 
           if (new_tbl) {
 
+            ## We have to create the values table. It doesn't exist yet.
+
             ## Get the field type for the feat_id column
             if (is.integer(api_tbl[[feat_id_fldname]])) {
               feat_id_type <- "INTEGER"
@@ -515,13 +519,13 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
 
             if (lookup_tbls) {
 
-              ## If using lookup tables, we're going to 'pre-define' the values table prior to writing
-              ## data, so that we can create foreign keys
+              # sql_flds and sql_indices are both pieces of SQL expression that we will build up.
+              ## They will ultimately be used to create the table and indices
 
               ## Start the list of field definitions with the feat_id column
               sql_flds <- paste0(feat_id_fldname, " ", feat_id_type, " NOT NULL")
 
-              ## Initialize a variable to hold expressions that will create the indices
+              ## Initialize a variable to hold a SQL expression that will be used to create the indices
               sql_indices <- character(0)
 
               ## Add an index expression for the feature id
@@ -532,11 +536,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
               }
 
               ## Define the lookup tables that are needed
-              if (identical(x$slug, NA)) {
-                flds_make <- c("cvar", "gcm", "scenario", "period", "spag")
-              } else {
-                flds_make <- c("slug", "spag")
-              }
+              flds_make <- lkp_tbl_names
 
               ## Add field definition and index creation expressions for other fields
               for (fld in flds_make) {
@@ -547,13 +547,13 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
                   sql_indices <- c(sql_indices,
                                    paste0("CREATE INDEX `", db_tbl, ".", fld, "_id` ON `", db_tbl, "`(`", fld, "_id`);"))
                 }
-
               }
+
 
               ## Create the values table
 
               ## Add additional field expressions  for the values table for dt and val (no indices needed)
-              sql_flds <- c(sql_flds, "dt TEXT NOT NULL", "val NUMERIC NOT NULL")   ## could also be REAL
+              sql_flds <- c(sql_flds, "dt TEXT NOT NULL", "val NUMERIC NOT NULL")   ## val could also be REAL?
 
               ## Create the values table
               sql_create_my_table <- paste0("CREATE TABLE `", db_tbl, "` (",
@@ -605,7 +605,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
 
         } else {
           ## Nothing returned - date fell outside of range? location outside extent?
-          if (debug) message(silver(" - no values returned!"))
+          if (debug) message(msg_fmt(" - no values returned!"))
         }
 
       }
@@ -629,7 +629,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   if (aoi_sf) {
     tmp_jsn_fn <- list.files(ca_cache_dir, pattern = "^\\~ca_(.*).geojson$", full.names = TRUE)
     if (length(tmp_jsn_fn) > 0) {
-      if (debug) message(silver(paste0(" - deleting ", length(tmp_jsn_fn), " temp geojson files")))
+      if (debug) message(msg_fmt(paste0(" - deleting ", length(tmp_jsn_fn), " temp geojson files")))
       unlink(tmp_jsn_fn)
     }
   }
@@ -638,7 +638,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
   if (is.na(tbl_sql) || !lookup_ret_joined) {
     res <- tbl(mydb, db_tbl)
   } else {
-    if (debug) message(silver(paste0(" - returning a remote tbl based on SQL: \"", tbl_sql, "\"")))
+    if (debug) message(msg_fmt(paste0(" - returning a remote tbl based on SQL: \"", tbl_sql, "\"")))
     res <- tbl(mydb, sql(tbl_sql))
   }
 
@@ -650,8 +650,8 @@ ca_getvals_db <- function(x, db_fn, db_tbl, indices = NULL, new_recs_only = TRUE
 
     if (file.exists(sidecar_fn)) {
 
-      ## The sidecar file already exists. We need to scan it and see if there's a line:
-      ## val_tbl: sac_pts_tbl
+      ## The sidecar file already exists. We need to scan it and see if there's a line for this values table:
+      ## example val_tbl: sac_pts_tbl
       ## If yes - do nothing
       ## If no - append it
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_cvar.R
 \name{ca_cvar}
 \alias{ca_cvar}
-\title{Assign climate variable(s) to a Cal-Adapt API call}
+\title{Add climate variable(s) to a Cal-Adapt API request}
 \usage{
 ca_cvar(x = ca_apireq(), cvar)
 }

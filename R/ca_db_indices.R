@@ -25,7 +25,9 @@
 #' automatically.
 #'
 #' For more details, see the vignette on querying large volumes of data:
-#' \code{vignette("big-query", package = "caladaptr")}
+#' \code{vignette("large-queries", package = "caladaptr")}
+#'
+#' @returns \code{x}
 #'
 #' @seealso \code{\link{ca_getvals_db}}, \code{\link{ca_db_info}}
 #'

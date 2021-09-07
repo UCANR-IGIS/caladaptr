@@ -17,6 +17,9 @@ ca_db_indices(x, tbl, idx_fld_add = NULL, idx_fld_del = NULL, quiet = FALSE)
 
 \item{quiet}{Suppress messages}
 }
+\value{
+\code{x}
+}
 \description{
 Add or delete indices
 }
@@ -39,7 +42,7 @@ you can run SQL expressions with the DBI package. Indices added by \code{ca_db_i
 automatically.
 
 For more details, see the vignette on querying large volumes of data:
-\code{vignette("big-query", package = "caladaptr")}
+\code{vignette("large-queries", package = "caladaptr")}
 }
 \seealso{
 \code{\link{ca_getvals_db}}, \code{\link{ca_db_info}}

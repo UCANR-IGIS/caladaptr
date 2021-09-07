@@ -3,7 +3,7 @@
 \docType{data}
 \name{cvars}
 \alias{cvars}
-\title{Climate Variables}
+\title{Climate variables}
 \format{
 A character vector with the names of climate variables
 }

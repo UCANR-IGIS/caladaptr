@@ -10,8 +10,10 @@ ca_preflight(
   date_check = TRUE,
   loc_check = TRUE,
   units_check = TRUE,
-  ignore_spag = FALSE,
-  quiet = FALSE
+  spag_check = TRUE,
+  check_for = c("getvals", "getrst"),
+  quiet = FALSE,
+  ignore_spag = deprecated()
 )
 }
 \arguments{
@@ -25,16 +27,39 @@ ca_preflight(
 
 \item{units_check}{Check for consistent units}
 
-\item{ignore_spag}{Ignore the spatial aggregation option}
+\item{spag_check}{Check spatial aggregation option}
+
+\item{check_for}{What to check for - getting values or getting rasters}
 
 \item{quiet}{Suppress messages}
+
+\item{ignore_spag}{Deprecated}
+}
+\value{
+TRUE if no messages are reported, else FALSE
 }
 \description{
 Run checks on an API request object
 }
 \details{
-This function checks an API request for errors.
+This function checks an Cal-Adapt API request for potential problems. It checks to make sure
+the request:
 
-If a slug is not found, the variable may not be available for the temporal aggregation period.
-See \code{\link{ca_catalog_rs}}.
+\itemize{
+   \item is complete
+   \item doesn't have conflicting elements
+   \item specifies an existing datasets
+   \item specifies a location within the Cal-Adapt coverage area
+   \item specifies area-of-interest presets correctly
+   \item has features that are not too large for the Cal-Adapt API
+   \item doesn't mix datasets that have different units
+   \item uses dates that fall within the Cal-Adapt time series
+   \item includes a spatial aggregation function if needed
+}
+
+Most of the checks can be selectively disabled using arguments. \code{check_for} allows you to tailor checks for
+querying values and/or downloading rasters.
+}
+\seealso{
+\code{\link{ca_catalog_rs}}
 }

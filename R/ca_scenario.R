@@ -1,4 +1,4 @@
-#' Assign emission scenario(s) to a Cal-Adapt API call
+#' Add emission scenario(s) to a Cal-Adapt API request
 #'
 #' Specifies emission scenario(s) for retrieval
 #'

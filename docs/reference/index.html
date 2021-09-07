@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -104,7 +104,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -205,7 +217,7 @@
         <td>
           <p><code><a href="ca_loc_pt.html">ca_loc_pt()</a></code> </p>
         </td>
-        <td><p>Assign point location to a Cal-Adapt API request</p></td>
+        <td><p>Add point location(s) to a Cal-Adapt API request</p></td>
       </tr><tr>
         
         <td>
@@ -217,13 +229,13 @@
         <td>
           <p><code><a href="ca_cvar.html">ca_cvar()</a></code> </p>
         </td>
-        <td><p>Assign climate variable(s) to a Cal-Adapt API call</p></td>
+        <td><p>Add climate variable(s) to a Cal-Adapt API request</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="ca_gcm.html">ca_gcm()</a></code> </p>
         </td>
-        <td><p>Assign GCM(s) to a Cal-Adapt API call</p></td>
+        <td><p>Adds GCM(s) to a Cal-Adapt API request</p></td>
       </tr><tr>
         
         <td>
@@ -235,19 +247,25 @@
         <td>
           <p><code><a href="ca_scenario.html">ca_scenario()</a></code> </p>
         </td>
-        <td><p>Assign emission scenario(s) to a Cal-Adapt API call</p></td>
+        <td><p>Add emission scenario(s) to a Cal-Adapt API request</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="ca_slug.html">ca_slug()</a></code> </p>
         </td>
-        <td><p>Assign Slug(s) to a Cal-Adapt API call</p></td>
+        <td><p>Adds slug(s) to a Cal-Adapt API call</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="ca_years.html">ca_years()</a></code> </p>
         </td>
         <td><p>Adds the start and end year to a Cal-Adapt API call</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_livneh.html">ca_livneh()</a></code> </p>
+        </td>
+        <td><p>Use Livneh data in a Cal-Adapt API call</p></td>
       </tr><tr>
         
         <td>
@@ -271,7 +289,7 @@
         <td>
           <p><code><a href="ca_example_apireq.html">ca_example_apireq()</a></code> </p>
         </td>
-        <td><p>Example API requests</p></td>
+        <td><p>Sample API requests</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -288,6 +306,12 @@
       <tr>
         
         <td>
+          <p><code><a href="ca_preflight.html">ca_preflight()</a></code> </p>
+        </td>
+        <td><p>Run checks on an API request object</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="ca_getvals_tbl.html">ca_getvals_tbl()</a></code> </p>
         </td>
         <td><p>Get values from an API request object as a tibble</p></td>
@@ -302,19 +326,13 @@
         <td>
           <p><code><a href="ca_getrst_stars.html">ca_getrst_stars()</a></code> </p>
         </td>
-        <td><p>Get a cropped raster</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ca_apicalls.html">ca_apicalls()</a></code> </p>
-        </td>
-        <td><p>Creates a tibble of individual API calls</p></td>
+        <td><p>Get cropped rasters</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="ca_baseurl.html">ca_baseurl</a></code> </p>
         </td>
-        <td><p>Cal-Adapt Base URL</p></td>
+        <td><p>Cal-Adapt base URL</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -331,21 +349,15 @@
       <tr>
         
         <td>
-          <p><code><a href="ca_catalog_rs.html">ca_catalog_rs()</a></code> </p>
-        </td>
-        <td><p>Get the Cal-Adapt raster series data catalog</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="cvars.html">cvars</a></code> </p>
         </td>
-        <td><p>Climate Variables</p></td>
+        <td><p>Climate variables</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="gcms.html">gcms</a></code> </p>
         </td>
-        <td><p>Global Climate Models</p></td>
+        <td><p>Global climate models</p></td>
       </tr><tr>
         
         <td>
@@ -363,7 +375,38 @@
         <td>
           <p><code><a href="ca_locagrid_geom.html">ca_locagrid_geom()</a></code> </p>
         </td>
-        <td><p>Get the geometry of the LOCA data set vector grid.</p></td>
+        <td><p>Get the LOCA grid cells as a sf object</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-using-the-cal-adapt-data-catalog" class="hasAnchor"><a href="#section-using-the-cal-adapt-data-catalog" class="anchor"></a>Using the Cal-Adapt data catalog</h2>
+          <p class="section-desc"><p>Use a local copy of the Cal-Adapt catalog to find the data you’re looking for</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="ca_catalog_rs.html">ca_catalog_rs()</a></code> </p>
+        </td>
+        <td><p>Get the Cal-Adapt raster series data catalog</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_catalog_fetch.html">ca_catalog_fetch()</a></code> </p>
+        </td>
+        <td><p>Fetch a new copy of the Cal-Adapt raster series catalog</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_catalog_search.html">ca_catalog_search()</a></code> </p>
+        </td>
+        <td><p>Search the Cal-Adapt raster series data catalog</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -382,7 +425,7 @@
         <td>
           <p><code><a href="aoipreset_types.html">aoipreset_types</a></code> <code><a href="aoipreset_types.html">aoipreset_idflds</a></code> <code><a href="aoipreset_types.html">aoipreset_idval</a></code> </p>
         </td>
-        <td><p>Area-of-Interest Presets</p></td>
+        <td><p>Area-of-interest presets</p></td>
       </tr><tr>
         
         <td>
@@ -405,9 +448,15 @@
       <tr>
         
         <td>
+          <p><code><a href="ca_db_read.html">ca_db_read()</a></code> </p>
+        </td>
+        <td><p>Load a Cal-Adapt SQLite database into R</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="ca_db_info.html">ca_db_info()</a></code> </p>
         </td>
-        <td><p>View properties of a Cal-Adapt values databases</p></td>
+        <td><p>View properties of a Cal-Adapt SQLlite database</p></td>
       </tr><tr>
         
         <td>
@@ -418,8 +467,8 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-managing-cropped-rasters" class="hasAnchor"><a href="#section-managing-cropped-rasters" class="anchor"></a>Managing Cropped Rasters</h2>
-          <p class="section-desc"><p>Manage cropped rasters saved as TIF</p></p>
+          <h2 id="section-managing-rasters" class="hasAnchor"><a href="#section-managing-rasters" class="anchor"></a>Managing Rasters</h2>
+          <p class="section-desc"><p>Downloading and working with climate data as rasters</p></p>
         </th>
       </tr>
       
@@ -430,9 +479,33 @@
       <tr>
         
         <td>
-          <p><code><a href="ca_read_stars.html">ca_read_stars()</a></code> </p>
+          <p><code><a href="ca_biggeom_blocks.html">ca_biggeom_blocks()</a></code> </p>
         </td>
-        <td><p>Read a stars object from disk</p></td>
+        <td><p>Split a large geom into blocks small enough to ask the API for rasters</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_stars_read.html">ca_stars_read()</a></code> </p>
+        </td>
+        <td><p>Read tif files from disk</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_stars_index.html">ca_stars_index()</a></code> </p>
+        </td>
+        <td><p>Create an index for a list of stars rasters</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_stars_6d.html">ca_stars_6d()</a></code> </p>
+        </td>
+        <td><p>Create a six-dimensional stars object of projected climate data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ca_stars_mosaic.html">ca_stars_mosaic()</a></code> </p>
+        </td>
+        <td><p>Mosaic stars objects into a seamless array for large areas</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -449,15 +522,15 @@
       <tr>
         
         <td>
-          <p><code><a href="ca_getcache.html">ca_getcache()</a></code> <code><a href="ca_getcache.html">ca_setcache()</a></code> </p>
+          <p><code><a href="ca_settings.html">ca_settings()</a></code> </p>
         </td>
-        <td><p>Manage Cache Directory</p></td>
+        <td><p>Manage package settings</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="ca_catalog_fetch.html">ca_catalog_fetch()</a></code> </p>
+          <p><code><a href="ca_getcache.html">ca_getcache()</a></code> <code><a href="ca_getcache.html">ca_setcache()</a></code> </p>
         </td>
-        <td><p>Fetch a new copy of the Cal-Adapt raster series catalog</p></td>
+        <td><p>Manage cache directory</p></td>
       </tr>
     </tbody>
     </table>

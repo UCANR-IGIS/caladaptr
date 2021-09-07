@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_slug.R
 \name{ca_slug}
 \alias{ca_slug}
-\title{Assign Slug(s) to a Cal-Adapt API call}
+\title{Adds slug(s) to a Cal-Adapt API call}
 \usage{
 ca_slug(x = ca_apireq(), slug)
 }

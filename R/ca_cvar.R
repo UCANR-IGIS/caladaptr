@@ -1,4 +1,4 @@
-#' Assign climate variable(s) to a Cal-Adapt API call
+#' Add climate variable(s) to a Cal-Adapt API request
 #'
 #' Specifies climate variable(s) a Cal-Adapt API call should retrieve
 #'

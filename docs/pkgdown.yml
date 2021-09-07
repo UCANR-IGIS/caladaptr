@@ -1,9 +1,13 @@
-pandoc: 2.9.2.1
+pandoc: 2.11.4
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
-  big-query: big-query.html
-last_built: 2021-05-18T15:36Z
+  api-requests: api-requests.html
+  large-queries: large-queries.html
+  rasters-pt1: rasters-pt1.html
+  rasters-pt2: rasters-pt2.html
+  rasters-pt3: rasters-pt3.html
+last_built: 2021-09-07T01:46Z
 urls:
   reference: http://ucanr-igis.github.io/caladapt/reference
   article: http://ucanr-igis.github.io/caladapt/articles

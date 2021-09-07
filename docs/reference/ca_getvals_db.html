@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -181,22 +193,23 @@
     <p>Write values from an API request to a local database</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_getvals_db</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>db_fn</span>,
-  <span class='kw'>db_tbl</span>,
-  indices = <span class='kw'>NULL</span>,
-  new_recs_only = <span class='fl'>TRUE</span>,
-  trans_len = <span class='fl'>100</span>,
-  lookup_tbls = <span class='fl'>TRUE</span>,
-  lookup_ret_joined = <span class='fl'>TRUE</span>,
-  pause_n = <span class='fl'>1000</span>,
-  pause_secs = <span class='fl'>60</span>,
-  write_sidecar = <span class='fl'>TRUE</span>,
-  stop_on_err = <span class='fl'>TRUE</span>,
-  quiet = <span class='fl'>FALSE</span>,
-  debug = <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ca_getvals_db</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>db_fn</span>,
+  <span class='va'>db_tbl</span>,
+  omit_col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  indices <span class='op'>=</span> <span class='cn'>NULL</span>,
+  new_recs_only <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  trans_len <span class='op'>=</span> <span class='fl'>100</span>,
+  lookup_tbls <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  lookup_ret_joined <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  pause_n <span class='op'>=</span> <span class='fl'>1000</span>,
+  pause_secs <span class='op'>=</span> <span class='fl'>60</span>,
+  write_sidecar <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  stop_on_err <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  debug <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -212,6 +225,10 @@
     <tr>
       <th>db_tbl</th>
       <td><p>The name of a database table. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>omit_col</th>
+      <td><p>Columns to exclude from the tibble</p></td>
     </tr>
     <tr>
       <th>indices</th>
@@ -264,27 +281,31 @@
     <p>A remote tibble linked to the SQLite database.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Use <code>ca_getvals_db</code> when retrieving large volumes of data (i.e., tens of thousands of values). This function
-writes the data to a SQLite database as they're received so you don't run the risk of exhausting your RAM. Another
-benefit is if the operation is interrupted before it finished (e.g., due to an internet hiccup), it will pick up
-where it left off. Note however for small amounts of data there is no advantage to putting it in a database
-as it will be slower to retrieve and work with.</p>
+    <p><code>ca_getvals_db</code> fetches data from the Cal-Adapt API and writes the data to a SQLite database as they're received. This
+allows you to fetch relatively large volumes of data in the background, and potentially over multiple sessions as it will
+pick up where it left off if interrupted. Saving the values in a database also reduces the risk of exhausting your RAM.</p>
+<p>Use <code>ca_getvals_db</code> to fetch large volumes of data (i.e., hundreds of thousands of values), or whenever you'd like
+to keep  a local copy of the data. Note however for small amounts of data there is no advantage to putting it in a database
+as it will be slighly slower to retrieve and work with.</p>
 <p><code>db_fn</code> should be a file name with path to a SQLite database. A SQLIte database is a single file typically
 with a <em>.db</em> or <em>.sqlite</em> extension. If the database doesn't exist, it will be created. If it already
 exists, the new data will be added to it.</p>
 <p><code>db_tbl</code> should the name of a table within the database where the new data will be saved. The table name should not
 contain special characters and spaces are discouraged. If <code>new_recs_only = TRUE</code>, only new records will be
-added to the database. <code>trans_len</code> defines the number of API calls per
-<a href='https://www.sqlitetutorial.net/sqlite-transaction/'>https://www.sqlitetutorial.net/sqlite-transaction/</a>SQLite transaction (i.e. how many API calls of data to
+added to the database.</p>
+<p><code>trans_len</code> defines the number of API calls per
+<a href='https://www.sqlitetutorial.net/sqlite-transaction/'>SQLite transaction</a> (i.e. how many API calls of data to
 accumulate before doing a write operation to the database). This can speed things up. Set it to 0 to disable transactions.</p>
 <p>If <code>lookup_tbls = TRUE</code>, the database will create lookup tables for categorical columns such as GCM, scenario,
 cvar, period, slug, etc. This can dramatically reduce the size of the SQLite database file and is generally recommended.
 id <code>lookup_ret_joined = TRUE</code>, the tibble returned will have the lookup tables joined (i.e., column names will
-be unaltered); if not the returned tibble will have id values for certain values.</p>
-<p><code>indices</code> is a vector of column names that you'd like indexed (ignored if <code>lookup_tbls = FALSE</code>). Creating indices can
-improve the performance of filters and joins, but at the cost of a larger database file and slower write operations. Fields you can
-create indices on include <code>"feat_id"</code> (the location id value), <code>"cvar"</code>, <code>"gcm"</code>, <code>"scenario"</code>, <code>"period"</code>,
-<code>"slug"</code>, and <code>"spag"</code>.</p>
+be unaltered); if not the returned tibble will have id values for certain values. A small text file is created for each SQLite
+database containing the names of the tables and SQL statement to join them (read automatically
+by <code><a href='ca_db_read.html'>ca_db_read</a></code>).</p>
+<p><code>indices</code> is a vector of column names in <code>db_tbl</code> that you'd like indexed (ignored if <code>lookup_tbls = FALSE</code>).
+Creating indices can improve the performance of filters and joins when you generate summaries, but at the cost of a larger
+database file and slightly slower write operations. Fields you can create indices on include <code>"feat_id"</code> (the location id value),
+<code>"cvar"</code>, <code>"gcm"</code>, <code>"scenario"</code>, <code>"period"</code>, <code>"slug"</code>, and <code>"spag"</code>.</p>
 <p>Indices can also be added to a SQLite database after downloading is complete with <a href='ca_db_indices.html'>ca_db_indices</a>. For large queries (e.g. thousands of
 API calls), it is recommended to not build indices during the download process, and only add indices for those fields you
 plan to filter on or join during your analysis. You can view which indices exist with <code><a href='ca_db_info.html'>ca_db_info</a></code>.</p>
@@ -296,7 +317,7 @@ the results, but to retrieve the actual values you need to use `collect()`. For 
 see <a href='https://dbplyr.tidyverse.org/articles/dbplyr.html'>https://dbplyr.tidyverse.org/articles/dbplyr.html</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='ca_db_info.html'>ca_db_info</a></code>, <code><a href='ca_db_indices.html'>ca_db_indices</a></code></p></div>
+    <div class='dont-index'><p><code><a href='ca_db_info.html'>ca_db_info</a></code>, <code><a href='ca_db_indices.html'>ca_db_indices</a></code>, <code><a href='ca_db_read.html'>ca_db_read</a></code>,</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

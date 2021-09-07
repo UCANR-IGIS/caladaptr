@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_scenario.R
 \name{ca_scenario}
 \alias{ca_scenario}
-\title{Assign emission scenario(s) to a Cal-Adapt API call}
+\title{Add emission scenario(s) to a Cal-Adapt API request}
 \usage{
 ca_scenario(x = ca_apireq(), scenario)
 }

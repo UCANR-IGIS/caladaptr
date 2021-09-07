@@ -1,4 +1,4 @@
-#' @title Cal-Adapt Base URL
+#' @title Cal-Adapt base URL
 #' @description Base URL for all calls to the Cal-Adapt API
 #' @docType data
 #' @usage data(ca_baseurl)

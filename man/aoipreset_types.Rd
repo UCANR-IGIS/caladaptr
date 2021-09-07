@@ -5,13 +5,13 @@
 \alias{aoipreset_types}
 \alias{aoipreset_idflds}
 \alias{aoipreset_idval}
-\title{Area-of-Interest Presets}
+\title{Area-of-interest presets}
 \format{
 An character vector with the names of area-of-interest presets
 
 Named list with with one element per preset type
 
-Named list of dataframes, with with one element per preset type
+Named list of data frames, with with one element per preset type
 }
 \usage{
 data(aoipreset_types)

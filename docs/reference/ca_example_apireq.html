@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Example API requests — ca_example_apireq • caladaptr</title>
+<title>Sample API requests — ca_example_apireq • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Example API requests — ca_example_apireq" />
-<meta property="og:description" content="Example API requests" />
+<meta property="og:title" content="Sample API requests — ca_example_apireq" />
+<meta property="og:description" content="Sample API requests" />
 
 
 
@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -172,33 +184,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Example API requests</h1>
+    <h1>Sample API requests</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_example_apireq.R'><code>R/ca_example_apireq.R</code></a></small>
     <div class="hidden name"><code>ca_example_apireq.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Example API requests</p>
+    <p>Sample API requests</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_example_apireq</span>(<span class='kw'>n</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_example_apireq</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>n</th>
-      <td><p>Which sample API request to return (1..5)</p></td>
+      <th>x</th>
+      <td><p>The number of a sample API request to return</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>These sample API requests can be used in demos, documentation, and tests.</p>
-<p>n = 1: Basic API request - one point, two CGMs, 20 years of annual data.</p>
-<p>n = 2: Three Congressional districts, monthly data, 4 years</p>
-<p>n = 3: sf data frame with one feature, 1 GCM, 1 scenario, 2 years of daily data</p>
-<p>n = 4: Simple feature data frame with two multipolygons, 1 GCM, 1 scenario, 20 years of annual data</p>
+    <p>These sample API requests can be used in demos, documentation, and tests. <code>x</code> should be an
+integer:</p>
+<p><code>x = 1</code>: Basic API request for Scripps data -- one point, two CGMs, 20 years of annual data.</p>
+<p><code>x = 2</code>: Three Congressional districts, monthly data, 4 years</p>
+<p><code>x = 3</code>: sf data frame with one feature, 1 GCM, 1 scenario, 2 years of daily data</p>
+<p><code>x = 4</code>: sf data frame with two multipolygons, 1 GCM, 1 scenario, 20 years of annual data</p>
+<p><code>x = 5</code>: Livheh data, ten census tracts, 20 years of daily temp data,
+spatial aggregation mean</p>
+<p><code>x = 6</code>: Livheh data, five census tracts (including one from #5), 5 years of daily temp
+data, spatial aggregation = mean</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

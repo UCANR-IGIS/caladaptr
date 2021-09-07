@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -181,13 +193,14 @@
     <p>Get values from an API request object as a tibble</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_getvals_tbl</span>(
-  <span class='kw'>x</span>,
-  quiet = <span class='fl'>FALSE</span>,
-  debug = <span class='fl'>FALSE</span>,
-  stop_on_err = <span class='fl'>TRUE</span>,
-  shiny_progress = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ca_getvals_tbl</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  debug <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  stop_on_err <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  shiny_progress <span class='op'>=</span> <span class='cn'>NULL</span>,
+  omit_col <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -212,11 +225,25 @@
       <th>shiny_progress</th>
       <td><p>A Shiny progress bar object, see Details.</p></td>
     </tr>
+    <tr>
+      <th>omit_col</th>
+      <td><p>Columns to exclude from the tibble</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A tibble</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p><code>ca_getvals_tbl</code> fetches data via the Cal-Adapt API, returning a tibble. Everything is done in memory. To download Cal-Adapt into
+a local SQLite database, see <code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>. To download Cal-Adapt data as raster files, see <code><a href='ca_getrst_stars.html'>ca_getrst_stars</a></code>.</p>
+<p>A default set of columns will be returned based on how the dataset is specified (i.e., by slug, cvar+scen+gcm+per, livneh, etc). Some columns
+can be omitted by passing column names to <code>col_omit</code>. Three columns that can never be omitted are <code>feat_id</code> (location id value),
+<code>dt</code> (date), and <code>val</code> (the actual climate values).</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='ca_getvals_db.html'>ca_getvals_db</a></code>, <code><a href='ca_getrst_stars.html'>ca_getrst_stars</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

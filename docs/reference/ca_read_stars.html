@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read a stars object from disk — ca_read_stars • caladaptr</title>
+<title>Read downloaded TIF files into R — ca_read_stars • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Read a stars object from disk — ca_read_stars" />
-<meta property="og:description" content="Read a stars object from disk" />
+<meta property="og:title" content="Read downloaded TIF files into R — ca_read_stars" />
+<meta property="og:description" content="`r lifecycle::badge(deprecated)`
+`ca_read_stars()` was renamed to `ca_stars_read()` for a more consistent API." />
 
 
 
@@ -82,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +106,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -172,39 +185,22 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read a stars object from disk</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_read_stars.R'><code>R/ca_read_stars.R</code></a></small>
+    <h1>Read downloaded TIF files into R</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_stars_read.R'><code>R/ca_stars_read.R</code></a></small>
     <div class="hidden name"><code>ca_read_stars.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Read a stars object from disk</p>
+    <p>`r lifecycle::badge(deprecated)`</p>
+<p>`ca_read_stars()` was renamed to `ca_stars_read()` for a more consistent API.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_read_stars</span>(<span class='kw'>x</span>, read_sidecar = <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>ca_read_stars</span><span class='op'>(</span><span class='va'>x</span>, read_sidecar <span class='op'>=</span> <span class='cn'>TRUE</span>, proxy <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>A single file name</p></td>
-    </tr>
-    <tr>
-      <th>read_sidecar</th>
-      <td><p>Whether to read the sidecar file if it exists, logical</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This function can be used to read a tif file downloaded by <code><a href='ca_getrst_stars.html'>ca_getrst_stars</a></code>. It
-is a lightweight wrapper around stars::read_stars(), with the ability to create a sidecar
-file (also created by <code><a href='ca_getrst_stars.html'>ca_getrst_stars</a></code>) which restores all of the attributes of
-the array dimensions that are not preserved by the tif format.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='ca_getrst_stars.html'>ca_getrst_stars</a></code></p></div>
+    <div class='dont-index'><p><code><a href='ca_stars_read.html'>ca_stars_read</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

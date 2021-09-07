@@ -23,6 +23,7 @@
 #' @importFrom curl has_internet
 #' @import crayon
 #' @importFrom utils txtProgressBar setTxtProgressBar
+#' @export
 
 ca_catalog_fetch <- function(quiet = FALSE, save_to_cache = TRUE) {
 

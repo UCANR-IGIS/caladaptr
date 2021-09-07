@@ -1,6 +1,6 @@
 #' Assign temporal aggregation period to a Cal-Adapt API call
 #'
-#' Specifies the temporal aggregation periond a Cal-Adapt API call should retrieve
+#' Add a temporal aggregation period to a Cal-Adapt API request
 #'
 #' @param x Cal-Adapt API request
 #' @param period Period of temporal aggregation

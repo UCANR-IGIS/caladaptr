@@ -2,24 +2,31 @@
 % Please edit documentation in R/ca_example_apireq.R
 \name{ca_example_apireq}
 \alias{ca_example_apireq}
-\title{Example API requests}
+\title{Sample API requests}
 \usage{
-ca_example_apireq(n)
+ca_example_apireq(x)
 }
 \arguments{
-\item{n}{Which sample API request to return (1..5)}
+\item{x}{The number of a sample API request to return}
 }
 \description{
-Example API requests
+Sample API requests
 }
 \details{
-These sample API requests can be used in demos, documentation, and tests.
+These sample API requests can be used in demos, documentation, and tests. \code{x} should be an
+integer:
 
-n = 1: Basic API request - one point, two CGMs, 20 years of annual data.
+\code{x = 1}: Basic API request for Scripps data -- one point, two CGMs, 20 years of annual data.
 
-n = 2: Three Congressional districts, monthly data, 4 years
+\code{x = 2}: Three Congressional districts, monthly data, 4 years
 
-n = 3: sf data frame with one feature, 1 GCM, 1 scenario, 2 years of daily data
+\code{x = 3}: sf data frame with one feature, 1 GCM, 1 scenario, 2 years of daily data
 
-n = 4: Simple feature data frame with two multipolygons, 1 GCM, 1 scenario, 20 years of annual data
+\code{x = 4}: sf data frame with two multipolygons, 1 GCM, 1 scenario, 20 years of annual data
+
+\code{x = 5}: Livheh data, ten census tracts, 20 years of daily temp data,
+spatial aggregation mean
+
+\code{x = 6}: Livheh data, five census tracts (including one from #5), 5 years of daily temp
+data, spatial aggregation = mean
 }

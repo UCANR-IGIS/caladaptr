@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get a cropped raster — ca_getrst_stars • caladaptr</title>
+<title>Get cropped rasters — ca_getrst_stars • caladaptr</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Get a cropped raster — ca_getrst_stars" />
+<meta property="og:title" content="Get cropped rasters — ca_getrst_stars" />
 <meta property="og:description" content="Download a cropped raster for an API request" />
 
 
@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -105,7 +105,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/big-query.html">Querying Large Amounts of Data</a>
+      <a href="../articles/api-requests.html">API Requests</a>
+    </li>
+    <li>
+      <a href="../articles/large-queries.html">Large Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
+    </li>
+    <li>
+      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
     </li>
   </ul>
 </li>
@@ -172,7 +184,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get a cropped raster</h1>
+    <h1>Get cropped rasters</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucanr-igis/caladaptr/blob/master/R/ca_getrst_stars.R'><code>R/ca_getrst_stars.R</code></a></small>
     <div class="hidden name"><code>ca_getrst_stars.Rd</code></div>
     </div>
@@ -181,16 +193,19 @@
     <p>Download a cropped raster for an API request</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ca_getrst_stars</span>(
-  <span class='kw'>x</span>,
-  out_dir = <span class='kw'>NULL</span>,
-  mask = <span class='fl'>TRUE</span>,
-  merge_geoms = <span class='fl'>FALSE</span>,
-  sidecar_write = <span class='fl'>TRUE</span>,
-  stop_on_err = <span class='fl'>TRUE</span>,
-  quiet = <span class='fl'>FALSE</span>,
-  debug = <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ca_getrst_stars</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  out_dir <span class='op'>=</span> <span class='cn'>NULL</span>,
+  mask <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  merge_geoms <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  sidecar <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  stop_on_err <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  normalize_path <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  debug <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  write_sidecar <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Deprecated.html'>deprecated</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -212,7 +227,7 @@
       <td><p>Whether to merge geometries, see Details</p></td>
     </tr>
     <tr>
-      <th>sidecar_write</th>
+      <th>sidecar</th>
       <td><p>Save a small sidecar file with the TIF file containing additional attribute info</p></td>
     </tr>
     <tr>
@@ -220,18 +235,30 @@
       <td><p>Stop if the server returns an error</p></td>
     </tr>
     <tr>
-      <th>quiet</th>
-      <td><p>Suppress messages</p></td>
+      <th>overwrite</th>
+      <td><p>Re-download and overwrite existing files</p></td>
+    </tr>
+    <tr>
+      <th>normalize_path</th>
+      <td><p>Expand and normalize output file names</p></td>
     </tr>
     <tr>
       <th>debug</th>
       <td><p>Print additional output at the console</p></td>
     </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>Suppress messages</p></td>
+    </tr>
+    <tr>
+      <th>write_sidecar</th>
+      <td><p>Deprecated</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector of TIF file names</p>
+    <p>A vector of TIF file names. If <code>normalize_path = TRUE</code> the output file names will be expanded (absolute) and use standard slashes for the OS (see normalizePath).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This will download time series cropped raster(s) for your study area, convert them to stars objects, and export them
@@ -242,7 +269,7 @@ pass <code>merge_geoms = TRUE</code>.</p>
 San Bernadino County). If you want to download
 rasters for a large area (e.g., the whole state of California) you're better off downloading NetCDF files from the
 Cal-Adapt <a href='http://albers.cnr.berkeley.edu/data/'>data server</a>.</p>
-<p>If <code>sidecar_write = TRUE</code>, a small file with the same base name as the tif will be saved. This sidecar file contains
+<p>If <code>sidecar = TRUE</code>, a small file with the same base name as the tif will be saved. This sidecar file contains
 attributes of a space-time-array not preserved by tifs. You can import the tif file back into R as a stars object
 with <code><a href='ca_read_stars.html'>ca_read_stars</a></code>.</p>
 <p>This function merely downloads the cropped rasters to disk and returns the filenames. To work with cropped rasters

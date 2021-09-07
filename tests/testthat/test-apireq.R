@@ -11,14 +11,17 @@ test_that("API requests are constructed properly", {
   expect_equal(length(ca_period(period = NA)), 9)
 })
 
-test_that("Raster Series Catalog works", {
-  catalog_df <- ca_catalog_rs(quiet = TRUE)
-  expect_s3_class(catalog_df, "data.frame")
-  expect_equal(length(catalog_df), 13)
-  expect_equal(catalog_df %>% filter(slug == "tasmax_30yavg_ens10_rcp45") %>% pull(url),
-               "https://api.cal-adapt.org/api/series/tasmax_30yavg_ens10_rcp45/")
+test_that("Preflight check works", {
+  cap1_good_yn <- ca_example_apireq(1) %>% ca_preflight(quiet=TRUE)
+  expect_equal(cap1_good_yn, TRUE)
+  cap6_good_yn <- ca_example_apireq(6) %>% ca_preflight(quiet=TRUE)
+  expect_equal(cap6_good_yn, TRUE)
 })
 
-
-
+test_that("ca_apicalls works", {
+  cap2 <- ca_example_apireq(2)
+  cap2_apicalls_lst <- cap2 %>% ca_apicalls()
+  expect_equal(nrow(cap2_apicalls_lst$api_tbl), 3)
+  expect_equal(names(cap2_apicalls_lst$api_tbl)[1], "feat_id")
+})
 

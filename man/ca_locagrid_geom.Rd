@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_locagrid_geom.R
 \name{ca_locagrid_geom}
 \alias{ca_locagrid_geom}
-\title{Get the geometry of the LOCA data set vector grid.}
+\title{Get the LOCA grid cells as a sf object}
 \usage{
 ca_locagrid_geom(quiet = FALSE)
 }
@@ -13,7 +13,7 @@ ca_locagrid_geom(quiet = FALSE)
 A simple feature data frame
 }
 \description{
-Get the geometry of the LOCA data set vector grid.
+Get the geometry of the LOCA grid cells as a sf polygon object
 }
 \details{
 This retrieves the geometry of the LOCA grid as a vector (polygon)

@@ -3,7 +3,7 @@
 \docType{data}
 \name{gcms}
 \alias{gcms}
-\title{Global Climate Models}
+\title{Global climate models}
 \format{
 An character vector with the names of 10 GCMs (abbreviated)
 }
