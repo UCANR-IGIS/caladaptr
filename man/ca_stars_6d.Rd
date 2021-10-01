@@ -2,7 +2,7 @@
 % Please edit documentation in R/ca_stars_6d.R
 \name{ca_stars_6d}
 \alias{ca_stars_6d}
-\title{Create a six-dimensional stars object of projected climate data}
+\title{Create a six-dimensional stars object for modeled climate data}
 \usage{
 ca_stars_6d(stars_lst, index_tbl = NULL)
 }
@@ -15,7 +15,7 @@ ca_stars_6d(stars_lst, index_tbl = NULL)
 A six-dimensional stars object with dimensions x, y, scenario, gcm, date, and cvar
 }
 \description{
-Create a six-dimensional stars object of projected climate data
+Create a six-dimensional stars object for modeled climate data
 }
 \details{
 stars_lst is a list of stars objects downloaded by \code{\link{ca_getrst_stars}} and turned into a list by

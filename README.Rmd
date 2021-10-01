@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 `caladaptr` is an API client that makes it easier to work with data from [Cal-Adapt.org](https://cal-adapt.org/) in R. The niche of `caladaptr` is to bring data into R after which you can use other packages for analysis and visualization:
 
-<p align="center"><img src="man/figures/caladaptr_role_480x390x256.png" width="480" height="390"/></p>
+<p align="center"><img src="man/figures/caladaptr_role_480x432x256.png" width="480" height="432"/></p>
 
 `caladaptr` allows you to:
 

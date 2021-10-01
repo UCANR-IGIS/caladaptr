@@ -1,3 +1,9 @@
+# caladaptr 0.6.2 (2021-09-06)
+
+* Added copyright holder and funding organization to the package authors 
+* Updated package license from GPL-3 to GPL (>= 3)  
+* logo updated - text and border are now green instead of red 
+
 # caladaptr 0.6.1 (2021-09-06)
 
 Version 0.6.1 is a fairly significant update, with several new and improved functions especially for downloading and working with rasters, SQLite databases, improved preflight testing for API requests, data catalog searching, customizing messages with a package-wide color scheme, and making function names more consistent. Also 5 vignettes on API Requests, Large Queries, and Rasters Part I, II, and III. 

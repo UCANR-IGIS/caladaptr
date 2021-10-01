@@ -1,14 +1,22 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt via the API
-Version: 0.6.1
-Date: 2021-09-06
-Authors@R: person("Andy", "Lyons", email = "caladaptr@gmail.com", role = c("aut", "cre"))
+Version: 0.6.2
+Date: 2021-09-30
+Authors@R: c(person(given = "Andy",
+                  family = "Lyons", 
+                  role = c("aut", "cre"),
+                  email = "caladaptr@gmail.com", 
+                  comment = c(ORCID = "0000-0002-7505-6709")),
+            person(given = "Regents of the University of California",
+                   role = "cph"),
+            person(given = "California Strategic Growth Council",
+                   role = "fnd"))
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
 URL: https://ucanr-igis.github.io/caladaptr
 Description: Base functions for importing climate data using the 
     Cal-Adapt API.
-License: GPL-3
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
