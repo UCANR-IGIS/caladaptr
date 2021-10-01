@@ -17,7 +17,7 @@ is to bring data into R after which you can use other packages for
 analysis and visualization:
 
 <p align="center">
-<img src="man/figures/caladaptr_role_480x390x256.png" width="480" height="390"/>
+<img src="man/figures/caladaptr_role_480x432x256.png" width="480" height="432"/>
 </p>
 
 `caladaptr` allows you to:
@@ -101,7 +101,7 @@ from Scripps, for a single point location.
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.6.1)
+#> caladaptr (version 0.6.2)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 
