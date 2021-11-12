@@ -104,6 +104,9 @@
 <li>
       <a href="https://caladaptr.shinyapps.io/timeseries/">Annual Data Time Series</a>
     </li>
+    <li>
+      <a href="https://ucanr-igis.shinyapps.io/chill/">Projected Chill Hours</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -514,9 +517,9 @@ p.indented2 {margin-left:2em;}
 <div id="month-filter" class="section level3">
 <h3 class="hasAnchor">
 <a href="#month-filter" class="anchor"></a>Month Filter</h3>
-<p>In a similar fashion, we can use <code><a href="http://lubridate.tidyverse.org/reference/month.html">lubridate::month()</a></code> to just get the days in March:</p>
+<p>In a similar fashion, we can use <code><a href="https://lubridate.tidyverse.org/reference/month.html">lubridate::month()</a></code> to just get the days in March:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">tasmin_tasmax_march</span> <span class="op">&lt;-</span> <span class="va">tasmin_tasmax_combined</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">tasmin_tasmax_march</span> <span class="op">&lt;-</span> <span class="va">tasmin_tasmax_combined</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 4 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s):</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median     Mean  3rd Qu.     Max.   NA's</span>
@@ -530,24 +533,24 @@ p.indented2 {margin-left:2em;}
 <p>Note how the result includes the actual date values for the dimension fields (which is critical actually because they’re not regularly spaced). We can visually verify we only got March values by looking at a random sample of the date values. <code><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values()</a></code> return the values for a dimension:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="va">tasmin_tasmax_march</span>, which <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt;  [1] "2051-03-31" "2053-03-05" "2064-03-22" "2050-03-11" "2064-03-13"</span>
-<span class="co">#&gt;  [6] "2062-03-10" "2054-03-22" "2050-03-27" "2046-03-22" "2058-03-20"</span>
-<span class="co">#&gt; [11] "2051-03-29" "2052-03-01" "2056-03-26" "2047-03-24" "2059-03-08"</span>
-<span class="co">#&gt; [16] "2050-03-08" "2045-03-13" "2046-03-14" "2055-03-11" "2055-03-31"</span></code></pre></div>
+<span class="co">#&gt;  [1] "2051-03-30" "2059-03-25" "2048-03-13" "2060-03-30" "2061-03-27"</span>
+<span class="co">#&gt;  [6] "2062-03-26" "2059-03-21" "2064-03-02" "2062-03-17" "2065-03-07"</span>
+<span class="co">#&gt; [11] "2060-03-14" "2056-03-22" "2055-03-23" "2054-03-14" "2046-03-25"</span>
+<span class="co">#&gt; [16] "2055-03-28" "2060-03-28" "2062-03-09" "2059-03-26" "2054-03-11"</span></code></pre></div>
 </div>
 <div id="julian-day-filter" class="section level3">
 <h3 class="hasAnchor">
 <a href="#julian-day-filter" class="anchor"></a>Julian Day Filter</h3>
-<p>We can also filter on the day-of-the-year (Julian day). First get the Julian day for the start and end dates using <code><a href="http://lubridate.tidyverse.org/reference/day.html">lubridate::yday()</a></code>:</p>
+<p>We can also filter on the day-of-the-year (Julian day). First get the Julian day for the start and end dates using <code><a href="https://lubridate.tidyverse.org/reference/day.html">lubridate::yday()</a></code>:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">jday_start</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2021-04-15"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">jday_start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2021-04-15"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 105</span>
-<span class="op">(</span><span class="va">jday_end</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2021-10-01"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="op">(</span><span class="va">jday_end</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2021-10-01"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 274</span></code></pre></div>
 <p>Filter our daily temperature stars object using these Julian dates:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">tasmin_tasmax_ag_season</span> <span class="op">&lt;-</span>  <span class="va">tasmin_tasmax_combined</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="va">jday_start</span>, <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">jday_end</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="va">jday_start</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">jday_end</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 4 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median     Mean 3rd Qu.     Max.  NA's</span>
@@ -814,7 +817,7 @@ p.indented2 {margin-left:2em;}
 </ol>
 <p>First we get the years:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">tmin_allyrs_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">years_all</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">tmin_allyrs_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">years_all</span><span class="op">)</span>
 <span class="co">#&gt;  [1] 2045 2046 2047 2048 2049 2050 2051 2052 2053 2054 2055 2056 2057 2058 2059</span>
 <span class="co">#&gt; [16] 2060 2061 2062 2063 2064 2065</span></code></pre></div>
 <p>Now we can write a little loop that builds a data frame of the number of frozen pixels per year:</p>
@@ -823,7 +826,7 @@ p.indented2 {margin-left:2em;}
 <span class="kw">for</span> <span class="op">(</span><span class="va">yr</span> <span class="kw">in</span> <span class="va">years_all</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">year_numfrost_df</span> <span class="op">&lt;-</span> <span class="va">year_numfrost_df</span> <span class="op">%&gt;%</span> 
     <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>year <span class="op">=</span> <span class="va">yr</span>,
-                     num_frozen_pixels <span class="op">=</span> <span class="va">frost_allyrs_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="va">yr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                     num_frozen_pixels <span class="op">=</span> <span class="va">frost_allyrs_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="va">yr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
                        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span>
 <span class="va">year_numfrost_df</span>
@@ -853,7 +856,7 @@ p.indented2 {margin-left:2em;}
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">years_all</span>, <span class="kw">function</span><span class="op">(</span><span class="va">yr</span><span class="op">)</span> 
   <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>year <span class="op">=</span> <span class="va">yr</span>, 
-             frost_pixel_days <span class="op">=</span> <span class="va">frost_allyrs_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="va">yr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+             frost_pixel_days <span class="op">=</span> <span class="va">frost_allyrs_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="va">yr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
                <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    year frost_pixel_days</span>

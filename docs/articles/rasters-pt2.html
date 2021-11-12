@@ -104,6 +104,9 @@
 <li>
       <a href="https://caladaptr.shinyapps.io/timeseries/">Annual Data Time Series</a>
     </li>
+    <li>
+      <a href="https://ucanr-igis.shinyapps.io/chill/">Projected Chill Hours</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -243,7 +246,7 @@ p.indented2 {margin-left:2em;}
 <p>These extra dimensions can be used to subset the stars object. For example if we just wanted the climate variables for emissions scenario rcp85, GCM MIROC5, and Jan-March, we could write an expression for <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp85"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="http://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp85"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span> 
 <span class="co">#&gt; stars object with 6 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median     Mean  3rd Qu.     Max.  NA's</span>
@@ -301,7 +304,7 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 
 <span class="va">date_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="http://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">is_in</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">date_idx</span><span class="op">)</span>
@@ -343,7 +346,7 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">## Select a range of dates in 2050. If we wanted all years this could also go into a loop.</span>
 <span class="va">date_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">`==`</span><span class="op">(</span><span class="fl">2050</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="op">)</span>
 
@@ -523,7 +526,7 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <p>Next we simplify the task by creating a stars object with daily min / max temp for just one year, one emissions scenario, and GCM:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">mercd_2050_stars</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="fl">2050</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="fl">2050</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 6 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s):</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median    Mean  3rd Qu.     Max.   NA's</span>

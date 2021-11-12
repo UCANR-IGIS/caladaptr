@@ -117,6 +117,8 @@ navbar:
       menu:
        - text: "Annual Data Time Series"
          href: https://caladaptr.shinyapps.io/timeseries/
+       - text: "Projected Chill Hours"
+         href: https://ucanr-igis.shinyapps.io/chill/
     presentations:
       text: Presentations
       menu:
