@@ -25,6 +25,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
       </span>
     </div>
 
@@ -81,16 +83,16 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    R Notebooks
+    Notebooks
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html">Introduction</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html" class="external-link">Introduction</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html">Compute Chill</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html" class="external-link">Compute Chill</a>
     </li>
   </ul>
 </li>
@@ -102,29 +104,35 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://caladaptr.shinyapps.io/timeseries/">Annual Data Time Series</a>
+      <a href="https://caladaptr.shinyapps.io/timeseries/" class="external-link">Annual Data Time Series</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.shinyapps.io/chill/">Projected Chill Hours</a>
+      <a href="https://ucanr-igis.shinyapps.io/chill/" class="external-link">Projected Chill Hours</a>
+    </li>
+    <li>
+      <a href="https://github.com/ucanr-igis/caladaptr.apps/" class="external-link">caladpatr.apps package</a>
     </li>
   </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Presentations
+    Pres &amp; Workshops
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html">Overview</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html" class="external-link">Overview</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Getting Started Workshop (Oct 2021)</a>
     </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/ucanr-igis/caladaptr/">
+  <a href="https://github.com/ucanr-igis/caladaptr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -139,13 +147,13 @@
 
       
 
-      </header><script src="rasters-pt3_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Rasters Part III: Downloading Rasters for Large Areas</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt3.Rmd"><code>vignettes/rasters-pt3.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt3.Rmd" class="external-link"><code>vignettes/rasters-pt3.Rmd</code></a></small>
       <div class="hidden name"><code>rasters-pt3.Rmd</code></div>
 
     </div>
@@ -155,64 +163,66 @@
 <style type="text/css">
 p.indented2 {margin-left:2em;}
 </style>
-<div id="introdution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introdution" class="anchor"></a>Introdution</h2>
+<div class="section level2">
+<h2 id="introdution">Introdution<a class="anchor" aria-label="anchor" href="#introdution"></a>
+</h2>
 <p>The Cal-Adapt API is a great way to get rasters, because you can specify exactly the area you want, the climate variable(s) you want, and the time frame you want. However raster files are inherently large, and there’s an upper limit on how large of an area you get with one call. Hence we need some strategies to download and work with rasters for large areas (such as the state of California).</p>
 <p>This vignette outlines an approach for downloading and working with rasters for large areas. The essence of the strategy is to 1) downloading rasters in a series of blocks that collectively cover the entire area-of-interest, and 2) mosaic the individual blocks to get one seamless raster. We’ll also see how you can combine multiple 3D mosaiced rasters into a single six-dimensional raster, as explained in <a href="rasters-pt2.html">Part 2</a>, and use parallel processing to speed up pixelwise operations.</p>
 <p>But first…</p>
-<div id="downloading-netcdf-files" class="section level3">
-<h3 class="hasAnchor">
-<a href="#downloading-netcdf-files" class="anchor"></a>Downloading NetCDF Files</h3>
-<p>An alternative to downloading rasters through the API is to simply download the source NetCDF files from the <a href="http://albers.cnr.berkeley.edu/data/">Cal-Adapt Data Server</a>. NetCDF files for the full extent of Cal-Adapt’s LOCA downscaled data at a daily time scale are available for download by FTP/HTTP. You can import NetCDF files into R using <code><a href="https://r-spatial.github.io/stars/reference/read_stars.html">stars::read_stars()</a></code> as well as other packages. <code>caladaptr</code> does not provide any functions or support for the original NetCDF data.</p>
+<div class="section level3">
+<h3 id="downloading-netcdf-files">Downloading NetCDF Files<a class="anchor" aria-label="anchor" href="#downloading-netcdf-files"></a>
+</h3>
+<p>An alternative to downloading rasters through the API is to simply download the source NetCDF files from the <a href="http://albers.cnr.berkeley.edu/data/" class="external-link">Cal-Adapt Data Server</a>. NetCDF files for the full extent of Cal-Adapt’s LOCA downscaled data at a daily time scale are available for download by FTP/HTTP. You can import NetCDF files into R using <code><a href="https://r-spatial.github.io/stars/reference/read_stars.html" class="external-link">stars::read_stars()</a></code> as well as other packages. <code>caladaptr</code> does not provide any functions or support for the original NetCDF data.</p>
 <p><img src="https://ucanr-igis.github.io/caladaptr-res/images/loca_grid_extent_600x646x256.png" style="width:363px; height:390px;"><br><em>NetCDF files for the full extent of Cal-Adapt’s LOCA downscaled climate data are available for download from the Cal-Adapt Data Server</em></p>
 </div>
 </div>
-<div id="break-up-a-large-area-of-interest-into-blocks" class="section level2">
-<h2 class="hasAnchor">
-<a href="#break-up-a-large-area-of-interest-into-blocks" class="anchor"></a>Break-up a large area-of-interest into blocks</h2>
+<div class="section level2">
+<h2 id="break-up-a-large-area-of-interest-into-blocks">Break-up a large area-of-interest into blocks<a class="anchor" aria-label="anchor" href="#break-up-a-large-area-of-interest-into-blocks"></a>
+</h2>
 <p>To illustrate working with large areas, in this example we’ll download TIFs for 50 years of annual precipitation data for several scenarios and GCMs, and the entire state of California.</p>
 <p>First load packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/">stars</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap">tmap</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_mode.html">tmap_mode</a></span><span class="op">(</span><span class="st">"plot"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'sf' was built under R version 4.1.2</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'stars' was built under R version 4.1.2</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap" class="external-link">tmap</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_mode.html" class="external-link">tmap_mode</a></span><span class="op">(</span><span class="st">"plot"</span><span class="op">)</span></code></pre></div>
 <p>We begin by importing the state boundary:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ca_bnd_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/ucanr-igis/caladaptr-res/main/geoms/ca_bnd.geojson"</span>
-<span class="va">ca_bnd_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="va">ca_bnd_url</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">ca_bnd_sf</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html">tm_borders</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_grid.html">tm_grid</a></span><span class="op">(</span>labels.show <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<span class="va">ca_bnd_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">ca_bnd_url</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">ca_bnd_sf</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_grid.html" class="external-link">tm_grid</a></span><span class="op">(</span>labels.show <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt3_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <p><br></p>
 <p>The entire state is far too big to use in an API call, but we can break it up into blocks that are 20,000 mi<sup>2</sup> or less using <code><a href="../reference/ca_biggeom_blocks.html">ca_biggeom_blocks()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ca_bnd_blocks_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_biggeom_blocks.html">ca_biggeom_blocks</a></span><span class="op">(</span><span class="va">ca_bnd_sf</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">ca_bnd_sf</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">ca_bnd_blocks_sf</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_text.html">tm_text</a></span><span class="op">(</span><span class="st">"id"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">ca_bnd_sf</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">ca_bnd_blocks_sf</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_text.html" class="external-link">tm_text</a></span><span class="op">(</span><span class="st">"id"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt3_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 </div>
-<div id="download-tifs" class="section level2">
-<h2 class="hasAnchor">
-<a href="#download-tifs" class="anchor"></a>Download TIFs</h2>
+<div class="section level2">
+<h2 id="download-tifs">Download TIFs<a class="anchor" aria-label="anchor" href="#download-tifs"></a>
+</h2>
 <p>The first step to download TIFs is to construct an API request. We’ll make a request for yearly precipitation totals for 50 years, 2 emissions scenarios, and 4 GCMs:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Create a CAP</span>
-<span class="va">ca_pr_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_loc_sf.html">ca_loc_sf</a></span><span class="op">(</span>loc <span class="op">=</span> <span class="va">ca_bnd_blocks_sf</span>, idfld <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="va">gcms</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="st">"pr"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="../reference/ca_scenario.html">ca_scenario</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"rcp45"</span>, <span class="st">"rcp85"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">ca_pr_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_loc_sf.html">ca_loc_sf</a></span><span class="op">(</span>loc <span class="op">=</span> <span class="va">ca_bnd_blocks_sf</span>, idfld <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="va">gcms</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="st">"pr"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/ca_scenario.html">ca_scenario</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rcp45"</span>, <span class="st">"rcp85"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">2050</span>, end <span class="op">=</span> <span class="fl">2099</span><span class="op">)</span>
 
-<span class="va">ca_pr_cap</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span>check_for <span class="op">=</span> <span class="st">"getrst"</span><span class="op">)</span>
+<span class="va">ca_pr_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span>check_for <span class="op">=</span> <span class="st">"getrst"</span><span class="op">)</span>
 <span class="co">#&gt; General issues</span>
 <span class="co">#&gt;  - none found</span>
 <span class="co">#&gt; Issues for downloading rasters</span>
@@ -225,29 +235,29 @@ p.indented2 {margin-left:2em;}
 </p>
 <p><br></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span> 
-<span class="va">ca_pryr_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"ca_pr-year"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">ca_pryr_dir</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">ca_pryr_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span> 
+<span class="va">ca_pryr_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"ca_pr-year"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">ca_pryr_dir</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">ca_pryr_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
-<span class="va">ca_pryr_tifs</span> <span class="op">&lt;-</span> <span class="va">ca_pr_cap</span> <span class="op">%&gt;%</span> 
+<span class="va">ca_pryr_tifs</span> <span class="op">&lt;-</span> <span class="va">ca_pr_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/ca_getrst_stars.html">ca_getrst_stars</a></span><span class="op">(</span>out_dir <span class="op">=</span> <span class="va">ca_pryr_dir</span>, mask <span class="op">=</span> <span class="cn">TRUE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, 
                   normalize_path <span class="op">=</span> <span class="cn">TRUE</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
-<span class="va">ca_pryr_tifs</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">ca_pryr_tifs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt;  chr [1:144] "pr_year_HadGEM2-ES_rcp45_id-b01.tif" ...</span></code></pre></div>
 </div>
-<div id="import-tifs-and-mosaic-them" class="section level2">
-<h2 class="hasAnchor">
-<a href="#import-tifs-and-mosaic-them" class="anchor"></a>Import TIFs and mosaic them</h2>
+<div class="section level2">
+<h2 id="import-tifs-and-mosaic-them">Import TIFs and mosaic them<a class="anchor" aria-label="anchor" href="#import-tifs-and-mosaic-them"></a>
+</h2>
 <p>After you’ve downloaded TIFs in blocks, the next step is to use <code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code> to import them in R as list of stars objects:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ca_pryr_blcks_stars_lst</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_tifs</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">ca_pryr_blcks_stars_lst</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_tifs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/ca_stars_read.html">ca_stars_read</a></span><span class="op">(</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_stars_lst</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_stars_lst</span><span class="op">)</span>
 <span class="co">#&gt; [1] 144</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_stars_lst</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_stars_lst</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "pr_year_HadGEM2-ES_rcp45_id-b01" "pr_year_CNRM-CM5_rcp45_id-b01"  </span>
 <span class="co">#&gt;  [3] "pr_year_CanESM2_rcp45_id-b01"    "pr_year_MIROC5_rcp45_id-b01"    </span>
 <span class="co">#&gt;  [5] "pr_year_HadGEM2-ES_rcp85_id-b01" "pr_year_CNRM-CM5_rcp85_id-b01"  </span>
@@ -266,13 +276,13 @@ p.indented2 {margin-left:2em;}
 There are several packages you can use to monitor how much memory different R objects are using. To see how much memory an object is using with base R, you can run <code>object.size(x) %&gt;% format(units = "Mb")</code>.
 </p>
 <p class="indented2">
-If your stars objects are too big for memory, you can be selective about which layers are imported and when. Deleting objects when no longer needed can also help. Alternately you can import TIFs as <em>stars proxy</em> objects, by passing <code>proxy = TRUE</code> to <code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code>. Stars proxy objects are more like pointers to the files on disk, so they are very small. Data is only read when actually needed for analysis or plotting. For more info, see the vignette on <a href="https://r-spatial.github.io/stars/articles/stars2.html">stars proxy objects</a>.
+If your stars objects are too big for memory, you can be selective about which layers are imported and when. Deleting objects when no longer needed can also help. Alternately you can import TIFs as <em>stars proxy</em> objects, by passing <code>proxy = TRUE</code> to <code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code>. Stars proxy objects are more like pointers to the files on disk, so they are very small. Data is only read when actually needed for analysis or plotting. For more info, see the vignette on <a href="https://r-spatial.github.io/stars/articles/stars2.html" class="external-link">stars proxy objects</a>.
 </p>
 <p><br></p>
 <p>At this point we have a list with 144 stars objects, representing several GCMs, scenarios, and 18 blocks that collectively cover all of California. That’s still pretty unwieldy, but we can mosaic them with <code><a href="../reference/ca_stars_mosaic.html">ca_stars_mosaic()</a></code>. This will return either a list of stars objects (<code>combine_6d = FALSE</code>, default), or a single stars object (<code>combine_6d = TRUE</code>).</p>
 <p>We’ll start by creating a list of mosaiced rasters (the default). Our list will have one 3D raster for each dataset (slug). The <code>geom_mask</code> argument tells it we want the mosaic returned masked by the original area-of-interest (in this case the state boundary):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ca_pryr_blcks_mos_lst</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_blcks_stars_lst</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">ca_pryr_blcks_mos_lst</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_blcks_stars_lst</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/ca_stars_mosaic.html">ca_stars_mosaic</a></span><span class="op">(</span>geom_mask <span class="op">=</span> <span class="va">ca_bnd_sf</span><span class="op">)</span>
 <span class="co">#&gt;  - mosaicing 18 stars rasters for pr_year_HadGEM2-ES_rcp45</span>
 <span class="co">#&gt;  - mosaicing 18 stars rasters for pr_year_CNRM-CM5_rcp45</span>
@@ -283,7 +293,7 @@ If your stars objects are too big for memory, you can be selective about which l
 <span class="co">#&gt;  - mosaicing 18 stars rasters for pr_year_CanESM2_rcp85</span>
 <span class="co">#&gt;  - mosaicing 18 stars rasters for pr_year_MIROC5_rcp85</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_lst</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_lst</span><span class="op">)</span>
 <span class="co">#&gt; [1] "pr_year_HadGEM2-ES_rcp45" "pr_year_CNRM-CM5_rcp45"  </span>
 <span class="co">#&gt; [3] "pr_year_CanESM2_rcp45"    "pr_year_MIROC5_rcp45"    </span>
 <span class="co">#&gt; [5] "pr_year_HadGEM2-ES_rcp85" "pr_year_CNRM-CM5_rcp85"  </span>
@@ -294,9 +304,9 @@ If your stars objects are too big for memory, you can be selective about which l
 <span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;                                   Min.     1st Qu.      Median        Mean</span>
-<span class="co">#&gt; pr_year_HadGEM2.ES_rcp45  2.348845e-07 7.36848e-06 1.62481e-05 2.30751e-05</span>
+<span class="co">#&gt; pr_year_HadGEM2-ES_rcp45  2.348845e-07 7.36848e-06 1.62481e-05 2.30751e-05</span>
 <span class="co">#&gt;                                3rd Qu.         Max.  NA's</span>
-<span class="co">#&gt; pr_year_HadGEM2.ES_rcp45  3.314904e-05 0.0001480115 57527</span>
+<span class="co">#&gt; pr_year_HadGEM2-ES_rcp45  3.314904e-05 0.0001480115 57527</span>
 <span class="co">#&gt; dimension(s):</span>
 <span class="co">#&gt;      from  to   offset   delta refsys point values x/y</span>
 <span class="co">#&gt; x       1 165 -124.438  0.0625 WGS 84    NA   NULL [x]</span>
@@ -304,17 +314,16 @@ If your stars objects are too big for memory, you can be selective about which l
 <span class="co">#&gt; year    1  50     2050       1     NA    NA   NULL</span></code></pre></div>
 <p>Plot the first year:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_lst</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2050</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">TRUE</span>, reset <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; downsample set to c(0,0,1)</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ca_bnd_sf</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, axes <span class="op">=</span> <span class="cn">TRUE</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_lst</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2050</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">TRUE</span>, reset <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ca_bnd_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, axes <span class="op">=</span> <span class="cn">TRUE</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt3_files/figure-html/plot_first_yr-1.png" width="700"></p>
 </div>
-<div id="create-a-6d-mosaic" class="section level2">
-<h2 class="hasAnchor">
-<a href="#create-a-6d-mosaic" class="anchor"></a>Create a 6D mosaic</h2>
+<div class="section level2">
+<h2 id="create-a-6d-mosaic">Create a 6D mosaic<a class="anchor" aria-label="anchor" href="#create-a-6d-mosaic"></a>
+</h2>
 <p>Next, we’ll mosaic the 144 3D rasters again, but this time we’ll add <code>combine_6d = TRUE</code> to tell it we want a single 6D stars object back:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ca_pryr_blcks_mos_stars</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_blcks_stars_lst</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">ca_pryr_blcks_mos_stars</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_blcks_stars_lst</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/ca_stars_mosaic.html">ca_stars_mosaic</a></span><span class="op">(</span>geom_mask <span class="op">=</span> <span class="va">ca_bnd_sf</span>, combine_6d <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt;  - mosaicing 18 stars rasters for pr_year_HadGEM2-ES_rcp45</span>
 <span class="co">#&gt;  - mosaicing 18 stars rasters for pr_year_CNRM-CM5_rcp45</span>
@@ -343,8 +352,8 @@ If your stars objects are too big for memory, you can be selective about which l
 <p>For further discussion and examples of working with 6D climate cubes, see the <a href="rasters-pt2.html">Rasters Part 2</a> vignette.</p>
 <p>Compute the inter-annual variance in precipitation. One of the potential impacts of climate change is increased variability in precipitation. This calculation will tell us relatively speaking which parts of the state may experience more inter-annual variance in precipitation from 2050-2099.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">ca_pryr_sd_stars</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_blcks_mos_stars</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
+<code class="sourceCode R"><span class="op">(</span><span class="va">ca_pryr_sd_stars</span> <span class="op">&lt;-</span> <span class="va">ca_pryr_blcks_mos_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
            FUN <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 5 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s):</span>
@@ -361,37 +370,36 @@ If your stars objects are too big for memory, you can be selective about which l
 <span class="co">#&gt; cvar        1   1       NA      NA     NA    NA                    pr</span></code></pre></div>
 <p>We can plot the results by GCM for one emissions scenario.</p>
 <p class="indented2">
-<strong>TIP</strong>: Note the use of <code>adrop()</code> below, which drops all dimensions with a range of 1. This is useful in this case because the stars <a href="https://r-spatial.github.io/stars/reference/plot.html"><code>plot()</code></a> function creates subplots for each level of the <em>first</em> non-spatial dimension. Therefore we want to get rid of all non-spatial dimensions that have a range of 1 (like cvar and scenario), so that subplots will be made for the first remaining dimension that has multiple values (in this case GCM).
+<strong>TIP</strong>: Note the use of <code><a href="https://rdrr.io/pkg/abind/man/adrop.html" class="external-link">adrop()</a></code> below, which drops all dimensions with a range of 1. This is useful in this case because the stars <a href="https://r-spatial.github.io/stars/reference/plot.html" class="external-link"><code>plot()</code></a> function creates subplots for each level of the <em>first</em> non-spatial dimension. Therefore we want to get rid of all non-spatial dimensions that have a range of 1 (like cvar and scenario), so that subplots will be made for the first remaining dimension that has multiple values (in this case GCM).
 </p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ca_pryr_sd_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp85"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">adrop</span><span class="op">(</span><span class="op">)</span>,
-      main <span class="op">=</span> <span class="st">"StdDev Annual Precip | RCP85 |"</span><span class="op">)</span>
-<span class="co">#&gt; downsample set to c(0,0,1)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ca_pryr_sd_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp85"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/abind/man/adrop.html" class="external-link">adrop</a></span><span class="op">(</span><span class="op">)</span>,
+      main <span class="op">=</span> <span class="st">"StdDev Annual Precip | RCP85 |"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt3_files/figure-html/plot_sd_rcp45-1.png" width="700"></p>
 </div>
-<div id="parallel-processing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#parallel-processing" class="anchor"></a>Parallel Processing</h2>
-<p><code><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply()</a></code> supports parallelization thru the <a href=""><code>parallel</code></a> package, which comes with base R. Parallelization splits the work among different cores on your computer (most computers these days have multipore cores). This can improve performance for pixelwise operations, particularly when the aggregation function is computationally intensive (<a href="https://bookdown.org/rdpeng/rprogdatascience/parallel-computation.html">more info</a>).</p>
+<div class="section level2">
+<h2 id="parallel-processing">Parallel Processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
+</h2>
+<p><code><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply()</a></code> supports parallelization thru the <a href=""><code>parallel</code></a> package, which comes with base R. Parallelization splits the work among different cores on your computer (most computers these days have multipore cores). This can improve performance for pixelwise operations, particularly when the aggregation function is computationally intensive (<a href="https://bookdown.org/rdpeng/rprogdatascience/parallel-computation.html" class="external-link">more info</a>).</p>
 <p>Let’s compare the amount of time it takes to compute the standard deviation of inter-annual precipitation, with and without parallelization, on a computer that can bring 6 cores into service:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Without parallelization</span>
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_stars</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
+<span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
            FUN <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    2.03    0.00    2.03</span>
+<span class="co">#&gt;    2.30    0.00    2.31</span>
 
 <span class="co">## With parallelization</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>
-<span class="va">my_clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html">makeCluster</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_stars</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>
+<span class="va">my_clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">ca_pryr_blcks_mos_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
            FUN <span class="op">=</span> <span class="va">sd</span>,
            CLUSTER <span class="op">=</span> <span class="va">my_clust</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    0.54    0.20    1.09</span>
-<span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html">stopCluster</a></span><span class="op">(</span><span class="va">my_clust</span><span class="op">)</span></code></pre></div>
+<span class="co">#&gt;    0.71    0.44    1.56</span>
+<span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">stopCluster</a></span><span class="op">(</span><span class="va">my_clust</span><span class="op">)</span></code></pre></div>
 </div>
   </div>
 
@@ -406,11 +414,13 @@ If your stars objects are too big for memory, you can be selective about which l
 
 
       <footer><div class="copyright">
-  <p>Developed by Andy Lyons, California Strategic Growth Council.</p>
+  <p></p>
+<p>Developed by Andy Lyons.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -418,6 +428,8 @@ If your stars objects are too big for memory, you can be selective about which l
 
   
 
+
+  
 
   </body>
 </html>

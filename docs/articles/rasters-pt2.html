@@ -25,6 +25,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
       </span>
     </div>
 
@@ -81,16 +83,16 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    R Notebooks
+    Notebooks
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html">Introduction</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html" class="external-link">Introduction</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html">Compute Chill</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html" class="external-link">Compute Chill</a>
     </li>
   </ul>
 </li>
@@ -102,29 +104,35 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://caladaptr.shinyapps.io/timeseries/">Annual Data Time Series</a>
+      <a href="https://caladaptr.shinyapps.io/timeseries/" class="external-link">Annual Data Time Series</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.shinyapps.io/chill/">Projected Chill Hours</a>
+      <a href="https://ucanr-igis.shinyapps.io/chill/" class="external-link">Projected Chill Hours</a>
+    </li>
+    <li>
+      <a href="https://github.com/ucanr-igis/caladaptr.apps/" class="external-link">caladpatr.apps package</a>
     </li>
   </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Presentations
+    Pres &amp; Workshops
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html">Overview</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html" class="external-link">Overview</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Getting Started Workshop (Oct 2021)</a>
     </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/ucanr-igis/caladaptr/">
+  <a href="https://github.com/ucanr-igis/caladaptr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -139,13 +147,13 @@
 
       
 
-      </header><script src="rasters-pt2_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt2.Rmd"><code>vignettes/rasters-pt2.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt2.Rmd" class="external-link"><code>vignettes/rasters-pt2.Rmd</code></a></small>
       <div class="hidden name"><code>rasters-pt2.Rmd</code></div>
 
     </div>
@@ -155,32 +163,34 @@
 <style type="text/css">
 p.indented2 {margin-left:2em;}
 </style>
-<div id="think-of-rasters-as-arrays" class="section level2">
-<h2 class="hasAnchor">
-<a href="#think-of-rasters-as-arrays" class="anchor"></a>Think of rasters as arrays</h2>
+<div class="section level2">
+<h2 id="think-of-rasters-as-arrays">Think of rasters as arrays<a class="anchor" aria-label="anchor" href="#think-of-rasters-as-arrays"></a>
+</h2>
 <p>The term ‘raster’ is pretty familiar and intuitive to anyone with a little experience with remote sensing or even photography. However to work effectively and efficiently with raster data from Cal-Adapt using the powerful functions from the stars package, you’ll get more mileage if you think of your data in terms of <strong>arrays</strong>.</p>
 <p>Like rasters, arrays are structures for organizing data in multiple dimensions, including regular grids and layers (i.e., bands). Rasters are a kind of array, but arrays are more general and extensible than rasters. For example arrays can have more than 3 dimensions. Below we will convert Cal-Adapt raster data into six dimensional arrays, where the dimensions include x, y, date, gcm, scenario, and climate variable.</p>
 <p>You might ask - why would anyone want to work with a 6-dimensional array, instead the more intuitive raster format where the layers represent slices of time? If you only have a single 3D raster to deal with, then yes the standard raster methods and functions would probably suffice. However if you’re dealing with data from climate models, you’re probably going to have to work with many rasters, representing different emission scenarios, GCMs, and climate variables. Quite likely your analysis will also have to apply the same analysis to several rasters, and combine or compare the results.</p>
 <p>In the <a href="rasters-pt1.html">Rasters Part I</a> vignette, we saw how to work programmatically with individual stars objects saved in a list, with the assistance of a list ‘index’ created by <code><a href="../reference/ca_stars_index.html">ca_stars_index()</a></code>. But this approach can be klunky. By combining all your rasters into a high dimensional array, you can write code which is a lot more concise, consistent, and (eventually) intuitive. In this vignette, we’ll see how combine all the 3D stars objects you downloaded from Cal-Adapt into a single six-dimensional stars object, or climate data cube, and slice and dice the data using square bracket notation and dplyr verbs for analysis.</p>
 </div>
-<div id="import-merced-county-raster-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#import-merced-county-raster-data" class="anchor"></a>Import Merced County raster data</h2>
+<div class="section level2">
+<h2 id="import-merced-county-raster-data">Import Merced County raster data<a class="anchor" aria-label="anchor" href="#import-merced-county-raster-data"></a>
+</h2>
 <p>Start by loading the packages we’ll use:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/">stars</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap">tmap</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'sf' was built under R version 4.1.2</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'stars' was built under R version 4.1.2</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap" class="external-link">tmap</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span></code></pre></div>
 <p>Next, we import the TIF files we downloaded in <a href="rasters-pt1.html">Rasters Part I</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span> 
-<span class="va">merced_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"merced"</span><span class="op">)</span>
-<span class="va">merced_tifs_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">merced_dir</span>, pattern <span class="op">=</span> <span class="st">".tif$"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">merced_tifs_fn</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span> 
+<span class="va">merced_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"merced"</span><span class="op">)</span>
+<span class="va">merced_tifs_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">merced_dir</span>, pattern <span class="op">=</span> <span class="st">".tif$"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">merced_tifs_fn</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "tasmax_day_CanESM2_rcp45_fips-06047.tif"   </span>
 <span class="co">#&gt;  [2] "tasmax_day_CanESM2_rcp85_fips-06047.tif"   </span>
 <span class="co">#&gt;  [3] "tasmax_day_CNRM-CM5_rcp45_fips-06047.tif"  </span>
@@ -200,7 +210,7 @@ p.indented2 {margin-left:2em;}
 <p>Import the TIF files as a list of stars objects:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mercd_stars_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_stars_read.html">ca_stars_read</a></span><span class="op">(</span><span class="va">merced_tifs_fn</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mercd_stars_lst</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">mercd_stars_lst</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "tasmax_day_CanESM2_rcp45_fips-06047"   </span>
 <span class="co">#&gt;  [2] "tasmax_day_CanESM2_rcp85_fips-06047"   </span>
 <span class="co">#&gt;  [3] "tasmax_day_CNRM-CM5_rcp45_fips-06047"  </span>
@@ -218,9 +228,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; [15] "tasmin_day_MIROC5_rcp45_fips-06047"    </span>
 <span class="co">#&gt; [16] "tasmin_day_MIROC5_rcp85_fips-06047"</span></code></pre></div>
 </div>
-<div id="create-a-6d-data-cube" class="section level2">
-<h2 class="hasAnchor">
-<a href="#create-a-6d-data-cube" class="anchor"></a>Create a 6D data cube</h2>
+<div class="section level2">
+<h2 id="create-a-6d-data-cube">Create a 6D data cube<a class="anchor" aria-label="anchor" href="#create-a-6d-data-cube"></a>
+</h2>
 <p><code><a href="../reference/ca_stars_6d.html">ca_stars_6d()</a></code> takes a list of 3D stars objects and returns a 6D stars object. The new dimensions are generated from the Cal-Adapt metadata that was first saved in sidecar files when you downloaded the TIF files, and imported along with the TIFs when you ran <code><a href="../reference/ca_stars_read.html">ca_stars_read()</a></code>.</p>
 <p>There are two important requirements for combining multiple 3D stars objects into one 6D stars object:</p>
 <ol style="list-style-type: decimal">
@@ -243,10 +253,10 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; date        1 7670 2045-01-01  1 days   Date    NA               NULL    </span>
 <span class="co">#&gt; cvar        1    2         NA      NA     NA    NA     tasmax, tasmin</span></code></pre></div>
 <p>Note the addition of dimensions for <code>scenario</code>, <code>gcm</code>, and <code>cvar</code>. In this example, these dimensions have 2 or more values, but even if there was only one value in the list of stars objects they will still be included in the stars object returned by <code><a href="../reference/ca_stars_6d.html">ca_stars_6d()</a></code>.</p>
-<p>These extra dimensions can be used to subset the stars object. For example if we just wanted the climate variables for emissions scenario rcp85, GCM MIROC5, and Jan-March, we could write an expression for <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>:</p>
+<p>These extra dimensions can be used to subset the stars object. For example if we just wanted the climate variables for emissions scenario rcp85, GCM MIROC5, and Jan-March, we could write an expression for <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter()</a></code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp85"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span> 
+<code class="sourceCode R"><span class="op">(</span><span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp85"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/month.html" class="external-link">month</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span> 
 <span class="co">#&gt; stars object with 6 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median     Mean  3rd Qu.     Max.  NA's</span>
@@ -260,9 +270,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; date        1 1895      NA      NA   Date    NA 2045-01-01,...,2065-03-31    </span>
 <span class="co">#&gt; cvar        1    2      NA      NA     NA    NA            tasmax, tasmin</span></code></pre></div>
 </div>
-<div id="subsetting-with-square-brackets" class="section level2">
-<h2 class="hasAnchor">
-<a href="#subsetting-with-square-brackets" class="anchor"></a>Subsetting with square brackets</h2>
+<div class="section level2">
+<h2 id="subsetting-with-square-brackets">Subsetting with square brackets<a class="anchor" aria-label="anchor" href="#subsetting-with-square-brackets"></a>
+</h2>
 <p>An alternative way of subsetting a stars object is with square brackets, similar to how you can subset matrices or arrays in base R.</p>
 <p>The template for subsetting our 6D array looks like:</p>
 <p class="indented2" style="font-family:monospace;">
@@ -274,13 +284,13 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <p>Square bracket notation is common with matrices and data frames in base R, but there are a couple of key differences between subsetting a stars object and a traditional matrix.</p>
 <ol style="list-style-type: decimal">
 <li><p>The first slot allows you to pass a spatial object, which will be used to perform a spatial query, or the name of an attribute. Hence there will be one extra comma in the square brackets. In this context <em>attribute</em> refers to the attributes of the stars object (i.e., names of the array values), not a vector feature. Our 6D stars object only has one attribute, <code>val</code>, but stars object are capable of having multiple attributes for each element of the array.</p></li>
-<li><p>The expressions for the dimensions can only accept indices, not logical values or dimension values. Expressions like <code>cvar == 'MIROC5'</code>, that would work fine to subset a regular matrix, won’t work for a stars object. Logical expressions can of course be easily converted to indices using <code><a href="https://rdrr.io/r/base/which.html">which()</a></code>.</p></li>
+<li><p>The expressions for the dimensions can only accept indices, not logical values or dimension values. Expressions like <code>cvar == 'MIROC5'</code>, that would work fine to subset a regular matrix, won’t work for a stars object. Logical expressions can of course be easily converted to indices using <code><a href="https://rdrr.io/r/base/which.html" class="external-link">which()</a></code>.</p></li>
 <li><p>Similar to traditional subsetting, if you omit an expression all values for that dimension will be returned. Commas should not be omitted, unless there are no other expressions that follow.</p></li>
 </ol>
 <p><br></p>
-<div id="example-1--square-bracket-notation-to-subet-multiple-dimensions-simultaneously" class="section level3">
-<h3 class="hasAnchor">
-<a href="#example-1--square-bracket-notation-to-subet-multiple-dimensions-simultaneously" class="anchor"></a>Example 1. Square bracket notation to subet multiple dimensions simultaneously</h3>
+<div class="section level3">
+<h3 id="example-1--square-bracket-notation-to-subet-multiple-dimensions-simultaneously">Example 1. Square bracket notation to subet multiple dimensions simultaneously<a class="anchor" aria-label="anchor" href="#example-1--square-bracket-notation-to-subet-multiple-dimensions-simultaneously"></a>
+</h3>
 <p>The following examples demonstrate how to subset with square brackets to get a subset consisting of:</p>
 <ol style="list-style-type: lower-roman">
 <li>emissions scenario: <code>rcp85</code><br>
@@ -290,24 +300,24 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <li>date: winter monthly only (December thru March)</li>
 </ol>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">scen_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"scenario"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">equals</a></span><span class="op">(</span><span class="st">"rcp45"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">scen_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"scenario"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">equals</a></span><span class="op">(</span><span class="st">"rcp45"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1</span>
 
-<span class="op">(</span><span class="va">gcm_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"gcm"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">is_in</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CNRM-CM5"</span>, <span class="st">"MIROC5"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="op">(</span><span class="va">gcm_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"gcm"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">is_in</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CNRM-CM5"</span>, <span class="st">"MIROC5"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 2 4</span>
 
-<span class="va">date_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">is_in</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">date_idx</span><span class="op">)</span>
+<span class="va">date_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://lubridate.tidyverse.org/reference/month.html" class="external-link">month</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">is_in</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">date_idx</span><span class="op">)</span>
 <span class="co">#&gt;  int [1:2546] 1 2 3 4 5 6 7 8 9 10 ...</span>
 
 <span class="va">mercd_stars_6d</span><span class="op">[</span> , , , <span class="va">scen_idx</span>, <span class="va">gcm_idx</span>, <span class="va">date_idx</span>, <span class="op">]</span>
@@ -331,53 +341,53 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; date     [2045-01-01,2045-01-02),...,[2065-12-31,2066-01-01)    </span>
 <span class="co">#&gt; cvar                                          tasmax, tasmin</span></code></pre></div>
 </div>
-<div id="example-2--square-bracket-notation-within-a-loop" class="section level3">
-<h3 class="hasAnchor">
-<a href="#example-2--square-bracket-notation-within-a-loop" class="anchor"></a>Example 2. Square bracket notation within a loop</h3>
+<div class="section level3">
+<h3 id="example-2--square-bracket-notation-within-a-loop">Example 2. Square bracket notation within a loop<a class="anchor" aria-label="anchor" href="#example-2--square-bracket-notation-within-a-loop"></a>
+</h3>
 <p>If we wanted to aggregate pixel values across time using a function such as accumulated GDD, for all combinations of emissions scenario and GCM, we could use square bracket notation within a loop.</p>
 <p>In the following example, a double loop is set up to loop through scenarios followed by GCMs. Cumulative GDD is then computed and saved to a list.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Get the names for the scenarios and GCM. We will loop through these.</span>
-<span class="op">(</span><span class="va">scen_names</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"scenario"</span><span class="op">)</span><span class="op">)</span>
+<span class="op">(</span><span class="va">scen_names</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"scenario"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "rcp45" "rcp85"</span>
-<span class="op">(</span><span class="va">gcm_names</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"gcm"</span><span class="op">)</span><span class="op">)</span>
+<span class="op">(</span><span class="va">gcm_names</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"gcm"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "CanESM2"    "CNRM-CM5"   "HadGEM2-ES" "MIROC5"</span>
 
 <span class="co">## Select a range of dates in 2050. If we wanted all years this could also go into a loop.</span>
-<span class="va">date_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">`==`</span><span class="op">(</span><span class="fl">2050</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">date_idx</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="st">"date"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">`==`</span><span class="op">(</span><span class="fl">2050</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co">## Create a pixel aggregation function that computes the accumulated GDD.</span>
 <span class="co">## The argument x will be a 2-column matrix where the rows are dates and</span>
 <span class="co">## and the columns are cvars (tasmax and tasmin)</span>
 <span class="va">gdd_csum</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">basetemp</span><span class="op">)</span> <span class="op">{</span>
- <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html">cumsum</a></span><span class="op">(</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fl">273</span>, MARGIN <span class="op">=</span> <span class="fl">1</span>, <span class="va">sum</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span> <span class="op">-</span> <span class="va">basetemp</span><span class="op">)</span>
+ <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fl">273</span>, MARGIN <span class="op">=</span> <span class="fl">1</span>, <span class="va">sum</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span> <span class="op">-</span> <span class="va">basetemp</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="co">## Create a blank list to hold the results</span>
-<span class="va">gdd_stars_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">gdd_stars_lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>
 
-<span class="kw">for</span> <span class="op">(</span><span class="va">sc_idx</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">scen_names</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">sc_idx</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">scen_names</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   
   <span class="co">## Create a first level list for this scenario</span>
-  <span class="va">gdd_stars_lst</span><span class="op">[[</span><span class="va">scen_names</span><span class="op">[</span><span class="va">sc_idx</span><span class="op">]</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="va">gdd_stars_lst</span><span class="op">[[</span><span class="va">scen_names</span><span class="op">[</span><span class="va">sc_idx</span><span class="op">]</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>
   
-  <span class="kw">for</span> <span class="op">(</span><span class="va">gcm_idx</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">gcm_names</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">gcm_idx</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">gcm_names</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
     
     <span class="co">## Add the stars element to the first level list</span>
     <span class="va">gdd_stars_lst</span><span class="op">[[</span><span class="va">scen_names</span><span class="op">[</span><span class="va">sc_idx</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">gcm_names</span><span class="op">[</span><span class="va">gcm_idx</span><span class="op">]</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> 
-      <span class="va">mercd_stars_6d</span><span class="op">[</span> , , , <span class="va">sc_idx</span>, <span class="va">gcm_idx</span>, <span class="va">date_idx</span>, <span class="op">]</span> <span class="op">%&gt;%</span>
-      <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span><span class="op">)</span>, 
+      <span class="va">mercd_stars_6d</span><span class="op">[</span> , , , <span class="va">sc_idx</span>, <span class="va">gcm_idx</span>, <span class="va">date_idx</span>, <span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+      <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span><span class="op">)</span>, 
                            FUN <span class="op">=</span> <span class="va">gdd_csum</span>, basetemp <span class="op">=</span> <span class="fl">7</span>, 
-                           .fname <span class="op">=</span> <span class="st">"my_gdd_csum"</span>, single_arg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-      <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span><span class="st">"gdd_csum"</span><span class="op">)</span>
+                           .fname <span class="op">=</span> <span class="st">"my_gdd_csum"</span>, single_arg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+      <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="st">"gdd_csum"</span><span class="op">)</span>
   <span class="op">}</span>
 <span class="op">}</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">gdd_stars_lst</span>, <span class="va">names</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">gdd_stars_lst</span>, <span class="va">names</span><span class="op">)</span>
 <span class="co">#&gt;      rcp45        rcp85       </span>
 <span class="co">#&gt; [1,] "CanESM2"    "CanESM2"   </span>
 <span class="co">#&gt; [2,] "CNRM-CM5"   "CNRM-CM5"  </span>
@@ -385,16 +395,16 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; [4,] "MIROC5"     "MIROC5"</span></code></pre></div>
 </div>
 </div>
-<div id="spatial-subsetting" class="section level2">
-<h2 class="hasAnchor">
-<a href="#spatial-subsetting" class="anchor"></a>Spatial Subsetting</h2>
-<p>You can spatially subset a stars object by passing a sf object to the first slot in the square brackets, or by using <code><a href="https://r-spatial.github.io/sf/reference/st_crop.html">st_crop()</a></code>. The two methods are equivalent. sf object must be in the same CRS as the stars object.</p>
+<div class="section level2">
+<h2 id="spatial-subsetting">Spatial Subsetting<a class="anchor" aria-label="anchor" href="#spatial-subsetting"></a>
+</h2>
+<p>You can spatially subset a stars object by passing a sf object to the first slot in the square brackets, or by using <code><a href="https://r-spatial.github.io/sf/reference/st_crop.html" class="external-link">st_crop()</a></code>. The two methods are equivalent. sf object must be in the same CRS as the stars object.</p>
 <p>For example suppose we were only interested in the Black Rascal Creek HUC10 watershed, which lies in Merced County:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mercd_bnd_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_aoipreset_geom.html">ca_aoipreset_geom</a></span><span class="op">(</span><span class="st">"counties"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">fips</span> <span class="op">==</span> <span class="st">"06047"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">name</span>, <span class="va">state_name</span>, <span class="va">fips</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">mercd_bnd_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_aoipreset_geom.html">ca_aoipreset_geom</a></span><span class="op">(</span><span class="st">"counties"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">fips</span> <span class="op">==</span> <span class="st">"06047"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">name</span>, <span class="va">state_name</span>, <span class="va">fips</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>
 <span class="co">#&gt; Reading layer `counties' from data source </span>
 <span class="co">#&gt;   `C:\Users\Andy\AppData\Local\R\cache\R\caladaptr\counties.gpkg' </span>
 <span class="co">#&gt;   using driver `GPKG'</span>
@@ -404,9 +414,9 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; Bounding box:  xmin: -13871160 ymin: 3833648 xmax: -12625080 ymax: 5416187</span>
 <span class="co">#&gt; Projected CRS: WGS 84 / Pseudo-Mercator</span>
 
-<span class="va">black_rascal_creek_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_aoipreset_geom.html">ca_aoipreset_geom</a></span><span class="op">(</span><span class="st">"hydrounits"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">huc10</span> <span class="op">==</span> <span class="st">"1804000114"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>
+<span class="va">black_rascal_creek_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_aoipreset_geom.html">ca_aoipreset_geom</a></span><span class="op">(</span><span class="st">"hydrounits"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">huc10</span> <span class="op">==</span> <span class="st">"1804000114"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>
 <span class="co">#&gt; Reading layer `hydrounits' from data source </span>
 <span class="co">#&gt;   `C:\Users\Andy\AppData\Local\R\cache\R\caladaptr\hydrounits.gpkg' </span>
 <span class="co">#&gt;   using driver `GPKG'</span>
@@ -416,10 +426,10 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; Bounding box:  xmin: -13863190 ymin: 3808721 xmax: -12735560 ymax: 5186222</span>
 <span class="co">#&gt; Projected CRS: WGS 84 / Pseudo-Mercator</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">mercd_bnd_sf</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html">tm_borders</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">mercd_bnd_sf</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt2_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>To subset our 6D stars object with square bracket notation, we simply put a sf object in the first slot:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -441,9 +451,9 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <strong>TIP</strong>: If you pass a sf object in slot 1 of square brakets, the rest of the slots are ignored and the remaining commas can be omitted. Hence you can’t spatially subset a stars object while simultaneously subsetting along dimension(s). Spatial subsetting an dimension subsetting need to be in separate expressions.
 </p>
 <p><br></p>
-<p>Here’s what spatial subsetting looks like with <code><a href="https://r-spatial.github.io/sf/reference/st_crop.html">st_crop()</a></code>:</p>
+<p>Here’s what spatial subsetting looks like with <code><a href="https://r-spatial.github.io/sf/reference/st_crop.html" class="external-link">st_crop()</a></code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">brc_stars_6d</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html">st_crop</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span>, crop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">brc_stars_6d</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html" class="external-link">st_crop</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span>, crop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 6 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median     Mean  3rd Qu.     Max.  NA's</span>
@@ -459,16 +469,15 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <p><code>crop = TRUE</code> (the default) tells it to reduce the extent of cropped object. Alternately it would keep the original number of rows and columns and set those outside the cropped are to NA.</p>
 <p>To verify we can plot the subset area (with additional filters to just get one layer) overlaid by the watershed boundary:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">brc_stars_6d</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, 
-                             <span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2050-01-01"</span><span class="op">)</span>, <span class="va">cvar</span> <span class="op">==</span> <span class="st">"tasmin"</span><span class="op">)</span>, 
+<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">brc_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, 
+                             <span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2050-01-01"</span><span class="op">)</span>, <span class="va">cvar</span> <span class="op">==</span> <span class="st">"tasmin"</span><span class="op">)</span>, 
      axes <span class="op">=</span> <span class="cn">TRUE</span>, reset <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; downsample set to c(0,0,1,1,1,1)</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt2_files/figure-html/plot_brc_stars_6d-1.png" width="700"></p>
-<p>This plot reflects the intersection rule that <code><a href="https://r-spatial.github.io/sf/reference/st_crop.html">st_crop()</a></code> applies to the pixels along the edges of the polygon. In order for a pixel to be counted as part of the intersection, the center needs to be within the polygon boundary. If you wanted to err on the side of inclusion, you could crop using the extent of the watershed boundary:</p>
+<p>This plot reflects the intersection rule that <code><a href="https://r-spatial.github.io/sf/reference/st_crop.html" class="external-link">st_crop()</a></code> applies to the pixels along the edges of the polygon. In order for a pixel to be counted as part of the intersection, the center needs to be within the polygon boundary. If you wanted to err on the side of inclusion, you could crop using the extent of the watershed boundary:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">brc_bb_stars_6d</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-   <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html">st_crop</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html">st_bbox</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sfc.html">st_as_sfc</a></span><span class="op">(</span><span class="op">)</span>, crop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">brc_bb_stars_6d</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+   <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html" class="external-link">st_crop</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html" class="external-link">st_bbox</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sfc.html" class="external-link">st_as_sfc</a></span><span class="op">(</span><span class="op">)</span>, crop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 6 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median     Mean  3rd Qu.     Max.</span>
@@ -482,33 +491,32 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; date        1 7670 2045-01-01  1 days   Date    NA               NULL    </span>
 <span class="co">#&gt; cvar        1    2         NA      NA     NA    NA     tasmax, tasmin</span>
 
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">brc_bb_stars_6d</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, 
-                             <span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2050-01-01"</span><span class="op">)</span>, <span class="va">cvar</span> <span class="op">==</span> <span class="st">"tasmin"</span><span class="op">)</span>, 
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">brc_bb_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, 
+                             <span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2050-01-01"</span><span class="op">)</span>, <span class="va">cvar</span> <span class="op">==</span> <span class="st">"tasmin"</span><span class="op">)</span>, 
      axes <span class="op">=</span> <span class="cn">TRUE</span>, reset <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; downsample set to c(0,0,1,1,1,1)</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">black_rascal_creek_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt2_files/figure-html/brc_bb_stars_6d-1.png" width="700"></p>
 </div>
-<div id="spatial-aggregation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#spatial-aggregation" class="anchor"></a>Spatial Aggregation</h2>
+<div class="section level2">
+<h2 id="spatial-aggregation">Spatial Aggregation<a class="anchor" aria-label="anchor" href="#spatial-aggregation"></a>
+</h2>
 <p>Spatial aggregation combines extracting pixel values for spatial features with an aggregation function like <code>mean</code> that collapses the values into a single number for each feature. The output is a stars vector cube, which is like a sf object however the attribute table is a multidimensional array.</p>
-<p>You can use <a href="https://r-spatial.github.io/stars/reference/aggregate.stars.html"><code>aggregate()</code></a> for spatial aggregations with stars objects. <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html">aggregate()</a></code> can also be used to aggregate values over time, but you can’t do both in the same call. When used for spatial aggregation, the inputs into <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html">aggregate()</a></code> include a stars object and a sf object.</p>
-<p>Unlike the more flexible <code><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply()</a></code>, the <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html">aggregate()</a></code> can only aggregate one attribute (layer) at a time. In other words, if you need to combine time series data into a single metric (such as GDD), and also aggregate the results by polygons, you have to break them into different steps. You can either aggregate the time data by polygon and then compute GDD metric, or compute the GDD metric by pixel (using <code><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply()</a></code>) and then aggregate those by polygon. The choice of order will affect the results.</p>
-<div id="compute-accumulated-gdd-for-merced-county-supervisor-districts" class="section level3">
-<h3 class="hasAnchor">
-<a href="#compute-accumulated-gdd-for-merced-county-supervisor-districts" class="anchor"></a>Compute Accumulated GDD for Merced County Supervisor Districts</h3>
-<p>To illustrate how temporal and spatial aggregation can be combined, we’ll compute the projected accumulated GDD for the Merced County Board of Supervisors Districts for one calendar year, one emissions scenario, and one GCM. We’ll first compute daily GDD for each pixel, so that we can take advantage of the fine scale resolution of the data. Next we’ll use <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html">aggregate()</a></code> to get the mean daily GDD for each district. Lastly, we’ll go back to <code><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply()</a></code> to generate the cumulative sum of the mean daily GDD for each district.</p>
-<p>Begin by importing the supervisor district boundaaries (<a href="https://geostack-mercedcounty.opendata.arcgis.com/">source</a>):</p>
+<p>You can use <a href="https://r-spatial.github.io/stars/reference/aggregate.stars.html" class="external-link"><code>aggregate()</code></a> for spatial aggregations with stars objects. <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate()</a></code> can also be used to aggregate values over time, but you can’t do both in the same call. When used for spatial aggregation, the inputs into <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate()</a></code> include a stars object and a sf object.</p>
+<p>Unlike the more flexible <code><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply()</a></code>, the <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate()</a></code> can only aggregate one attribute (layer) at a time. In other words, if you need to combine time series data into a single metric (such as GDD), and also aggregate the results by polygons, you have to break them into different steps. You can either aggregate the time data by polygon and then compute GDD metric, or compute the GDD metric by pixel (using <code><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply()</a></code>) and then aggregate those by polygon. The choice of order will affect the results.</p>
+<div class="section level3">
+<h3 id="compute-accumulated-gdd-for-merced-county-supervisor-districts">Compute Accumulated GDD for Merced County Supervisor Districts<a class="anchor" aria-label="anchor" href="#compute-accumulated-gdd-for-merced-county-supervisor-districts"></a>
+</h3>
+<p>To illustrate how temporal and spatial aggregation can be combined, we’ll compute the projected accumulated GDD for the Merced County Board of Supervisors Districts for one calendar year, one emissions scenario, and one GCM. We’ll first compute daily GDD for each pixel, so that we can take advantage of the fine scale resolution of the data. Next we’ll use <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate()</a></code> to get the mean daily GDD for each district. Lastly, we’ll go back to <code><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply()</a></code> to generate the cumulative sum of the mean daily GDD for each district.</p>
+<p>Begin by importing the supervisor district boundaaries (<a href="https://geostack-mercedcounty.opendata.arcgis.com/" class="external-link">source</a>):</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mercd_bos_dist_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">merced_dir</span>, <span class="st">"mercd_bos_dist.geojson"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">mercd_bos_dist_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">merced_dir</span>, <span class="st">"mercd_bos_dist.geojson"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span><span class="op">)</span>
 
-<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">mercd_bos_dist_fn</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/ucanr-igis/caladaptr-res/main/geoms/merced_bos_districts.geojson"</span>, <span class="va">mercd_bos_dist_fn</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">mercd_bos_dist_fn</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/ucanr-igis/caladaptr-res/main/geoms/merced_bos_districts.geojson"</span>, <span class="va">mercd_bos_dist_fn</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="op">}</span>
 
-<span class="op">(</span><span class="va">mercd_bos_dist_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="va">mercd_bos_dist_fn</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">districtid</span><span class="op">)</span><span class="op">)</span>
+<span class="op">(</span><span class="va">mercd_bos_dist_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">mercd_bos_dist_fn</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">districtid</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Simple feature collection with 5 features and 1 field</span>
 <span class="co">#&gt; Geometry type: MULTIPOLYGON</span>
 <span class="co">#&gt; Dimension:     XY</span>
@@ -521,12 +529,12 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; 4          2 MULTIPOLYGON (((-120.5048 3...</span>
 <span class="co">#&gt; 5          3 MULTIPOLYGON (((-120.5953 3...</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html">tm_shape</a></span><span class="op">(</span><span class="va">mercd_bos_dist_sf</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html">tm_fill</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"districtid"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">mercd_bos_dist_sf</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_fill</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"districtid"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt2_files/figure-html/import_bos-1.png" width="700"></p>
 <p>Next we simplify the task by creating a stars object with daily min / max temp for just one year, one emissions scenario, and GCM:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">mercd_2050_stars</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="fl">2050</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">mercd_2050_stars</span> <span class="op">&lt;-</span> <span class="va">mercd_stars_6d</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="st">"rcp45"</span>, <span class="va">gcm</span> <span class="op">==</span> <span class="st">"MIROC5"</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">==</span> <span class="fl">2050</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 6 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s):</span>
 <span class="co">#&gt;          Min.  1st Qu.   Median    Mean  3rd Qu.     Max.   NA's</span>
@@ -543,8 +551,8 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gdd_daily_2args</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span>, <span class="va">basetemp</span><span class="op">)</span> <span class="op">{</span><span class="op">(</span><span class="op">(</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span> <span class="op">-</span> <span class="fl">273.15</span> <span class="op">-</span> <span class="va">basetemp</span><span class="op">}</span>
 
-<span class="op">(</span><span class="va">mercd_2050_dlygdd_stars</span> <span class="op">&lt;-</span> <span class="va">mercd_2050_stars</span> <span class="op">%&gt;%</span> 
-    <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"date"</span><span class="op">)</span>,
+<span class="op">(</span><span class="va">mercd_2050_dlygdd_stars</span> <span class="op">&lt;-</span> <span class="va">mercd_2050_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+    <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"date"</span><span class="op">)</span>,
              FUN <span class="op">=</span> <span class="va">gdd_daily_2args</span>, basetemp <span class="op">=</span> <span class="fl">7</span>,
              .fname <span class="op">=</span> <span class="st">"dly_gdd"</span>, single_arg <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 5 dimensions and 1 attribute</span>
@@ -558,10 +566,10 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; scenario    1   1         NA      NA     NA    NA  rcp45    </span>
 <span class="co">#&gt; gcm         1   1         NA      NA     NA    NA MIROC5    </span>
 <span class="co">#&gt; date        1 365 2050-01-01  1 days   Date    NA   NULL</span></code></pre></div>
-<p>Now we’re ready to use <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html">aggregate()</a></code> to get the average daily GDD for each Supervisor district. We are averaging across the polygons, but the daily values (i.e., time dimension) are still kept separate because we’re going to need to create the cumulative sum in the final step.</p>
+<p>Now we’re ready to use <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate()</a></code> to get the average daily GDD for each Supervisor district. We are averaging across the polygons, but the daily values (i.e., time dimension) are still kept separate because we’re going to need to create the cumulative sum in the final step.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">bod_2050_dlygdd_stars</span> <span class="op">&lt;-</span> <span class="va">mercd_2050_dlygdd_stars</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html">aggregate</a></span><span class="op">(</span>by <span class="op">=</span> <span class="va">mercd_bos_dist_sf</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">bod_2050_dlygdd_stars</span> <span class="op">&lt;-</span> <span class="va">mercd_2050_dlygdd_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate</a></span><span class="op">(</span>by <span class="op">=</span> <span class="va">mercd_bos_dist_sf</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 4 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s):</span>
 <span class="co">#&gt;               Min.  1st Qu.   Median     Mean  3rd Qu.     Max.</span>
@@ -579,14 +587,14 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; date                                                                  NULL</span></code></pre></div>
 <p>We now have 365 daily GDD values for each of 5 poglyons. Our last step is to create the cumulative sum:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">bod_2050_csumgdd_stars</span> <span class="op">&lt;-</span> <span class="va">bod_2050_dlygdd_stars</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"geometry"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span><span class="op">)</span>,
-           FUN <span class="op">=</span> <span class="va">cumsum</span>, .fname <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/aperm.html">aperm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span><span class="st">"csum_gdd"</span><span class="op">)</span> 
+<code class="sourceCode R"><span class="va">bod_2050_csumgdd_stars</span> <span class="op">&lt;-</span> <span class="va">bod_2050_dlygdd_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geometry"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span><span class="op">)</span>,
+           FUN <span class="op">=</span> <span class="va">cumsum</span>, .fname <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/aperm.html" class="external-link">aperm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="st">"csum_gdd"</span><span class="op">)</span> 
 
 <span class="co">## Copy the properties of the 'date' dimension  </span>
-<span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_dimensions</a></span><span class="op">(</span><span class="va">bod_2050_csumgdd_stars</span><span class="op">)</span><span class="op">[</span><span class="st">"date"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html">st_dimensions</a></span><span class="op">(</span><span class="va">bod_2050_dlygdd_stars</span><span class="op">)</span><span class="op">[</span><span class="st">"date"</span><span class="op">]</span>
+<span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_dimensions</a></span><span class="op">(</span><span class="va">bod_2050_csumgdd_stars</span><span class="op">)</span><span class="op">[</span><span class="st">"date"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_dimensions</a></span><span class="op">(</span><span class="va">bod_2050_dlygdd_stars</span><span class="op">)</span><span class="op">[</span><span class="st">"date"</span><span class="op">]</span>
 
 <span class="va">bod_2050_csumgdd_stars</span>
 <span class="co">#&gt; stars object with 4 dimensions and 1 attribute</span>
@@ -606,17 +614,17 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 <span class="co">#&gt; date                                                                  NULL</span></code></pre></div>
 <p>Plot the accumulated curves (one curve for each Supervisor District):</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gdd_csum_df</span> <span class="op">&lt;-</span> <span class="va">bod_2050_csumgdd_stars</span><span class="op">[</span>, , , , drop<span class="op">=</span><span class="cn">TRUE</span><span class="op">]</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Dist1"</span>, <span class="st">"Dist2"</span>, <span class="st">"Dist3"</span>, <span class="st">"Dist4"</span>, <span class="st">"Dist5"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">gdd_csum_df</span> <span class="op">&lt;-</span> <span class="va">bod_2050_csumgdd_stars</span><span class="op">[</span>, , , , drop<span class="op">=</span><span class="cn">TRUE</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Dist1"</span>, <span class="st">"Dist2"</span>, <span class="st">"Dist3"</span>, <span class="st">"Dist4"</span>, <span class="st">"Dist5"</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html">matplot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">gdd_csum_df</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">gdd_csum_df</span>, type<span class="op">=</span><span class="st">"l"</span>, lty <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gdd_csum_df</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">gdd_csum_df</span>, type<span class="op">=</span><span class="st">"l"</span>, lty <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt2_files/figure-html/drill_down-1.png" width="700"></p>
 <p>Plot the accumulated GDD per Supervisor district as of Sept 30, 2050.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">bod_2050_csumgdd_stars</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2050-09-30"</span><span class="op">)</span><span class="op">)</span>,
+<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bod_2050_csumgdd_stars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2050-09-30"</span><span class="op">)</span><span class="op">)</span>,
      main <span class="op">=</span> <span class="st">"Accumulated GDD: Jan 1 - Sept 30, 2050"</span><span class="op">)</span></code></pre></div>
 <p><img src="rasters-pt2_files/figure-html/plot_bod_2050_csumgdd_stars-1.png" width="700"></p>
 </div>
@@ -634,11 +642,13 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 
 
       <footer><div class="copyright">
-  <p>Developed by Andy Lyons, California Strategic Growth Council.</p>
+  <p></p>
+<p>Developed by Andy Lyons.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -646,6 +656,8 @@ my_6d_stars_object[<em>spatial object or a attribute</em>, <em>x-indices</em>, <
 
   
 
+
+  
 
   </body>
 </html>

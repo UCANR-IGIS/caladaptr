@@ -10,7 +10,8 @@ ca_getvals_tbl(
   debug = FALSE,
   stop_on_err = TRUE,
   shiny_progress = NULL,
-  omit_col = NULL
+  omit_col = NULL,
+  timeout = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ ca_getvals_tbl(
 \item{shiny_progress}{A Shiny progress bar object, see Details.}
 
 \item{omit_col}{Columns to exclude from the tibble}
+
+\item{timeout}{Timeout in seconds}
 }
 \value{
 A tibble
@@ -39,6 +42,9 @@ a local SQLite database, see \code{\link{ca_getvals_db}}. To download Cal-Adapt 
 A default set of columns will be returned based on how the dataset is specified (i.e., by slug, cvar+scen+gcm+per, livneh, etc). Some columns
 can be omitted by passing column names to \code{col_omit}. Three columns that can never be omitted are \code{feat_id} (location id value),
 \code{dt} (date), and \code{val} (the actual climate values).
+
+\code{timeout} set the longest amount of time before curl reports an error. The default is 10 seconds. Increase this if
+you experience timeout errors (which have been know to occur on ShinyApps.io perhaps due to server congestion)
 }
 \seealso{
 \code{\link{ca_getvals_db}}, \code{\link{ca_getrst_stars}}

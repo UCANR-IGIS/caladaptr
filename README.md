@@ -101,7 +101,7 @@ from Scripps, for a single point location.
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.6.2)
+#> caladaptr (version 0.6.3)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 

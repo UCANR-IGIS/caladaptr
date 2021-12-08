@@ -6,6 +6,7 @@
 #' @param stop_on_err Stop if the server returns an error
 #' @param shiny_progress A Shiny progress bar object, see Details.
 #' @param omit_col Columns to exclude from the tibble
+#' @param timeout Timeout in seconds
 #'
 #' @details \code{ca_getvals_tbl} fetches data via the Cal-Adapt API, returning a tibble. Everything is done in memory. To download Cal-Adapt into
 #' a local SQLite database, see \code{\link{ca_getvals_db}}. To download Cal-Adapt data as raster files, see \code{\link{ca_getrst_stars}}.
@@ -14,12 +15,15 @@
 #' can be omitted by passing column names to \code{col_omit}. Three columns that can never be omitted are \code{feat_id} (location id value),
 #' \code{dt} (date), and \code{val} (the actual climate values).
 #'
+#' \code{timeout} set the longest amount of time before curl reports an error. The default is 10 seconds. Increase this if
+#' you experience timeout errors (which have been know to occur on ShinyApps.io perhaps due to server congestion)
+#'
 #' @return A tibble
 #'
 #' @seealso \code{\link{ca_getvals_db}}, \code{\link{ca_getrst_stars}}
 #'
 #' @importFrom crayon red
-#' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status http_status
+#' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status http_status timeout
 #' @importFrom utils txtProgressBar setTxtProgressBar packageVersion
 #' @importFrom units set_units
 #' @importFrom dplyr select mutate left_join slice
@@ -29,7 +33,8 @@
 #' @importFrom shiny Progress
 #' @export
 
-ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, shiny_progress = NULL, omit_col = NULL) {
+ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, shiny_progress = NULL, omit_col = NULL,
+                           timeout = NULL) {
 
   if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
 
@@ -84,6 +89,9 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
 
   ## Define the user agent
   caladaptr_ua <- user_agent(paste0("caladaptr_v", packageVersion("caladaptr")))
+
+  ## Set the timeout option
+  if (!is.null(timeout)) httr::timeout(timeout)
 
   ## Create a tibble to store the results
   res_tbl <- NULL

@@ -12,6 +12,13 @@ repo:
     source: https://github.com/ucanr-igis/caladaptr/blob/master/
     issue: https://github.com/ucanr-igis/caladaptr/issues/
     user: https://github.com/ucanr-igis/
+authors:
+  California Strategic Growth Council:
+    href: "https://sgc.ca.gov"
+    html: "<img src='https://ucanr-igis.github.io/caladaptr-res/assets/sgc-small_140x34.png' width=140>"
+  footer:
+    roles: [cre]
+    text: "Developed by"
 reference:
   - title: API Request Constructors
     desc: Functions that build a Cal-Adapt API request object
@@ -91,6 +98,8 @@ navbar:
     - tutorials
     - news
     - rnotebooks
+    - shinyapps
+    - pres_wrkshps
     right: github
   components:
     home:
@@ -106,21 +115,25 @@ navbar:
       icon: fab fa-github fa-lg
       href: https://github.com/ucanr-igis/caladaptr/
     rnotebooks:
-      text: R Notebooks
+      text: Notebooks
       menu:
-       - text: "Introduction"
+       - text: Introduction
          href: https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html
-       - text: "Compute Chill"
+       - text: Compute Chill
          href: https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html
     shinyapps:
       text: Shiny Apps
       menu:
-       - text: "Annual Data Time Series"
+       - text: Annual Data Time Series
          href: https://caladaptr.shinyapps.io/timeseries/
-       - text: "Projected Chill Hours"
+       - text: Projected Chill Hours
          href: https://ucanr-igis.shinyapps.io/chill/
-    presentations:
-      text: Presentations
+       - text: caladpatr.apps package
+         href: https://github.com/ucanr-igis/caladaptr.apps/
+    pres_wrkshps:
+      text: Pres & Workshops
       menu:
-       - text: "Overview"
+       - text: Overview
          href: https://ucanr-igis.github.io/caladaptr-res/pres/overview.html
+       - text: "Getting Started Workshop (Oct 2021)"
+         href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/

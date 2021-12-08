@@ -1,7 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/404.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/api-requests.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/large-queries.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt1.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt2.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt3.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/authors.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/index.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/news/index.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/aoipreset_types.html</loc>
@@ -22,6 +52,9 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_biggeom_blocks.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_biggeom_split.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_catalog_fetch.html</loc>
   </url>
   <url>
@@ -29,6 +62,9 @@
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_catalog_search.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_check.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_cvar.html</loc>
@@ -55,7 +91,13 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getcache.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getrst.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getrst_stars.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getvals.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_getvals_db.html</loc>
@@ -94,6 +136,9 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_read_stars.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_resp_check.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_scenario.html</loc>
   </url>
   <url>
@@ -115,7 +160,13 @@
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_stars_read.html</loc>
   </url>
   <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/ca_vals2tbl.html</loc>
+  </url>
+  <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/ca_years.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/climvars.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/cvars.html</loc>
@@ -128,6 +179,9 @@
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/gcms.html</loc>
+  </url>
+  <url>
+    <loc>http://ucanr-igis.github.io/caladapt/reference/index.html</loc>
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/periods.html</loc>
@@ -146,20 +200,5 @@
   </url>
   <url>
     <loc>http://ucanr-igis.github.io/caladapt/reference/scenarios.html</loc>
-  </url>
-  <url>
-    <loc>http://ucanr-igis.github.io/caladapt/articles/api-requests.html</loc>
-  </url>
-  <url>
-    <loc>http://ucanr-igis.github.io/caladapt/articles/large-queries.html</loc>
-  </url>
-  <url>
-    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt1.html</loc>
-  </url>
-  <url>
-    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt2.html</loc>
-  </url>
-  <url>
-    <loc>http://ucanr-igis.github.io/caladapt/articles/rasters-pt3.html</loc>
   </url>
 </urlset>

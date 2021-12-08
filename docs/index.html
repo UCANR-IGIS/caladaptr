@@ -26,6 +26,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
       </span>
     </div>
 
@@ -82,16 +84,16 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    R Notebooks
+    Notebooks
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html">Introduction</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html" class="external-link">Introduction</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html">Compute Chill</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html" class="external-link">Compute Chill</a>
     </li>
   </ul>
 </li>
@@ -103,29 +105,35 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://caladaptr.shinyapps.io/timeseries/">Annual Data Time Series</a>
+      <a href="https://caladaptr.shinyapps.io/timeseries/" class="external-link">Annual Data Time Series</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.shinyapps.io/chill/">Projected Chill Hours</a>
+      <a href="https://ucanr-igis.shinyapps.io/chill/" class="external-link">Projected Chill Hours</a>
+    </li>
+    <li>
+      <a href="https://github.com/ucanr-igis/caladaptr.apps/" class="external-link">caladpatr.apps package</a>
     </li>
   </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Presentations
+    Pres &amp; Workshops
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html">Overview</a>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html" class="external-link">Overview</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Getting Started Workshop (Oct 2021)</a>
     </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/ucanr-igis/caladaptr/">
+  <a href="https://github.com/ucanr-igis/caladaptr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -142,16 +150,16 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="caladaptr-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#caladaptr-" class="anchor"></a>caladaptR <a href="http://ucanr-igis.github.io/caladaptr"><img src="reference/figures/logo.gif" align="right" height="150" style="padding:15px;"></a>
+<div class="section level1">
+<div class="page-header"><h1 id="caladaptr-">caladaptR <a href="http://ucanr-igis.github.io/caladaptr"><img src="reference/figures/logo.gif" align="right" height="150" style="padding:15px;"></a>
+<a class="anchor" aria-label="anchor" href="#caladaptr-"></a>
 </h1></div>
 <!-- badges: start -->
 
-<div id="features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#features" class="anchor"></a>Features</h2>
-<p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/">Cal-Adapt.org</a> in R. The niche of <code>caladaptr</code> is to bring data into R after which you can use other packages for analysis and visualization:</p>
+<div class="section level2">
+<h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
+</h2>
+<p><code>caladaptr</code> is an API client that makes it easier to work with data from <a href="https://cal-adapt.org/" class="external-link">Cal-Adapt.org</a> in R. The niche of <code>caladaptr</code> is to bring data into R after which you can use other packages for analysis and visualization:</p>
 <p align="center">
 <img src="reference/figures/caladaptr_role_480x432x256.png" width="480" height="432"></p>
 <p><code>caladaptr</code> allows you to:</p>
@@ -165,13 +173,13 @@
 <ul>
 <li>be pipe friendly</li>
 <li>return tibbles for compatibility with tidyverse packages</li>
-<li>return values with encoded units (managed by the <a href="https://cran.r-project.org/package=units">units</a> package)</li>
+<li>return values with encoded units (managed by the <a href="https://cran.r-project.org/package=units" class="external-link">units</a> package)</li>
 <li>accept and return <code>sf</code> data frames where spatial objects are needed</li>
-<li>return rasters as spatiotemporal arrays (<a href="https://r-spatial.github.io/stars/"><code>stars</code></a> objects)</li>
+<li>return rasters as spatiotemporal arrays (<a href="https://r-spatial.github.io/stars/" class="external-link"><code>stars</code></a> objects)</li>
 </ul>
-<p><code>caladaptr</code> does not support downloading the original NetCDF rasters nor station data (e.g., sea level rise, stream gauges). For these data, see the Data Download tool or FTP server on <a href="https://cal-adapt.org/data/">Cal-Adapt.org</a>.</p>
+<p><code>caladaptr</code> does not support downloading the original NetCDF rasters nor station data (e.g., sea level rise, stream gauges). For these data, see the Data Download tool or FTP server on <a href="https://cal-adapt.org/data/" class="external-link">Cal-Adapt.org</a>.</p>
 <p><em>Beta status</em> status means:</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li>the package is still under development<br>
 </li>
 <li>there’s a small possibility that updates will <em>not</em> be backward compatible<br>
@@ -179,43 +187,43 @@
 <li>user feedback and input is extremely welcome and will be used to guide future development!</li>
 </ol>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p><code>caladaptr</code> is available on <a href="https://github.com/ucanr-igis/caladaptr" target="_blank" rel="noopener">GitHub</a>. To install it, you need the <code>remotes</code> (or <code>devtools</code>) package. Windows users also need to have <a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank" rel="noopener">RTools</a> installed.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p><code>caladaptr</code> is available on <a href="https://github.com/ucanr-igis/caladaptr" target="_blank" rel="noopener" class="external-link">GitHub</a>. To install it, you need the <code>remotes</code> (or <code>devtools</code>) package. Windows users also need to have <a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank" rel="noopener" class="external-link">RTools</a> installed.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(remotes)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"ucanr-igis/caladaptr"</span>)</span></code></pre></div>
 </div>
-<div id="general-workflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#general-workflow" class="anchor"></a>General Workflow</h2>
+<div class="section level2">
+<h2 id="general-workflow">General Workflow<a class="anchor" aria-label="anchor" href="#general-workflow"></a>
+</h2>
 <p>In general, there are three steps to retrieving Cal-Adapt data with <code>caladaptr</code>:</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li><p>Create an ‘API request object’</p></li>
 <li><p>Feed the API request into a function that fetches data (either values or rasters)</p></li>
 <li><p>Wrangle the data that comes back into the format required for your analysis</p></li>
 </ol>
 </div>
-<div id="example-projected-annual-temperature-at-a-point-location" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example-projected-annual-temperature-at-a-point-location" class="anchor"></a>Example: Projected Annual Temperature at a Point Location</h2>
+<div class="section level2">
+<h2 id="example-projected-annual-temperature-at-a-point-location">Example: Projected Annual Temperature at a Point Location<a class="anchor" aria-label="anchor" href="#example-projected-annual-temperature-at-a-point-location"></a>
+</h2>
 <p>In this example, we’ll get the projected maximum daily temperature for a point location near Sacramento, averaged by calendar year from 2040-2070, for 10 GCMs and 2 emissions scenarios. Then we’ll plot them.</p>
 <p><strong>1. Create an API request object</strong></p>
 <p>Creating an API request object is a bit like filling in an order form. The request is essentially a description of the data you want.</p>
-<p>There are a number of constructor functions you can mix and match to create an API request object. Below we create a request for 30 years of projected annual average maximum daily temperature from the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html">LOCA downscaled CMIP5 climate projections</a> from Scripps, for a single point location.</p>
+<p>There are a number of constructor functions you can mix and match to create an API request object. Below we create a request for 30 years of projected annual average maximum daily temperature from the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html" class="external-link">LOCA downscaled CMIP5 climate projections</a> from Scripps, for a single point location.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span><span class="op">)</span>
-<span class="co">#&gt; caladaptr (version 0.6.2)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
+<span class="co">#&gt; caladaptr (version 0.6.3)</span>
 <span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
 <span class="co">#&gt; Bug reports: https://github.com/ucanr-igis/caladaptr/issues</span>
 
-<span class="va">sac_tasmax_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>     <span class="co">## specify a location</span>
-  <span class="fu"><a href="reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"HadGEM2-ES"</span>, <span class="st">"CNRM-CM5"</span>, <span class="st">"CanESM2"</span>,<span class="st">"MIROC5"</span>,            <span class="co">## select GCM(s)</span>
+<span class="va">sac_tasmax_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_loc_pt.html">ca_loc_pt</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">121.4687</span>, <span class="fl">38.5938</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>     <span class="co">## specify a location</span>
+  <span class="fu"><a href="reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"HadGEM2-ES"</span>, <span class="st">"CNRM-CM5"</span>, <span class="st">"CanESM2"</span>,<span class="st">"MIROC5"</span>,            <span class="co">## select GCM(s)</span>
            <span class="st">"ACCESS1-0"</span>, <span class="st">"CCSM4"</span>, <span class="st">"CESM1-BGC"</span>, 
-           <span class="st">"CMCC-CMS"</span>, <span class="st">"GFDL-CM3"</span>, <span class="st">"HadGEM2-CC"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>     
-  <span class="fu"><a href="reference/ca_scenario.html">ca_scenario</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"rcp45"</span>,<span class="st">"rcp85"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>                               <span class="co">## select emission scenarios(s)</span>
-  <span class="fu"><a href="reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tasmax"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>                                          <span class="co">## select climate variables</span>
-  <span class="fu"><a href="reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span> <span class="op">%&gt;%</span>                                             <span class="co">## select a temporal aggregation period</span>
+           <span class="st">"CMCC-CMS"</span>, <span class="st">"GFDL-CM3"</span>, <span class="st">"HadGEM2-CC"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>     
+  <span class="fu"><a href="reference/ca_scenario.html">ca_scenario</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rcp45"</span>,<span class="st">"rcp85"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>                               <span class="co">## select emission scenarios(s)</span>
+  <span class="fu"><a href="reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tasmax"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>                                          <span class="co">## select climate variables</span>
+  <span class="fu"><a href="reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>                                             <span class="co">## select a temporal aggregation period</span>
   <span class="fu"><a href="reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">2040</span>, end <span class="op">=</span> <span class="fl">2070</span><span class="op">)</span>                                <span class="co">## select start and end dates</span>
 
 <span class="va">sac_tasmax_cap</span>
@@ -232,8 +240,8 @@
 <p><strong>2. Fetch data</strong></p>
 <p>Functions that <strong>fetch data</strong> from Cal-Adapt include <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, <code><a href="reference/ca_getvals_db.html">ca_getvals_db()</a></code> (see <em>Large Queries</em> vignette), and <code><a href="reference/ca_getrst_stars.html">ca_getrst_stars()</a></code> (see <em>Rasters Part I</em> vignette). Below we’ll fetch data into a tibble by passing the API request to <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sac_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="va">sac_tasmax_cap</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">sac_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="va">sac_tasmax_cap</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 8</span>
 <span class="co">#&gt;      id cvar   period gcm        scenario spag  dt           val</span>
 <span class="co">#&gt;   &lt;int&gt; &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;      &lt;fct&gt;    &lt;fct&gt; &lt;chr&gt;        [K]</span>
@@ -243,16 +251,16 @@
 <span class="co">#&gt; 4     1 tasmax year   HadGEM2-ES rcp45    none  2043-12-31  300.</span>
 <span class="co">#&gt; 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31  300.</span>
 <span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31  298.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl</span><span class="op">)</span>
 <span class="co">#&gt; [1] 620   8</span></code></pre></div>
 <p><strong>3. Wrangle Data</strong></p>
-<p>Depending what your goal it, you may need to add or delete columns, reshape the data, group rows, etc. Below we’ll add a column for Fahrenheit using <code><a href="https://rdrr.io/pkg/units/man/units.html">set_units()</a></code> from the <a href="https://cran.r-project.org/package=units"><code>units</code></a> package.</p>
+<p>Depending what your goal it, you may need to add or delete columns, reshape the data, group rows, etc. Below we’ll add a column for Fahrenheit using <code><a href="https://rdrr.io/pkg/units/man/units.html" class="external-link">set_units()</a></code> from the <a href="https://cran.r-project.org/package=units" class="external-link"><code>units</code></a> package.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Add a column with Fahrenheit units</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-quantities/units/">units</a></span><span class="op">)</span>
-<span class="va">sac_tasmax_tbl2</span> <span class="op">&lt;-</span> <span class="va">sac_tasmax_tbl</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>temp_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/units/man/units.html">set_units</a></span><span class="op">(</span><span class="va">val</span>, <span class="va">degF</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl2</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-quantities/units/" class="external-link">units</a></span><span class="op">)</span>
+<span class="va">sac_tasmax_tbl2</span> <span class="op">&lt;-</span> <span class="va">sac_tasmax_tbl</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>temp_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/units/man/units.html" class="external-link">set_units</a></span><span class="op">(</span><span class="va">val</span>, <span class="va">degF</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl2</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 9</span>
 <span class="co">#&gt;      id cvar   period gcm        scenario spag  dt           val temp_f</span>
 <span class="co">#&gt;   &lt;int&gt; &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt;      &lt;fct&gt;    &lt;fct&gt; &lt;chr&gt;        [K] [degF]</span>
@@ -264,17 +272,17 @@
 <span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31  298.   77.2</span></code></pre></div>
 <p>Now we can plot it:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sac_tasmax_tbl2</span>, 
-       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">temp_f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color<span class="op">=</span><span class="va">gcm</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Annual Average Maximum Daily Temperature for Sacramento"</span>, x <span class="op">=</span> <span class="st">"year"</span>, y <span class="op">=</span> <span class="st">"temp (F)"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sac_tasmax_tbl2</span>, 
+       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">temp_f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color<span class="op">=</span><span class="va">gcm</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Annual Average Maximum Daily Temperature for Sacramento"</span>, x <span class="op">=</span> <span class="st">"year"</span>, y <span class="op">=</span> <span class="st">"temp (F)"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-sac_tasmax_tbl2_plot-1.png" width="600"></p>
 </div>
-<div id="constructing-api-requests" class="section level2">
-<h2 class="hasAnchor">
-<a href="#constructing-api-requests" class="anchor"></a>Constructing API Requests</h2>
+<div class="section level2">
+<h2 id="constructing-api-requests">Constructing API Requests<a class="anchor" aria-label="anchor" href="#constructing-api-requests"></a>
+</h2>
 <p>API request objects are constructed by stringing together functions that provide the key elements of the request, including the location(s), dataset(s), and time frame.</p>
 <p><strong>Location functions</strong> (pick one):</p>
 <table class="table">
@@ -346,20 +354,20 @@
 <p><code><a href="reference/ca_example_apireq.html">ca_example_apireq()</a></code> is a convenience function that returns sample API requests for testing. You can use <code><a href="reference/ca_preflight.html">ca_preflight()</a></code> to check an API request for errors. Plotting an API request will show the location(s), with an option to overlay the loca grid cells:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">samp_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_example_apireq.html">ca_example_apireq</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
-<span class="va">samp_cap</span> <span class="op">%&gt;%</span> <span class="fu"><a href="reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">samp_cap</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; General issues</span>
 <span class="co">#&gt;  - none found</span>
 <span class="co">#&gt; Issues for querying values</span>
 <span class="co">#&gt;  - none found</span>
 <span class="co">#&gt; Issues for downloading rasters</span>
 <span class="co">#&gt;  - none found</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samp_cap</span>, locagrid <span class="op">=</span> <span class="cn">TRUE</span>, static <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">samp_cap</span>, locagrid <span class="op">=</span> <span class="cn">TRUE</span>, static <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-plot_samp_cap-1.png" width="360"></p>
-<p>For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the <em>API Requests</em> vignette and ‘R Notebooks’ on the <a href="https://ucanr-igis.github.io/caladaptr/">website</a>.</p>
+<p>For more examples, including retrieving data for a preset area-of-interest (i.e., census tracts), see the <em>API Requests</em> vignette and ‘R Notebooks’ on the <a href="https://ucanr-igis.github.io/caladaptr/" class="external-link">website</a>.</p>
 </div>
-<div id="constants" class="section level2">
-<h2 class="hasAnchor">
-<a href="#constants" class="anchor"></a>Constants</h2>
+<div class="section level2">
+<h2 id="constants">Constants<a class="anchor" aria-label="anchor" href="#constants"></a>
+</h2>
 <p>To help you pass arguments for the various constructor functions, <code>caladaptr</code> provides the following constants:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Climate Variables </span>
@@ -383,9 +391,9 @@
 <span class="va">periods</span>
 <span class="co">#&gt; [1] "day"    "month"  "year"   "30yavg"</span></code></pre></div>
 </div>
-<div id="data-catalog" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-catalog" class="anchor"></a>Data Catalog</h2>
+<div class="section level2">
+<h2 id="data-catalog">Data Catalog<a class="anchor" aria-label="anchor" href="#data-catalog"></a>
+</h2>
 <p><code>caladaptr</code> can not tell you which climate data you need for your project. Nor will it teach you how to use climate data appropriately or wisely. However it does have a copy of the Cal-Adapt raster series data catalog, so you can see what’s available and specify the datasets you need.</p>
 <p>To view the entire data catalog in a RStudio Viewer pane, run the following. You can then use the filter button to find datasets that match a key word.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(<span class="fu">ca_catalog_rs</span>())</span></code></pre></div>
@@ -398,52 +406,58 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/ucanr-igis/caladaptr/">https://​github.com/​ucanr-igis/​caladaptr/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/ucanr-igis/caladaptr/issues">https://​github.com/​ucanr-igis/​caladaptr/​issues</a>
-</li>
+<li><a href="https://github.com/ucanr-igis/caladaptr/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/ucanr-igis/caladaptr/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small>GPL (&gt;= 3)</small></li>
 </ul>
 </div>
+
+
 <div class="citation">
-<h2>Citation</h2>
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html">Citing caladaptr</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Andy Lyons <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-7505-6709" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>California Strategic Growth Council <br><small class="roles"> Funder </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing caladaptr</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li>Andy Lyons <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-7505-6709" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://sgc.ca.gov" class="external-link"><img src="https://ucanr-igis.github.io/caladaptr-res/assets/sgc-small_140x34.png" width="140"></a> <br><small class="roles"> Funder </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://www.tidyverse.org/lifecycle/#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Andy Lyons, California Strategic Growth Council.</p>
+  <p></p>
+<p>Developed by Andy Lyons.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -451,6 +465,8 @@
 
   
 
+
+  
 
   </body>
 </html>

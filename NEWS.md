@@ -1,3 +1,7 @@
+# caladaptr 0.6.3 (2021-12-07)
+
+* `ca_getvals_tbl()`: added `timeout` argument to have the ability to increase the amount of time before httr returns a timeout error
+
 # caladaptr 0.6.2 (2021-09-06)
 
 * Added copyright holder and funding organization to the package authors 
