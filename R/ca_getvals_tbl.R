@@ -6,7 +6,7 @@
 #' @param stop_on_err Stop if the server returns an error
 #' @param shiny_progress A Shiny progress bar object, see Details.
 #' @param omit_col Columns to exclude from the tibble
-#' @param timeout Timeout in seconds
+#' @param timeout Timeout limit in seconds
 #'
 #' @details \code{ca_getvals_tbl} fetches data via the Cal-Adapt API, returning a tibble. Everything is done in memory. To download Cal-Adapt into
 #' a local SQLite database, see \code{\link{ca_getvals_db}}. To download Cal-Adapt data as raster files, see \code{\link{ca_getrst_stars}}.
@@ -16,14 +16,14 @@
 #' \code{dt} (date), and \code{val} (the actual climate values).
 #'
 #' \code{timeout} set the longest amount of time before curl reports an error. The default is 10 seconds. Increase this if
-#' you experience timeout errors (which have been know to occur on ShinyApps.io perhaps due to server congestion)
+#' you experience timeout errors (which have been know to occur on ShinyApps.io perhaps due to server congestion).
 #'
 #' @return A tibble
 #'
 #' @seealso \code{\link{ca_getvals_db}}, \code{\link{ca_getrst_stars}}
 #'
 #' @importFrom crayon red
-#' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status http_status timeout
+#' @importFrom httr GET POST content modify_url user_agent upload_file accept_json http_error stop_for_status warn_for_status http_status config
 #' @importFrom utils txtProgressBar setTxtProgressBar packageVersion
 #' @importFrom units set_units
 #' @importFrom dplyr select mutate left_join slice
@@ -91,7 +91,13 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
   caladaptr_ua <- user_agent(paste0("caladaptr_v", packageVersion("caladaptr")))
 
   ## Set the timeout option
-  if (!is.null(timeout)) httr::timeout(timeout)
+  if (is.null(timeout)) {
+    tout_config <- NULL
+  } else {
+    ## httr::timeout(timeout) ## this seemed to have no effect on ShinyApps.io
+    if (!is.numeric(timeout)) stop("timeout must be numeric (number of seconds)")
+    tout_config <- httr::config(connecttimeout = timeout)
+  }
 
   ## Create a tibble to store the results
   res_tbl <- NULL
@@ -188,12 +194,13 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
                        body = body_flds_lst,
                        encode = "multipart",
                        accept_json(),
-                       caladaptr_ua)
+                       caladaptr_ua,
+                       tout_config)
 
     } else {   ## SEND A GET REQUEST
       api_url_full <- api_tbl[i, "api_url", drop = TRUE]
       if (debug) message(msg_fmt(paste0(" - (", i, "/", nrow(api_tbl), ") ", api_url_full)))
-      qry_resp <- GET(api_url_full, accept_json(), caladaptr_ua)
+      qry_resp <- GET(api_url_full, accept_json(), caladaptr_ua, tout_config)
     }
 
     ## At this point we have a response object

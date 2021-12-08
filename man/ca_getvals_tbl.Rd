@@ -27,7 +27,7 @@ ca_getvals_tbl(
 
 \item{omit_col}{Columns to exclude from the tibble}
 
-\item{timeout}{Timeout in seconds}
+\item{timeout}{Timeout limit in seconds}
 }
 \value{
 A tibble
@@ -44,7 +44,7 @@ can be omitted by passing column names to \code{col_omit}. Three columns that ca
 \code{dt} (date), and \code{val} (the actual climate values).
 
 \code{timeout} set the longest amount of time before curl reports an error. The default is 10 seconds. Increase this if
-you experience timeout errors (which have been know to occur on ShinyApps.io perhaps due to server congestion)
+you experience timeout errors (which have been know to occur on ShinyApps.io perhaps due to server congestion).
 }
 \seealso{
 \code{\link{ca_getvals_db}}, \code{\link{ca_getrst_stars}}

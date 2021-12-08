@@ -1,3 +1,7 @@
+# caladaptr 0.6.4 (2021-12-08)
+
+* `ca_getvals_tbl()`: modified GET call to implement `timeout`
+
 # caladaptr 0.6.3 (2021-12-07)
 
 * `ca_getvals_tbl()`: added `timeout` argument to have the ability to increase the amount of time before httr returns a timeout error
