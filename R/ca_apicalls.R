@@ -5,7 +5,7 @@
 #' @param x A Cal-Adapt API request
 #' @param slug_check Cross check the slug against the raster series catalog
 #' @param date_check Cross check the start and end date against the raster series catalog
-#' @param loc_check Check to make sure the location is within the Cal-Adapt coverage area
+#' @param loc_check Check locations for duplicate values and the Cal-Adapt coverage area
 #' @param units_check Check for consistent units
 #' @param spag_check Check spatial aggregation option
 #' @param check_for Which operations or context to use
@@ -15,9 +15,9 @@
 #'
 #' @details This is an internal function which a) evaluates an API request and generates a tibble
 #' of individual API calls, and b) checks for errors. It is exported as it may have some use for
-#' trouble-shooting and developers.
+#' trouble-shooting and developers, but is not something most users will need.
 #'
-#' This function is called in two contexts.
+#' This function is called in two contexts:
 #'
 #' a) by ca_preflight() which will report the errors to the user
 #'
@@ -44,7 +44,7 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
                         units_check = TRUE, spag_check = FALSE, pf = FALSE,
                         check_for = c("getvals", "getrst"), ignore_spag = deprecated(), preflight = deprecated()) {
 
-  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
+  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq", call. = FALSE)
 
   if (FALSE %in% (check_for %in% c("getvals", "getrst"))) stop("unknown value(s) for `check_for`")
 
@@ -63,33 +63,6 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
   genl_msgs <- character(0)  ## general messages
   gval_msgs <- character(0)  ## messages specific to using the API request to get values
   grst_msgs <- character(0)  ## messages specific to using the API request to get rasters
-
-  ## Create an internal function to handle issues discovered. If pf=TRUE, they'll just be
-  ## logged in genl_msgs, gval_msgs, grst_msgs.
-  ## If pf = FALSE and stop_msg has value, the stop() will be called
-  stopwarn <- function(pf, check_for, stop_msg = NULL, gval_msg = NULL, grst_msg = NULL) {
-
-    if (pf) {
-      e0 <- parent.frame()
-      ## Record the error message as a general or global error
-      if (!is.null(stop_msg)  && is.null(gval_msg) && is.null(grst_msg)) {
-        assign("genl_msgs", c(get("genl_msgs", envir = e0), stop_msg), envir = e0)
-      }
-      ## Record the error message as a get values problem
-      if (!is.null(gval_msg) && ("getvals" %in% check_for)) {
-        assign("gval_msgs", c(get("gval_msgs", envir = e0), gval_msg), envir = e0)
-      }
-      ## Record the error message as a get raster problem
-      if (!is.null(grst_msg) && ("getrst" %in% check_for)) {
-        assign("grst_msgs", c(get("grst_msgs", envir = e0), grst_msg), envir = e0)
-      }
-
-    } else {
-      ## If a stop message is passed and this is not a preflight call, stop the presses
-      if (!is.null(stop_msg)) stop(stop_msg)
-    }
-
-  }
 
   check_duplicate_hash_int <- TRUE
 
@@ -120,7 +93,7 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
 
   }
 
-  ## Load the loca grid area
+  ## Load the loca grid polygon
   if (loc_check) {
     loca_area_sf <- st_read(system.file("extdata", "loca_area.geojson", package = "caladaptr"), quiet = TRUE)
   }
@@ -140,8 +113,12 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
                                        sapply(1:nrow(x$loc$val),
                                               function(i) st_as_text(st_point(as.numeric(x$loc$val[i, c(2,3)]))))))
 
-    ## Verify the point(s) are in the Cal-Adapt area
+    ## Check for duplicate coordinates
+    dup_loc <- anyDuplicated(x$loc$val[ ,2:3]) !=0
+    if (dup_loc) check_duplicate_hash_int <- FALSE
+
     if (loc_check) {
+      ## Verify the point(s) are in the Cal-Adapt area
       qry_pts_sf <- st_as_sf(x$loc$val[ ,2:3], coords = c("x","y"), crs = 4326)
       suppressMessages({
         pts_in_loca_area_mat <- qry_pts_sf %>% st_intersects(loca_area_sf, sparse = FALSE)
@@ -149,6 +126,9 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
       if (FALSE %in% pts_in_loca_area_mat) {
         stopwarn(pf, check_for, stop_msg="One or more points fall outside the area covered by Cal-Adapt")
       }
+
+      if (dup_loc) stopwarn(pf, check_for, stop_msg="Duplicate locations found.")
+
     }
 
     idfld_name <- names(x$loc$val)[1]
@@ -184,6 +164,8 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
 
     loc_sf <- NA
     sf_hash <- ""
+
+
 
   } else if (x$loc$type == "sf") {
 
@@ -235,7 +217,7 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
       }  ## if getrst %in% check_for
 
 
-      ## Next check the area
+      ## Next check the toal size of the area of interest
       epsg_caalbers <- 3310
       max_area_m2 <- 52079387300 ## Size of San Bernadino Cty is known to work. Exactly 20k mi^2 = 51799762207
       if (TRUE %in% (x$loc$val$loc %>% st_transform(epsg_caalbers) %>% st_area() %>% as.numeric() > max_area_m2)) {
@@ -467,4 +449,43 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
   }
 
 }
+
+
+#' Internal function used by ca_apicalls() to handle issues discovered.
+#'
+#' This is mostly to keep the code clean.
+#' If pf=TRUE, they'll just be logged in genl_msgs, gval_msgs, grst_msgs.
+#' stop_msg is the message to show if the problem is a deal-breaker
+#' gval_msgs, grst_msgs are the messages to show if the context is getvals or getrst (these are sometimes different)
+#' If neither gval_msgs or grst_msgs are passed, the error will be logged (pf=TRUE) or code stopped (pf=FALSE)
+#' If pf = FALSE and stop_msg has value, the stop() will be called
+#'
+#'
+#' @keywords internal
+stopwarn <- function(pf, check_for, stop_msg = NULL, gval_msg = NULL, grst_msg = NULL) {
+
+  if (pf) {
+    e0 <- parent.frame()
+    ## Record the error message as a general or global error
+    if (!is.null(stop_msg)  && is.null(gval_msg) && is.null(grst_msg)) {
+      assign("genl_msgs", c(get("genl_msgs", envir = e0), stop_msg), envir = e0)
+    }
+    ## Record the error message as a get values problem
+    if (!is.null(gval_msg) && ("getvals" %in% check_for)) {
+      assign("gval_msgs", c(get("gval_msgs", envir = e0), gval_msg), envir = e0)
+    }
+    ## Record the error message as a get raster problem
+    if (!is.null(grst_msg) && ("getrst" %in% check_for)) {
+      assign("grst_msgs", c(get("grst_msgs", envir = e0), grst_msg), envir = e0)
+    }
+
+  } else {
+    ## If a stop message is passed and this is not a preflight call, stop the presses
+    if (!is.null(stop_msg)) stop(stop_msg, call. = FALSE)
+  }
+
+}
+
+
+
 

@@ -64,9 +64,9 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
     sidecar <- write_sidecar
   }
 
-  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
-  if (is.null(out_dir)) stop("out_dir is a required argument")
-  if (!file.exists(out_dir)) stop("out_dir does not exist")
+  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq", call. = FALSE)
+  if (is.null(out_dir)) stop("out_dir is a required argument", call. = FALSE)
+  if (!file.exists(out_dir)) stop("out_dir does not exist", call. = FALSE)
 
   ## Get the function(s) we'll use to style messages
   accent2 <- getOption("ca_accent2", I)
@@ -85,7 +85,7 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
   }
 
   ## Check for an internet connection
-  if (!has_internet()) stop("No internet connection detected")
+  if (!has_internet()) stop("No internet connection detected", call. = FALSE)
 
   ## Prepare a function process_path that will be used to process output file names (normalized, or not)
   if (normalize_path) {
@@ -186,7 +186,7 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
 
 
     } else {
-      stop(paste0("Unknown location type: ", x$loc$type))
+      stop(paste0("Unknown location type: ", x$loc$type), call. = FALSE)
     }
 
   } else {
@@ -433,7 +433,7 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
         # qry_resp <- GET(utils::URLencode(api_url_full), caladaptr_ua)
 
       } else {
-        stop("Don't know how to handle this location type")
+        stop("Don't know how to handle this location type", call. = FALSE)
 
       }
 
@@ -727,7 +727,7 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
                   unlink(tifs_unzipped)
 
                 } else {
-                  stop("Unepxected")
+                  stop("Unepxected number of TIFs returned. Please contact the package author for help.")
                 }
 
               }

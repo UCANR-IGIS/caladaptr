@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
       </span>
     </div>
 
@@ -122,10 +122,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html" class="external-link">Overview</a>
+      <a href="https://youtu.be/6sDwXPbSYOQ" class="external-link">Overview</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Getting Started Workshop (Oct 2021)</a>
+      <a href="https://youtu.be/APCIBs35BJg" class="external-link">Code Example</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_feb22/" class="external-link">Workshop: Working with Cal-Adapt Data in R (Feb 2022)</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Workshop: Getting Started (Oct 2021)</a>
     </li>
   </ul>
 </li>
@@ -153,7 +159,7 @@
       <h1 data-toc-skip>Large Queries</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/large-queries.Rmd" class="external-link"><code>vignettes/large-queries.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/doc/vignettes/large-queries.Rmd" class="external-link"><code>doc/vignettes/large-queries.Rmd</code></a></small>
       <div class="hidden name"><code>large-queries.Rmd</code></div>
 
     </div>
@@ -181,7 +187,6 @@ p.indented2 {margin-left:2em;}
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'sf' was built under R version 4.1.2</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap" class="external-link">tmap</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
 <span class="fu"><a href="../reference/ca_settings.html">ca_settings</a></span><span class="op">(</span>console_colors <span class="op">=</span> <span class="st">"light"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
@@ -433,19 +438,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>11</span>
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> gcms</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>gcm_id<span style="color: #0000BB; font-weight: bold;">*</span>; gcm</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>13</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> periods</span></span>
 <span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>period_id<span style="color: #0000BB; font-weight: bold;">*</span>; period</span>
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>4</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> scenarios</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>scenario_id<span style="color: #0000BB; font-weight: bold;">*</span>; scenario</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>3</span>
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> slugs</span></span>
@@ -468,7 +463,6 @@ p.indented2 {margin-left:2em;}
 <p>SQL is beyond the scope of this vignette, but below are some example of using DBI to send SQL statements to a SQLite database to query a table. See the documentation from <a href="https://dbi.r-dbi.org/articles/dbi" class="external-link">DBI</a> and <a href="https://www.sqlitetutorial.net/" class="external-link">SQLite Tutorial</a> for more information and examples.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'RSQLite' was built under R version 4.1.2</span>
 
 <span class="co">## Grab the active database connection. </span>
 <span class="co">## db_conn &lt;- rvrsde_liv_tas_rtbl$src$con</span>
@@ -478,16 +472,14 @@ p.indented2 {margin-left:2em;}
 
 <span class="co">## List the tables</span>
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">db_conn</span><span class="op">)</span>
-<span class="co">#&gt; [1] "cvars"             "gcms"              "periods"          </span>
-<span class="co">#&gt; [4] "rvrsde_tas"        "rvrsde_tas_hashes" "scenarios"        </span>
-<span class="co">#&gt; [7] "slugs"             "spags"</span>
+<span class="co">#&gt; [1] "cvars"             "periods"           "rvrsde_tas"       </span>
+<span class="co">#&gt; [4] "rvrsde_tas_hashes" "slugs"             "spags"</span>
 
 <span class="co">## Import one table in its entirety</span>
-<span class="op">(</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbReadTable.html" class="external-link">dbReadTable</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"scenarios"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;   scenario_id   scenario</span>
-<span class="co">#&gt; 1           1      rcp45</span>
-<span class="co">#&gt; 2           2      rcp85</span>
-<span class="co">#&gt; 3           3 historical</span>
+<span class="op">(</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbReadTable.html" class="external-link">dbReadTable</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"slugs"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;   slug_id              slug</span>
+<span class="co">#&gt; 1       1 tasmin_day_livneh</span>
+<span class="co">#&gt; 2       2 tasmax_day_livneh</span>
 
 <span class="co">## Use a SELECT query to read the first 12 records from rvrsde_tas</span>
 <span class="va">first12_qry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbSendQuery.html" class="external-link">dbSendQuery</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"SELECT * FROM rvrsde_tas LIMIT 12;"</span><span class="op">)</span>
@@ -624,19 +616,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>11</span>
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> gcms</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>gcm_id<span style="color: #0000BB; font-weight: bold;">*</span>; gcm</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>13</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> periods</span></span>
 <span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>period_id<span style="color: #0000BB; font-weight: bold;">*</span>; period</span>
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>4</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> scenarios</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>scenario_id<span style="color: #0000BB; font-weight: bold;">*</span>; scenario</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>3</span>
 <span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> slugs</span></span>
@@ -780,7 +762,7 @@ p.indented2 {margin-left:2em;}
 <code class="sourceCode R"><span class="va">locaschl_et_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_loc_sf.html">ca_loc_sf</a></span><span class="op">(</span>loc <span class="op">=</span> <span class="va">loca_ctr_sf</span>, idfld <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="va">gcms</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/ca_scenario.html">ca_scenario</a></span><span class="op">(</span><span class="st">"rcp85"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="st">"ET"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="st">"et"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"month"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">2080</span>, end <span class="op">=</span> <span class="fl">2099</span><span class="op">)</span>
 
@@ -827,12 +809,12 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 2</span></span>
 <span class="co">#&gt;      id mean_et</span>
 <span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">28</span>679   0.976</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> <span style="text-decoration: underline;">28</span>686   0.762</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> <span style="text-decoration: underline;">28</span>705   1.73 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> <span style="text-decoration: underline;">28</span>817   2.19 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> <span style="text-decoration: underline;">28</span>843   1.15 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> <span style="text-decoration: underline;">28</span>846   1.36</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">28</span>679   1.02 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> <span style="text-decoration: underline;">28</span>686   0.802</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> <span style="text-decoration: underline;">28</span>705   1.77 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> <span style="text-decoration: underline;">28</span>817   2.18 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> <span style="text-decoration: underline;">28</span>843   1.19 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> <span style="text-decoration: underline;">28</span>846   1.41</span></code></pre></div>
 <p>We can now join the summary of ET for each LOCA grid cell back to the schools layer, using the grid <code>id</code> as the join field.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ca_schools_et_sf</span> <span class="op">&lt;-</span> <span class="va">ca_schools_loca_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 

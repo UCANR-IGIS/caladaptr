@@ -47,12 +47,6 @@ knitr::opts_chunk$set(
 
 \
 
-*Beta status* status means:
-
-1) the package is still under development  
-2) there's a small possibility that updates will *not* be backward compatible  
-3) user feedback and input is extremely welcome and will be used to guide future development!
-
 ## Installation
 
 `caladaptr` is available on [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. To install it, you need the  `remotes` (or `devtools`) package. Windows users also need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} installed.

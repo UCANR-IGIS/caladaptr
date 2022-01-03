@@ -231,7 +231,7 @@ db_conn <- dbConnect(SQLite(), dbname = rvrsde_liv_tas_fn)
 dbListTables(db_conn)
 
 ## Import one table in its entirety
-(dbReadTable(db_conn, "scenarios"))
+(dbReadTable(db_conn, "slugs"))
 
 ## Use a SELECT query to read the first 12 records from rvrsde_tas
 first12_qry <- dbSendQuery(db_conn, "SELECT * FROM rvrsde_tas LIMIT 12;")
@@ -371,7 +371,7 @@ Next, create the API request. Here we'll get monthly evapotranspiration at the e
 locaschl_et_cap <- ca_loc_sf(loc = loca_ctr_sf, idfld = "id") %>%
   ca_gcm(gcms[1:4]) %>%
   ca_scenario("rcp85") %>%
-  ca_cvar("ET") %>%
+  ca_cvar("et") %>%
   ca_period("month") %>%
   ca_years(start = 2080, end = 2099)
 

@@ -24,9 +24,16 @@ ca_loc_pt <- function(x = ca_apireq(), coords, id=NULL) {
   ## If pt is a numeric vector of length 2, convert it to a data frame
   if (is.numeric(coords) && length(coords) == 2) coords <- data.frame(x=coords[1], y = coords[2])
 
+  ## Make sure coords is now a data frame or matrix
   if (!inherits(coords, "data.frame") && !inherits(coords, "matrix")) {
     stop("coords must be a two-column data frame or matrix with x and y values in geographic coordinates")
   }
+
+  ## Check for NAs
+  if (anyNA(coords)) stop("coords should not contain NA values")
+
+  ## Check for duplicate values
+  if (anyDuplicated(coords) != 0) stop("coords should not contain duplicate coordinates")
 
   ## Add more error checking here including the range of x and y
 

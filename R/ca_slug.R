@@ -18,6 +18,9 @@ ca_slug <- function(x = ca_apireq(), slug) {
 
   ## Error check
   if (!identical(slug, NA)) {
+    if (anyNA(slug)) stop("slug should not contain NA values")
+    if (anyDuplicated(slug)) stop("slug should not contain duplicate values")
+
     all_slugs <- ca_catalog_rs(quiet = TRUE)$slug
     if (FALSE %in% (slug %in% all_slugs)) {
       stop(paste0("Unknown value(s) in slug: ",

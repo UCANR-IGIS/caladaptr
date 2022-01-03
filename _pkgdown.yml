@@ -134,6 +134,10 @@ navbar:
       text: Pres & Workshops
       menu:
        - text: Overview
-         href: https://ucanr-igis.github.io/caladaptr-res/pres/overview.html
-       - text: "Getting Started Workshop (Oct 2021)"
+         href: https://youtu.be/6sDwXPbSYOQ
+       - text: Code Example
+         href: https://youtu.be/APCIBs35BJg
+       - text: "Workshop: Working with Cal-Adapt Data in R (Feb 2022)"
+         href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_feb22/
+       - text: "Workshop: Getting Started (Oct 2021)"
          href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/

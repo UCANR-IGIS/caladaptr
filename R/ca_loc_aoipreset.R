@@ -34,14 +34,10 @@ ca_loc_aoipreset <- function(x = ca_apireq(), type, idfld="id", idval=NULL) {
   if (FALSE %in% (idfld %in% aoipreset_idflds[[type]])) stop("invalid value for idfld. See aoipreset_idflds")
 
   if (!is.null(idval)) {
+    if (anyNA(idval)) stop("idval can not contain NA values")
+    if (anyDuplicated(idval)) stop("idval should not contain duplicate values")
     if (FALSE %in% (idval %in% aoipreset_idval[[type]][[idfld]])) stop("invalid value(s) in idval. See aoipreset_idval")
   }
-
-  # if (length(stat) > 1) stop("Sorry, for right now you can only pass one stat function")
-  # if (FALSE %in% (stat %in% c("max", "mean", "median", "min", "sum"))) {
-  #   stop(paste0("invalid value(s) in stat: ",
-  #               paste(stat[!stat %in% c("max", "mean", "median", "min", "sum")], collapse = ", ")))
-  # }
 
   res <- x
   res$loc <- list(type="aoipreset", val = list(type = type,

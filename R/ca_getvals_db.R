@@ -81,20 +81,20 @@ ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new
                           pause_n = 1000, pause_secs = 60,
                           write_sidecar = TRUE, stop_on_err = TRUE, quiet = FALSE, debug = FALSE) {
 
-  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
+  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq", call. = FALSE)
 
   ## Check for an internet connection
-  if (!has_internet()) stop("No internet connection detected")
+  if (!has_internet()) stop("No internet connection detected", call. = FALSE)
 
   ## Get the functions to format messages
   accent2 <- getOption("ca_accent2", I)
   msg_fmt <- getOption("ca_message", I)
 
   ## Check the table name for spaces
-  if (grepl(" ", db_tbl)) stop("Please provide a table name that doesn't have spaces")
+  if (grepl(" ", db_tbl)) stop("Please provide a table name that doesn't have spaces", call. = FALSE)
 
-  if (pause_n > 2500) stop("The maximum value for `pause_n` is 2500")
-  if (pause_secs < 30) stop("The smallest value for `pause_secs` is 30")
+  if (pause_n > 2500) stop("The maximum value for `pause_n` is 2500", call. = FALSE)
+  if (pause_secs < 30) stop("The smallest value for `pause_secs` is 30", call. = FALSE)
 
   ## Get a tibble with the individual API calls
   apicalls_lst <- ca_apicalls(x, check_for = "getvals")
@@ -113,7 +113,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new
 
   ## Make sure all the slugs are returning the same units
   if (length(unique(api_tbl$rs_units)) > 1) {
-    stop("Can not process this API request: Raster series have different units")
+    stop("Can not process this API request: Raster series have different units", call. = FALSE)
   }
 
   ## Verify indices contains valid values
@@ -121,7 +121,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new
     valid_index_names <- c(feat_id_fldname, "feat_id", "cvar", "gcm", "scenario", "period", "spag", "slug")
 
     if (FALSE %in% (indices %in% valid_index_names)) {
-      stop(paste0("Valid values for indices include: ", paste(valid_index_names, collapse = ","), ","))
+      stop(paste0("Valid values for indices include: ", paste(valid_index_names, collapse = ","), ","), call. = FALSE)
     }
   }
 
@@ -137,10 +137,10 @@ ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new
 
   ## Remove any columns the user wants to omit
   if (!is.null(omit_col)) {
-    if ("val" %in% omit_col) stop("Sorry, you can not omit the values column from the results")
-    if ("dt" %in% omit_col) stop("Sorry, you can not omit the date column from the results")
+    if ("val" %in% omit_col) stop("Sorry, you can not omit the values column from the results", call. = FALSE)
+    if ("dt" %in% omit_col) stop("Sorry, you can not omit the date column from the results", call. = FALSE)
     if (feat_id_fldname %in% omit_col) {
-      stop("Sorry, you can not omit the location column from the results")
+      stop("Sorry, you can not omit the location column from the results", call. = FALSE)
     }
   }
   apicall_cols_keep <- setdiff(apicall_cols_default, omit_col)
@@ -325,7 +325,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new
   ## (If not, it could have been created with a different value for lookup_tbls)
   if (db_tbl %in% all_tbls) {
     if (FALSE %in% (apicall_cols_keep %in% dbListFields(mydb, db_tbl))) {
-      stop(paste0(db_tbl, " already exists, but doesn't have the required fields. Specify a different database or a different values table."))
+      stop(paste0(db_tbl, " already exists, but doesn't have the required fields. Specify a different database or a different values table."), call. = FALSE)
     }
   }
 
@@ -514,7 +514,7 @@ ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new
             } else if (is.character(api_tbl[[feat_id_fldname]])) {
               feat_id_type <- "TEXT"
             } else {
-              stop("DONT KNOW THE FIELD TYPE OF THE FEAT_ID COLUMN IN API_TBL")
+              stop("DONT KNOW THE FIELD TYPE OF THE FEAT_ID COLUMN IN API_TBL. PLEASE CONTACT THE PACKAGE AUTHOR FOR HELP.")
             }
 
             if (lookup_tbls) {

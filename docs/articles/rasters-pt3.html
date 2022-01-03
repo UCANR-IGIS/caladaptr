@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
       </span>
     </div>
 
@@ -122,10 +122,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html" class="external-link">Overview</a>
+      <a href="https://youtu.be/6sDwXPbSYOQ" class="external-link">Overview</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Getting Started Workshop (Oct 2021)</a>
+      <a href="https://youtu.be/APCIBs35BJg" class="external-link">Code Example</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_feb22/" class="external-link">Workshop: Working with Cal-Adapt Data in R (Feb 2022)</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Workshop: Getting Started (Oct 2021)</a>
     </li>
   </ul>
 </li>
@@ -153,7 +159,7 @@
       <h1 data-toc-skip>Rasters Part III: Downloading Rasters for Large Areas</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt3.Rmd" class="external-link"><code>vignettes/rasters-pt3.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/doc/vignettes/rasters-pt3.Rmd" class="external-link"><code>doc/vignettes/rasters-pt3.Rmd</code></a></small>
       <div class="hidden name"><code>rasters-pt3.Rmd</code></div>
 
     </div>
@@ -185,9 +191,7 @@ p.indented2 {margin-left:2em;}
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'sf' was built under R version 4.1.2</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'stars' was built under R version 4.1.2</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap" class="external-link">tmap</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_mode.html" class="external-link">tmap_mode</a></span><span class="op">(</span><span class="st">"plot"</span><span class="op">)</span></code></pre></div>
@@ -388,7 +392,7 @@ If your stars objects are too big for memory, you can be selective about which l
   <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
            FUN <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    2.30    0.00    2.31</span>
+<span class="co">#&gt;    2.23    0.00    2.23</span>
 
 <span class="co">## With parallelization</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>
@@ -398,7 +402,7 @@ If your stars objects are too big for memory, you can be selective about which l
            FUN <span class="op">=</span> <span class="va">sd</span>,
            CLUSTER <span class="op">=</span> <span class="va">my_clust</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    0.71    0.44    1.56</span>
+<span class="co">#&gt;    0.52    0.39    1.58</span>
 <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">stopCluster</a></span><span class="op">(</span><span class="va">my_clust</span><span class="op">)</span></code></pre></div>
 </div>
   </div>

@@ -36,10 +36,10 @@
 ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, shiny_progress = NULL, omit_col = NULL,
                            timeout = NULL) {
 
-  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq")
+  if (!inherits(x, "ca_apireq")) stop("x should be a ca_apireq", call. = FALSE)
 
   ## Check for an internet connection
-  if (!has_internet()) stop("No internet connection detected")
+  if (!has_internet()) stop("No internet connection detected", call. = FALSE)
 
   ## Get the functions to format messages
   accent2 <- getOption("ca_accent2", I)
@@ -61,7 +61,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
   names(api_tbl)[1] <- feat_id_fldname
 
   if (length(unique(api_tbl$rs_units)) > 1) {
-    stop("Can not process this API request: Raster series have different units")
+    stop("Can not process this API request: Raster series have different units", call. = FALSE)
   }
 
   ## Define which columns to save in the output table
@@ -77,10 +77,10 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
   }
 
   if (!is.null(omit_col)) {
-    if ("val" %in% omit_col) stop("Sorry, you can not omit the values column from the results")
-    if ("dt" %in% omit_col) stop("Sorry, you can not omit the date column from the results")
+    if ("val" %in% omit_col) stop("Sorry, you can not omit the values column from the results", call. = FALSE)
+    if ("dt" %in% omit_col) stop("Sorry, you can not omit the date column from the results", call. = FALSE)
     if (names(api_tbl)[1] %in% omit_col) {
-      stop("Sorry, you can not omit the location column from the results")
+      stop("Sorry, you can not omit the location column from the results", call. = FALSE)
     }
   }
 
@@ -95,7 +95,7 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
     tout_config <- NULL
   } else {
     ## httr::timeout(timeout) ## this seemed to have no effect on ShinyApps.io
-    if (!is.numeric(timeout)) stop("timeout must be numeric (number of seconds)")
+    if (!is.numeric(timeout)) stop("timeout must be numeric (number of seconds)", call. = FALSE)
     tout_config <- httr::config(connecttimeout = timeout)
   }
 

@@ -24,7 +24,7 @@ ca_apicalls(
 
 \item{date_check}{Cross check the start and end date against the raster series catalog}
 
-\item{loc_check}{Check to make sure the location is within the Cal-Adapt coverage area}
+\item{loc_check}{Check locations for duplicate values and the Cal-Adapt coverage area}
 
 \item{units_check}{Check for consistent units}
 
@@ -48,9 +48,9 @@ Constructs a tibble of individual API calls for an API request
 \details{
 This is an internal function which a) evaluates an API request and generates a tibble
 of individual API calls, and b) checks for errors. It is exported as it may have some use for
-trouble-shooting and developers.
+trouble-shooting and developers, but is not something most users will need.
 
-This function is called in two contexts.
+This function is called in two contexts:
 
 a) by ca_preflight() which will report the errors to the user
 

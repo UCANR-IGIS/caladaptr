@@ -1,6 +1,13 @@
-# caladaptr 0.6.4 (2021-12-08)
+# caladaptr 0.6.4 (2022-01-02)
 
-* `ca_getvals_tbl()`: modified GET call to implement `timeout`
+* `ca_getvals_tbl()`, `ca_getrst_stars()`, `ca_getvals_db()`: added `.call = F` to several calls of stop() 
+* `ca_loc_pt()`: added error checks for NAs and duplicate coordinates in `coords`
+* `ca_loc_aoipreset()`: added error check for NAs and duplicate values in `idval`
+* `ca_slug()`: added error check for NAs and duplicate values in `slug`
+* `ca_apicalls()`: Added duplicate location check when `loc_check = TRUE`; stopwarn() split off into separate function
+* `cvars`: updated "ET" to "et" to reflect a change made in the API
+* updated the raster series data catalog (inst/extdata/ca_catalog_rs.csv)
+* `ca_getvals_tbl()`: added `timeout` argument
 
 # caladaptr 0.6.3 (2021-12-07)
 

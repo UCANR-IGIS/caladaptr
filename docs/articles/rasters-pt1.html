@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
       </span>
     </div>
 
@@ -122,10 +122,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/pres/overview.html" class="external-link">Overview</a>
+      <a href="https://youtu.be/6sDwXPbSYOQ" class="external-link">Overview</a>
     </li>
     <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Getting Started Workshop (Oct 2021)</a>
+      <a href="https://youtu.be/APCIBs35BJg" class="external-link">Code Example</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_feb22/" class="external-link">Workshop: Working with Cal-Adapt Data in R (Feb 2022)</a>
+    </li>
+    <li>
+      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Workshop: Getting Started (Oct 2021)</a>
     </li>
   </ul>
 </li>
@@ -153,7 +159,7 @@
       <h1 data-toc-skip>Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt1.Rmd" class="external-link"><code>vignettes/rasters-pt1.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/doc/vignettes/rasters-pt1.Rmd" class="external-link"><code>doc/vignettes/rasters-pt1.Rmd</code></a></small>
       <div class="hidden name"><code>rasters-pt1.Rmd</code></div>
 
     </div>
@@ -185,9 +191,7 @@ p.indented2 {margin-left:2em;}
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'sf' was built under R version 4.1.2</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'stars' was built under R version 4.1.2</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span></code></pre></div>
@@ -307,9 +311,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;                                        Min.  1st Qu.   Median    Mean  3rd Qu.</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  266.4809 280.8343 285.1293 284.897 289.0701</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  266.4809 280.8343 285.1293 284.897 289.0701</span>
 <span class="co">#&gt;                                        Max.  NA's</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  302.3545 58748</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  302.3545 58748</span>
 <span class="co">#&gt; dimension(s):</span>
 <span class="co">#&gt;      from   to     offset   delta refsys point values x/y</span>
 <span class="co">#&gt; x       1   20    -121.25  0.0625 WGS 84 FALSE   NULL [x]</span>
@@ -348,9 +352,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s):</span>
 <span class="co">#&gt;                                        Min.  1st Qu.   Median     Mean  3rd Qu.</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  263.7848 279.8704 284.5147 284.5306 289.4701</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  263.7848 279.8704 284.5147 284.5306 289.4701</span>
 <span class="co">#&gt;                                        Max.</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  300.6826</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  300.6826</span>
 <span class="co">#&gt; dimension(s):</span>
 <span class="co">#&gt;      from   to     offset   delta refsys point values x/y</span>
 <span class="co">#&gt; x      10   12    -121.25  0.0625 WGS 84 FALSE   NULL [x]</span>
@@ -365,9 +369,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s):</span>
 <span class="co">#&gt;                                        Min.  1st Qu.   Median     Mean  3rd Qu.</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  268.9576 276.7619 279.2449 278.5362 281.6215</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  268.9576 276.7619 279.2449 278.5362 281.6215</span>
 <span class="co">#&gt;                                        Max.</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  284.0545</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  284.0545</span>
 <span class="co">#&gt; dimension(s):</span>
 <span class="co">#&gt;      from to     offset   delta refsys point values x/y</span>
 <span class="co">#&gt; x       1  3   -120.688  0.0625 WGS 84 FALSE   NULL [x]</span>
@@ -461,9 +465,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; stars object with 4 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;                                        Min.  1st Qu.   Median    Mean  3rd Qu.</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  266.4809 280.8343 285.1293 284.897 289.0701</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  266.4809 280.8343 285.1293 284.897 289.0701</span>
 <span class="co">#&gt;                                        Max.  NA's</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  302.3545 58748</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  302.3545 58748</span>
 <span class="co">#&gt; dimension(s):</span>
 <span class="co">#&gt;      from   to     offset   delta refsys point         values x/y</span>
 <span class="co">#&gt; x       1   20    -121.25  0.0625 WGS 84 FALSE           NULL [x]</span>
@@ -542,10 +546,10 @@ p.indented2 {margin-left:2em;}
 <p>Note how the result includes the actual date values for the dimension fields (which is critical actually because they’re not regularly spaced). We can visually verify we only got March values by looking at a random sample of the date values. <code><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values()</a></code> return the values for a dimension:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="va">tasmin_tasmax_march</span>, which <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt;  [1] "2062-03-01" "2050-03-11" "2045-03-29" "2062-03-14" "2048-03-29"</span>
-<span class="co">#&gt;  [6] "2051-03-15" "2050-03-23" "2049-03-07" "2047-03-03" "2065-03-23"</span>
-<span class="co">#&gt; [11] "2050-03-31" "2056-03-13" "2053-03-28" "2054-03-29" "2051-03-12"</span>
-<span class="co">#&gt; [16] "2051-03-03" "2063-03-15" "2049-03-13" "2052-03-15" "2060-03-04"</span></code></pre></div>
+<span class="co">#&gt;  [1] "2048-03-07" "2051-03-20" "2053-03-08" "2046-03-04" "2051-03-23"</span>
+<span class="co">#&gt;  [6] "2055-03-09" "2058-03-20" "2045-03-16" "2062-03-02" "2054-03-16"</span>
+<span class="co">#&gt; [11] "2051-03-21" "2056-03-15" "2064-03-08" "2058-03-22" "2064-03-19"</span>
+<span class="co">#&gt; [16] "2051-03-17" "2058-03-05" "2060-03-23" "2056-03-16" "2045-03-26"</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="julian-day-filter">Julian Day Filter<a class="anchor" aria-label="anchor" href="#julian-day-filter"></a>
@@ -787,9 +791,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
 <span class="co">#&gt;                                        Min.  1st Qu.   Median    Mean  3rd Qu.</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  266.4809 280.8343 285.1293 284.897 289.0701</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  266.4809 280.8343 285.1293 284.897 289.0701</span>
 <span class="co">#&gt;                                        Max.  NA's</span>
-<span class="co">#&gt; tasmin_day_HadGEM2.ES_rcp45_fi...  302.3545 58748</span>
+<span class="co">#&gt; tasmin_day_HadGEM2-ES_rcp45_fi...  302.3545 58748</span>
 <span class="co">#&gt; dimension(s):</span>
 <span class="co">#&gt;      from   to     offset   delta refsys point values x/y</span>
 <span class="co">#&gt; x       1   20    -121.25  0.0625 WGS 84 FALSE   NULL [x]</span>
@@ -800,7 +804,7 @@ p.indented2 {margin-left:2em;}
 <code class="sourceCode R"><span class="op">(</span><span class="va">frost_allyrs_stars</span> <span class="op">&lt;-</span> <span class="va">tmin_allyrs_stars</span> <span class="op">&lt;=</span> <span class="fl">273</span><span class="op">)</span>
 <span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span>
 <span class="co">#&gt; attribute(s), summary of first 1e+05 cells:</span>
-<span class="co">#&gt;  tasmin_day_HadGEM2.ES_rcp45_fi... </span>
+<span class="co">#&gt;  tasmin_day_HadGEM2-ES_rcp45_fi... </span>
 <span class="co">#&gt;  Mode :logical                     </span>
 <span class="co">#&gt;  FALSE:40233                       </span>
 <span class="co">#&gt;  TRUE :1019                        </span>
