@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![caladaptr status badge](https://ajlyons.r-universe.dev/badges/caladaptr)](https://ajlyons.r-universe.dev)
 <!-- badges: end -->
 
 ## Features
@@ -49,11 +50,27 @@ knitr::opts_chunk$set(
 
 ## Installation
 
-`caladaptr` is available on [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. To install it, you need the  `remotes` (or `devtools`) package. Windows users also need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} installed.
+`caladaptr` is available on [r-universe](https://ajlyons.r-universe.dev/){target="_blank" rel="noopener"}. To install it, you can run:
 
 ```
-library(remotes)
+options(repos = c(ajlyons = 'https://ajlyons.r-universe.dev',
+                  CRAN = 'https://cloud.r-project.org'))
+install.packages('caladaptr')
+```
+
+Alternately, you can install it directly from [GitHub](https://github.com/ucanr-igis/caladaptr){target="_blank" rel="noopener"}. (This requires the `remotes` package plus [RTools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank" rel="noopener"} for Windows users.)
+
+```
 remotes::install_github("ucanr-igis/caladaptr")
+```
+
+If you are trying (and failing) to install `caladaptr` on [RStudio Cloud](https://rstudio.cloud/){target="_blank" rel="noopener"} (or another Linux machine), try to install `sf` by itself, and then `caladaptr`.
+
+```
+if (!require(sf)) install.packages("sf")
+options(repos = c(ajlyons = 'https://ajlyons.r-universe.dev',
+                  CRAN = 'https://cloud.r-project.org'))
+install.packages('caladaptr')
 ```
 
 ## General Workflow 

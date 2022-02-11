@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt via the API
-Version: 0.6.4
-Date: 2022-01-02
+Version: 0.6.5
+Date: 2022-02-10
 Authors@R: c(person(given = "Andy",
                   family = "Lyons", 
                   role = c("aut", "cre"),
@@ -20,28 +20,28 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    httr,
-    sf,
-    tibble,
-    units,
-    purrr,
-    dplyr,
-    magrittr,
+    backports,
     crayon,
-    digest,
-    utils,
-    tmap,
     curl,
-    RSQLite,
     DBI,
     dbplyr,
+    digest,
+    dplyr,
     fastmatch,
-    backports,
-    stars,
     geojsonsf,
-    zip,
+    httr,
+    lifecycle,
+    magrittr,
+    purrr,
+    RSQLite,
+    sf,
     shiny,
-    lifecycle
+    stars,
+    tibble,
+    tmap,
+    units,
+    utils,
+    zip
 RoxygenNote: 7.1.2
 Suggests: 
     chillR,

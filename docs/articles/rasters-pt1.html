@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
       </span>
     </div>
 
@@ -159,7 +159,7 @@
       <h1 data-toc-skip>Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/doc/vignettes/rasters-pt1.Rmd" class="external-link"><code>doc/vignettes/rasters-pt1.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt1.Rmd" class="external-link"><code>vignettes/rasters-pt1.Rmd</code></a></small>
       <div class="hidden name"><code>rasters-pt1.Rmd</code></div>
 
     </div>
@@ -546,10 +546,10 @@ p.indented2 {margin-left:2em;}
 <p>Note how the result includes the actual date values for the dimension fields (which is critical actually because they’re not regularly spaced). We can visually verify we only got March values by looking at a random sample of the date values. <code><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values()</a></code> return the values for a dimension:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="va">tasmin_tasmax_march</span>, which <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt;  [1] "2048-03-07" "2051-03-20" "2053-03-08" "2046-03-04" "2051-03-23"</span>
-<span class="co">#&gt;  [6] "2055-03-09" "2058-03-20" "2045-03-16" "2062-03-02" "2054-03-16"</span>
-<span class="co">#&gt; [11] "2051-03-21" "2056-03-15" "2064-03-08" "2058-03-22" "2064-03-19"</span>
-<span class="co">#&gt; [16] "2051-03-17" "2058-03-05" "2060-03-23" "2056-03-16" "2045-03-26"</span></code></pre></div>
+<span class="co">#&gt;  [1] "2063-03-07" "2053-03-08" "2052-03-31" "2045-03-20" "2059-03-01"</span>
+<span class="co">#&gt;  [6] "2049-03-03" "2054-03-14" "2064-03-03" "2051-03-20" "2049-03-29"</span>
+<span class="co">#&gt; [11] "2056-03-25" "2046-03-26" "2065-03-14" "2053-03-27" "2062-03-20"</span>
+<span class="co">#&gt; [16] "2063-03-20" "2048-03-26" "2063-03-18" "2060-03-01" "2048-03-09"</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="julian-day-filter">Julian Day Filter<a class="anchor" aria-label="anchor" href="#julian-day-filter"></a>

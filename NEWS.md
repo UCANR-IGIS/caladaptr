@@ -1,3 +1,8 @@
+# caladaptr 0.6.5 (2022-02-10)
+
+* `ca_example_apireq`: additional example added
+
+
 # caladaptr 0.6.4 (2022-01-02)
 
 * `ca_getvals_tbl()`, `ca_getrst_stars()`, `ca_getvals_db()`: added `.call = F` to several calls of stop() 

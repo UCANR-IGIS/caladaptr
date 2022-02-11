@@ -16,7 +16,7 @@ Sample API requests
 These sample API requests can be used in demos, documentation, and tests. \code{x} should be an
 integer:
 
-\code{x = 1}: Basic API request for Scripps data -- one point, two CGMs, 20 years of annual data.
+\code{x = 1}: Basic API request for Scripps data -- one point, 4 CGMs, 20 years of annual data.
 
 \code{x = 2}: Three Congressional districts, monthly data, 4 years
 
@@ -29,4 +29,6 @@ spatial aggregation mean
 
 \code{x = 6}: Livheh data, five census tracts (including one from #5), 5 years of daily temp
 data, spatial aggregation = mean
+
+\code{x = 7}: Basic API request for Scripps data -- one point, 4 CGMs, 70 years of annual data.
 }

@@ -7,6 +7,8 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![caladaptr status
+badge](https://ajlyons.r-universe.dev/badges/caladaptr)](https://ajlyons.r-universe.dev)
 <!-- badges: end -->
 
 ## Features
@@ -46,25 +48,33 @@ the Data Download tool or FTP server on
 
   
 
-*Beta status* status means:
-
-1.  the package is still under development  
-2.  there’s a small possibility that updates will *not* be backward
-    compatible  
-3.  user feedback and input is extremely welcome and will be used to
-    guide future development!
-
 ## Installation
 
 `caladaptr` is available on
-<a href="https://github.com/ucanr-igis/caladaptr" target="_blank" rel="noopener">GitHub</a>.
-To install it, you need the `remotes` (or `devtools`) package. Windows
-users also need to have
-<a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank" rel="noopener">RTools</a>
-installed.
+<a href="https://ajlyons.r-universe.dev/" target="_blank" rel="noopener">r-universe</a>.
+To install it, you can run:
 
-    library(remotes)
+    options(repos = c(ajlyons = 'https://ajlyons.r-universe.dev',
+                      CRAN = 'https://cloud.r-project.org'))
+    install.packages('caladaptr')
+
+Alternately, you can install it directly from
+<a href="https://github.com/ucanr-igis/caladaptr" target="_blank" rel="noopener">GitHub</a>.
+(This requires the `remotes` package plus
+<a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank" rel="noopener">RTools</a>
+for Windows users.)
+
     remotes::install_github("ucanr-igis/caladaptr")
+
+If you are trying (and failing) to install `caladaptr` on
+<a href="https://rstudio.cloud/" target="_blank" rel="noopener">RStudio Cloud</a>
+(or another Linux machine), try to install `sf` by itself, and then
+`caladaptr`.
+
+    if (!require(sf)) install.packages("sf")
+    options(repos = c(ajlyons = 'https://ajlyons.r-universe.dev',
+                      CRAN = 'https://cloud.r-project.org'))
+    install.packages('caladaptr')
 
 ## General Workflow
 
@@ -255,7 +265,7 @@ To help you pass arguments for the various constructor functions,
 ## Climate Variables 
 cvars
 #>  [1] "tasmax"     "tasmin"     "pr"         "swe"        "baseflow"  
-#>  [6] "ET"         "rainfall"   "runoff"     "snowfall"   "soilMoist1"
+#>  [6] "et"         "rainfall"   "runoff"     "snowfall"   "soilMoist1"
 #> [11] "Tair"
 
 ## Global Climate Models

@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
       </span>
     </div>
 
@@ -159,7 +159,7 @@
       <h1 data-toc-skip>Rasters Part III: Downloading Rasters for Large Areas</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/doc/vignettes/rasters-pt3.Rmd" class="external-link"><code>doc/vignettes/rasters-pt3.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/rasters-pt3.Rmd" class="external-link"><code>vignettes/rasters-pt3.Rmd</code></a></small>
       <div class="hidden name"><code>rasters-pt3.Rmd</code></div>
 
     </div>
@@ -392,7 +392,7 @@ If your stars objects are too big for memory, you can be selective about which l
   <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_apply.html" class="external-link">st_apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"scenario"</span>, <span class="st">"gcm"</span>, <span class="st">"cvar"</span><span class="op">)</span>,
            FUN <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    2.23    0.00    2.23</span>
+<span class="co">#&gt;    2.15    0.04    2.20</span>
 
 <span class="co">## With parallelization</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>
@@ -402,7 +402,7 @@ If your stars objects are too big for memory, you can be selective about which l
            FUN <span class="op">=</span> <span class="va">sd</span>,
            CLUSTER <span class="op">=</span> <span class="va">my_clust</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;    0.52    0.39    1.58</span>
+<span class="co">#&gt;    0.52    0.38    1.50</span>
 <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">stopCluster</a></span><span class="op">(</span><span class="va">my_clust</span><span class="op">)</span></code></pre></div>
 </div>
   </div>

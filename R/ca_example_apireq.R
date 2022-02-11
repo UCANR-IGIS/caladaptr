@@ -9,7 +9,7 @@
 #' These sample API requests can be used in demos, documentation, and tests. \code{x} should be an
 #' integer:
 #'
-#' \code{x = 1}: Basic API request for Scripps data -- one point, two CGMs, 20 years of annual data.
+#' \code{x = 1}: Basic API request for Scripps data -- one point, 4 CGMs, 20 years of annual data.
 #'
 #' \code{x = 2}: Three Congressional districts, monthly data, 4 years
 #'
@@ -22,6 +22,8 @@
 #'
 #' \code{x = 6}: Livheh data, five census tracts (including one from #5), 5 years of daily temp
 #' data, spatial aggregation = mean
+#'
+#' \code{x = 7}: Basic API request for Scripps data -- one point, 4 CGMs, 70 years of annual data.
 #'
 #' @importFrom sf st_read st_sf
 #'
@@ -100,6 +102,16 @@ ca_example_apireq <- function(x) {
       ca_cvar(c("tasmin", "tasmax")) %>%
       ca_period("day") %>%
       ca_options(spatial_ag = "mean")
+
+
+  } else if (x == 7) {
+      ## Basic API request - one point, 4 CGMs, 70 years of annual data
+      ca_loc_pt(coords = c(-119.0, 35.4)) %>%
+        ca_gcm(gcms[1:4]) %>%
+        ca_scenario("rcp85") %>%
+        ca_period("year") %>%
+        ca_years(start = 2030, end = 2099) %>%
+        ca_cvar("tasmax")
 
   } else {
     stop("Unknown value of x")

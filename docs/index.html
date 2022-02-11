@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
       </span>
     </div>
 
@@ -184,21 +184,21 @@
 <li>return rasters as spatiotemporal arrays (<a href="https://r-spatial.github.io/stars/" class="external-link"><code>stars</code></a> objects)</li>
 </ul>
 <p><code>caladaptr</code> does not support downloading the original NetCDF rasters nor station data (e.g., sea level rise, stream gauges). For these data, see the Data Download tool or FTP server on <a href="https://cal-adapt.org/data/" class="external-link">Cal-Adapt.org</a>.</p>
-<p><em>Beta status</em> status means:</p>
-<ol style="list-style-type: decimal">
-<li>the package is still under development<br>
-</li>
-<li>there’s a small possibility that updates will <em>not</em> be backward compatible<br>
-</li>
-<li>user feedback and input is extremely welcome and will be used to guide future development!</li>
-</ol>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><code>caladaptr</code> is available on <a href="https://github.com/ucanr-igis/caladaptr" target="_blank" rel="noopener" class="external-link">GitHub</a>. To install it, you need the <code>remotes</code> (or <code>devtools</code>) package. Windows users also need to have <a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank" rel="noopener" class="external-link">RTools</a> installed.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(remotes)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"ucanr-igis/caladaptr"</span>)</span></code></pre></div>
+<p><code>caladaptr</code> is available on <a href="https://ajlyons.r-universe.dev/" target="_blank" rel="noopener" class="external-link">r-universe</a>. To install it, you can run:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repos =</span> <span class="fu">c</span>(<span class="at">ajlyons =</span> <span class="st">'https://ajlyons.r-universe.dev'</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">CRAN =</span> <span class="st">'https://cloud.r-project.org'</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">'caladaptr'</span>)</span></code></pre></div>
+<p>Alternately, you can install it directly from <a href="https://github.com/ucanr-igis/caladaptr" target="_blank" rel="noopener" class="external-link">GitHub</a>. (This requires the <code>remotes</code> package plus <a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank" rel="noopener" class="external-link">RTools</a> for Windows users.)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"ucanr-igis/caladaptr"</span>)</span></code></pre></div>
+<p>If you are trying (and failing) to install <code>caladaptr</code> on <a href="https://rstudio.cloud/" target="_blank" rel="noopener" class="external-link">RStudio Cloud</a> (or another Linux machine), try to install <code>sf</code> by itself, and then <code>caladaptr</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(sf)) <span class="fu">install.packages</span>(<span class="st">"sf"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repos =</span> <span class="fu">c</span>(<span class="at">ajlyons =</span> <span class="st">'https://ajlyons.r-universe.dev'</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">CRAN =</span> <span class="st">'https://cloud.r-project.org'</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">'caladaptr'</span>)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="general-workflow">General Workflow<a class="anchor" aria-label="anchor" href="#general-workflow"></a>
@@ -217,7 +217,7 @@
 <p><strong>1. Create an API request object</strong></p>
 <p>Creating an API request object is a bit like filling in an order form. The request is essentially a description of the data you want.</p>
 <p>There are a number of constructor functions you can mix and match to create an API request object. Below we create a request for 30 years of projected annual average maximum daily temperature from the <a href="https://berkeley-gif.github.io/caladapt-docs/data-catalog.html" class="external-link">LOCA downscaled CMIP5 climate projections</a> from Scripps, for a single point location.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
 <span class="co">#&gt; caladaptr (version 0.6.4)</span>
 <span class="co">#&gt; URL: https://ucanr-igis.github.io/caladaptr</span>
@@ -245,7 +245,7 @@
 <span class="co">#&gt; </span></code></pre></div>
 <p><strong>2. Fetch data</strong></p>
 <p>Functions that <strong>fetch data</strong> from Cal-Adapt include <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, <code><a href="reference/ca_getvals_db.html">ca_getvals_db()</a></code> (see <em>Large Queries</em> vignette), and <code><a href="reference/ca_getrst_stars.html">ca_getrst_stars()</a></code> (see <em>Rasters Part I</em> vignette). Below we’ll fetch data into a tibble by passing the API request to <code><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sac_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="va">sac_tasmax_cap</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="reference/ca_getvals_tbl.html">ca_getvals_tbl</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sac_tasmax_tbl</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 8</span>
@@ -261,7 +261,7 @@
 <span class="co">#&gt; [1] 620   8</span></code></pre></div>
 <p><strong>3. Wrangle Data</strong></p>
 <p>Depending what your goal it, you may need to add or delete columns, reshape the data, group rows, etc. Below we’ll add a column for Fahrenheit using <code><a href="https://rdrr.io/pkg/units/man/units.html" class="external-link">set_units()</a></code> from the <a href="https://cran.r-project.org/package=units" class="external-link"><code>units</code></a> package.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Add a column with Fahrenheit units</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-quantities/units/" class="external-link">units</a></span><span class="op">)</span>
@@ -277,7 +277,7 @@
 <span class="co">#&gt; 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31  300.   79.5</span>
 <span class="co">#&gt; 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31  298.   77.2</span></code></pre></div>
 <p>Now we can plot it:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sac_tasmax_tbl2</span>, 
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">temp_f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -358,7 +358,7 @@
 </tbody>
 </table>
 <p><code><a href="reference/ca_example_apireq.html">ca_example_apireq()</a></code> is a convenience function that returns sample API requests for testing. You can use <code><a href="reference/ca_preflight.html">ca_preflight()</a></code> to check an API request for errors. Plotting an API request will show the location(s), with an option to overlay the loca grid cells:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">samp_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ca_example_apireq.html">ca_example_apireq</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
 <span class="va">samp_cap</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; General issues</span>
@@ -375,11 +375,11 @@
 <h2 id="constants">Constants<a class="anchor" aria-label="anchor" href="#constants"></a>
 </h2>
 <p>To help you pass arguments for the various constructor functions, <code>caladaptr</code> provides the following constants:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Climate Variables </span>
 <span class="va">cvars</span>
 <span class="co">#&gt;  [1] "tasmax"     "tasmin"     "pr"         "swe"        "baseflow"  </span>
-<span class="co">#&gt;  [6] "ET"         "rainfall"   "runoff"     "snowfall"   "soilMoist1"</span>
+<span class="co">#&gt;  [6] "et"         "rainfall"   "runoff"     "snowfall"   "soilMoist1"</span>
 <span class="co">#&gt; [11] "Tair"</span>
 
 <span class="co">## Global Climate Models</span>
@@ -402,7 +402,7 @@
 </h2>
 <p><code>caladaptr</code> can not tell you which climate data you need for your project. Nor will it teach you how to use climate data appropriately or wisely. However it does have a copy of the Cal-Adapt raster series data catalog, so you can see what’s available and specify the datasets you need.</p>
 <p>To view the entire data catalog in a RStudio Viewer pane, run the following. You can then use the filter button to find datasets that match a key word.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(<span class="fu">ca_catalog_rs</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(<span class="fu">ca_catalog_rs</span>())</span></code></pre></div>
 <p>You can also search for datasets using <code><a href="reference/ca_catalog_search.html">ca_catalog_search()</a></code>, and download a fresh copy of the catalog from Cal-Adapt using <code><a href="reference/ca_catalog_fetch.html">ca_catalog_fetch()</a></code>.</p>
 <p>Most / all of the Cal-Adapt rasters series have been downscaled to approximately 6km (3.7 mi) using the LOCA downscaling method, and are available for the coverage area shown below. For a finer scale analysis, you can download the LOCA grid cells as a polygon layer using <code><a href="reference/ca_locagrid_geom.html">ca_locagrid_geom()</a></code>.</p>
 <p><img src="reference/figures/loca-area_292x386x256.png"></p>
@@ -449,6 +449,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.tidyverse.org/lifecycle/#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://ajlyons.r-universe.dev" class="external-link"><img src="https://ajlyons.r-universe.dev/badges/caladaptr" alt="caladaptr status badge"></a></li>
 </ul>
 </div>
 
