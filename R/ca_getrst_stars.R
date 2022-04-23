@@ -239,6 +239,8 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
     ## i.e., the start and end dates are not encoded in the file name, but everything else is
     tif_fn_out <- file.path(out_dir, paste0(api_tbl_use[i, "tif_out_base", drop = TRUE], ".tif"))
 
+    # cat("tif will be ", tif_fn_out, "\n")
+
     ## See if this TIF file has already been downloaded
     if (file.exists(tif_fn_out) && !overwrite) {
       if (!quiet) message(msg_fmt(paste0(" - ", tif_fn_out, " found. Skipping.")))
@@ -318,8 +320,11 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
             suppressWarnings(
               locagrids_bb_sfc <- locagrid_intersects_sf %>%
                 st_bbox() %>%
-                st_as_sfc() %>%
-                st_buffer(-0.001)
+                bbox_resize(buff = -0.005) %>%
+                st_as_sfc()
+
+                # %>% st_buffer(-0.001)
+
             )
           )
 
@@ -375,12 +380,21 @@ ca_getrst_stars <- function(x, out_dir = NULL, mask = TRUE, merge_geoms = FALSE,
 
         ## Get the bounding box of the intersecting locagrids, and take
         ## a small internal buffer (to avoid getting extra pixels on the outside)
+
         suppressMessages(
           suppressWarnings(
+
             locagrids_bb_sfc <- locagrid_intersects_sf %>%
               st_bbox() %>%
-              st_as_sfc() %>%
-              st_buffer(-0.001)
+              bbox_resize(buff = -0.005) %>%
+              st_as_sfc()
+
+            # locagrids_bb_sfc <- locagrid_intersects_sf %>%
+            #   st_bbox() %>%
+            #   st_as_sfc() %>%
+            #   st_buffer(-0.001)
+
+
           )
         )
 

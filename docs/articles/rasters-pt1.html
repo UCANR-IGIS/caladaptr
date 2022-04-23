@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -82,7 +82,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Notebooks
      
     <span class="caret"></span>
@@ -97,7 +97,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Shiny Apps
      
     <span class="caret"></span>
@@ -115,7 +115,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Pres &amp; Workshops
      
     <span class="caret"></span>
@@ -546,10 +546,10 @@ p.indented2 {margin-left:2em;}
 <p>Note how the result includes the actual date values for the dimension fields (which is critical actually because they’re not regularly spaced). We can visually verify we only got March values by looking at a random sample of the date values. <code><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values()</a></code> return the values for a dimension:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_get_dimension_values</a></span><span class="op">(</span><span class="va">tasmin_tasmax_march</span>, which <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt;  [1] "2063-03-07" "2053-03-08" "2052-03-31" "2045-03-20" "2059-03-01"</span>
-<span class="co">#&gt;  [6] "2049-03-03" "2054-03-14" "2064-03-03" "2051-03-20" "2049-03-29"</span>
-<span class="co">#&gt; [11] "2056-03-25" "2046-03-26" "2065-03-14" "2053-03-27" "2062-03-20"</span>
-<span class="co">#&gt; [16] "2063-03-20" "2048-03-26" "2063-03-18" "2060-03-01" "2048-03-09"</span></code></pre></div>
+<span class="co">#&gt;  [1] "2045-03-07" "2052-03-31" "2059-03-31" "2055-03-02" "2059-03-27"</span>
+<span class="co">#&gt;  [6] "2059-03-30" "2045-03-29" "2058-03-27" "2049-03-30" "2056-03-27"</span>
+<span class="co">#&gt; [11] "2053-03-08" "2065-03-02" "2048-03-27" "2057-03-05" "2050-03-04"</span>
+<span class="co">#&gt; [16] "2045-03-23" "2047-03-29" "2057-03-28" "2059-03-09" "2065-03-01"</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="julian-day-filter">Julian Day Filter<a class="anchor" aria-label="anchor" href="#julian-day-filter"></a>
@@ -919,7 +919,7 @@ p.indented2 {margin-left:2em;}
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

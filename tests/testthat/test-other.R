@@ -2,7 +2,7 @@ test_that("ca_catalog_search works correctly", {
   res_tbl <- ca_catalog_search("pr_day_gridmet", quiet = TRUE)
   expect_equal(nrow(res_tbl), 1)
   expect_equal(ncol(res_tbl), 13)
-  expect_equal(res_tbl$id, 366)
+  expect_equal(res_tbl$id, 338)
 })
 
 test_that("Raster Series Catalog works", {

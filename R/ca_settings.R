@@ -36,7 +36,7 @@ ca_settings <- function(console_colors = NA, date_slice = NA, quiet = FALSE) {
       options(ca_accent3 = crayon::cyan$bold)
       options(ca_accent4 = crayon::cyan)
       options(ca_message = crayon::white)
-      options(ca_success = crayon::green$bold)
+      options(ca_success = crayon::green)
 
     } else if (identical(console_colors, "light")) {
       options(ca_accent1 = crayon::blue$bold)
@@ -44,7 +44,7 @@ ca_settings <- function(console_colors = NA, date_slice = NA, quiet = FALSE) {
       options(ca_accent3 = crayon::magenta$bold)
       options(ca_accent4 = crayon::magenta)
       options(ca_message = crayon::silver)
-      options(ca_success = crayon::green$bold)
+      options(ca_success = crayon::green)
 
     } else {
       if (is.list(console_colors)) {

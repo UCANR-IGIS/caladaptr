@@ -16,9 +16,9 @@ with_mock_api({
   test_that("Fetching data for a single point", {
     skip_on_cran()
     skip_if_offline()
-    pt1_cap <- ca_example_apireq(1)
-    pt1_vals <- pt1_cap %>% ca_getvals_tbl()
 
+    pt1_cap <- ca_example_apireq(1)
+    pt1_vals <- pt1_cap %>% ca_getvals_tbl(quiet = TRUE)
     expect_s3_class(pt1_vals, "tbl_df")
     expect_s3_class(pt1_vals$val, "units")
     expect_equal(nrow(pt1_vals), 84)
@@ -32,8 +32,9 @@ with_mock_api({
   test_that("Fetching data for three congressional districts (AOI Preset)", {
     skip_on_cran()
     skip_if_offline()
+
     aoi_baseflow_cap <- ca_example_apireq(2)
-    aoi_baseflow_tbl <- aoi_baseflow_cap %>% ca_getvals_tbl()
+    aoi_baseflow_tbl <- aoi_baseflow_cap %>% ca_getvals_tbl(quiet = TRUE)
 
     expect_s3_class(aoi_baseflow_tbl, "tbl_df")
     expect_equal(nrow(aoi_baseflow_tbl), 144)
@@ -56,8 +57,9 @@ with_mock_api({
   test_that("Fetching data for a two-feature sf polygon", {
     skip_on_cran()
     skip_if_offline()
+
     cnty2_cap <- ca_example_apireq(4)
-    cnty2_cap_tbl <- ca_getvals_tbl(cnty2_cap)
+    cnty2_cap_tbl <- cnty2_cap %>% ca_getvals_tbl(quiet = TRUE)
     expect_s3_class(cnty2_cap_tbl, "tbl_df")
     expect_equal(nrow(cnty2_cap_tbl), 42)
     expect_equal(ncol(cnty2_cap_tbl), 8)
@@ -68,38 +70,35 @@ with_mock_api({
   ## Third fetch test - sf object one feature, 1 GCM, 1 scenario, 3 years of daily data
   #####################################################################################
 
-
   test_that("Fetching data for a one-feature sf polygon", {
     skip_on_cran()
     skip_if_offline()
+
     simp_poly_cap <- ca_example_apireq(3)
-    simp_poly_tbl <- ca_getvals_tbl(simp_poly_cap)
+    simp_poly_tbl <- simp_poly_cap %>% ca_getvals_tbl(quiet = TRUE)
     expect_s3_class(simp_poly_tbl, "tbl_df")
     expect_equal(nrow(simp_poly_tbl), 1096)
     expect_s3_class(simp_poly_tbl, "tbl_df")
     expect_equal(as.numeric(sum(simp_poly_tbl$val)), 0.04269988, tolerance = 0.0001)
   })
 
+})   ## with mock API
 
+#####################################################################################
+## Fourth fetch test - sf object one feature, Livneh data
+## For some reason this one fail inside mockAPI(), so we put it outside.
+#####################################################################################
+
+test_that("Fetching data for five AOI presets (census tracts, daily tasmin/tasmax, Livneh", {
+  skip_on_cran()
+  skip_if_offline()
+
+  liv_cap <- ca_example_apireq(6)
+  liv_tbl <- liv_cap %>% ca_getvals_tbl(quiet = TRUE)
+  expect_s3_class(liv_tbl, "tbl_df")
+  expect_equal(nrow(liv_tbl), 21920)
+  expect_equal(ncol(liv_tbl), 7)
+  expect_equal(names(liv_tbl), c("tract", "cvar", "period", "slug", "spag", "dt", "val"))
+  expect_equal(as.numeric(sum(liv_tbl$val)), 508522.5, tolerance = 0.01)
 })
-
-## THE FOLLOWING IS WORK IN PROGRESS. I NEED TO MODIFY CA_GETVALS_TBL TO ACCOMODATE LIVNEH
-## DATA. MAYBE JUST ADD SLUG TO THE TABLE AS A DEFAULT.  YES!!!!!!
-## CONSIDER MAKING OTHER COLUMNS OPTIONAL ALSO (EXCEPT FOR feat_id and date)
-
-if (FALSE) {
-  ### ----------------------
-  (liv_test2_cap <- ca_example_apireq(6))
-  liv_test2_tbl <- liv_test2_cap %>% ca_getvals_tbl()
-  dim(liv_test2_tbl) ## 2190, 8
-  names(liv_test2_tbl) ## c("tract", "cvar", "period", "gcm", "scenario", "spag", "dt", "val")
-
-  expect_type(x$x, "integer")
-
-  capture_requests({
-    liv_test2_tbl <- liv_test2_cap %>% ca_getvals_tbl()
-    # simp_poly_cap <- ca_example_apireq(3)
-    # simp_poly_tbl <- ca_getvals_tbl(simp_poly_cap)
-  })
-}
 

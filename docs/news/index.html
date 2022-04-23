@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
       </span>
     </div>
 
@@ -38,7 +38,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -63,7 +63,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Notebooks
      
     <span class="caret"></span>
@@ -76,7 +76,7 @@
     </li>
   </ul></li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Shiny Apps
      
     <span class="caret"></span>
@@ -92,7 +92,7 @@
     </li>
   </ul></li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Pres &amp; Workshops
      
     <span class="caret"></span>
@@ -129,6 +129,16 @@
       <small>Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.6" id="caladaptr-066-2022-04-16">caladaptr 0.6.6 (2022-04-16)<a class="anchor" aria-label="anchor" href="#caladaptr-066-2022-04-16"></a></h2>
+<ul><li>
+<code>ca_preflight</code>: modified to render messages differently in non-interactive contexts (i.e., Rmarkdown)</li>
+<li>
+<code>format.ca_apireq</code>, <code>print.ca_apireq</code>: modified how output appears in RMarkdown documents (color codes removed)</li>
+<li>
+<code><a href="../reference/bbox_resize.html">bbox_resize()</a></code>: utility function to resize a bounding box object (returned by <code><a href="https://r-spatial.github.io/sf/reference/st_bbox.html" class="external-link">sf::st_bbox()</a></code>) by passing either a scaling factor or a fixed offset; used internally but exported for convenience.</li>
+<li>data catalog updated</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.5" id="caladaptr-065-2022-02-10">caladaptr 0.6.5 (2022-02-10)<a class="anchor" aria-label="anchor" href="#caladaptr-065-2022-02-10"></a></h2>
 <ul><li>
@@ -375,7 +385,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

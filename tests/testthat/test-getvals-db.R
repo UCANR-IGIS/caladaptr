@@ -63,7 +63,7 @@ test_that("We can save values to a brand new sqlite database", {
                   db_tbl = "my_vals",
                   lookup_tbls = TRUE,
                   new_recs_only = TRUE,
-                  quiet = FALSE)
+                  quiet = TRUE)
   expect_equal(ncol(liv_tmp1_rtbl), 7)
   expect_s3_class(liv_tmp1_rtbl, "tbl_dbi")
   expect_s3_class(liv_tmp1_rtbl, "tbl_SQLiteConnection")
@@ -80,7 +80,7 @@ test_that("We can append values to a sqlite database", {
                   db_tbl = "my_vals",
                   lookup_tbls = TRUE,
                   new_recs_only = TRUE,
-                  quiet = FALSE)
+                  quiet = TRUE)
   expect_s3_class(liv_tmp2_rtbl, "tbl_dbi")
   expect_s3_class(liv_tmp2_rtbl, "tbl_SQLiteConnection")
   expect_equal(ncol(liv_tmp2_rtbl), 7)
@@ -95,7 +95,7 @@ test_that("Fetching db data for two Congressional Districts and a slug with no l
   skip_if_offline()
   cdist_bflow_fn <- tempfile("~ca_cdist_bflow_test_", fileext = ".sqlite")
   cdist_bflow_cap <- ca_example_apireq(2)
-  cdist_bflow_rtbl <- cdist_bflow_cap %>% ca_getvals_db(db_fn = cdist_bflow_fn, db_tbl = "bflow", lookup_tbls = FALSE, quiet = FALSE)
+  cdist_bflow_rtbl <- cdist_bflow_cap %>% ca_getvals_db(db_fn = cdist_bflow_fn, db_tbl = "bflow", lookup_tbls = FALSE, quiet = TRUE)
   expect_s3_class(cdist_bflow_rtbl, "tbl_dbi")
   expect_s3_class(cdist_bflow_rtbl, "tbl_SQLiteConnection")
   expect_equal(ncol(cdist_bflow_rtbl), 5)

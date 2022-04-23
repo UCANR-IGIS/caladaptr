@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -82,7 +82,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Notebooks
      
     <span class="caret"></span>
@@ -97,7 +97,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Shiny Apps
      
     <span class="caret"></span>
@@ -115,7 +115,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Pres &amp; Workshops
      
     <span class="caret"></span>
@@ -169,9 +169,9 @@
 <style type="text/css">
 p.indented2 {margin-left:2em;}
 </style>
-<div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h2>
+<div class="section level3">
+<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h3>
 <p>Suppose your project requires you to get climate data for every census track in California (which is over 8000). Or maybe you need daily projected temperature for every school in the state, for multiple emissions scenarios and multiple GCMs. That’s a lot of data, and a lot of API calls.</p>
 <p>When downloading large volumes of data, you generally want to run one command that does everything for you, and is smart enough not to download the same data more than once. You probably also don’t want to lose what you’ve already gotten if your computer crashes or the internet goes down.</p>
 <p>To address these challenges, <code>caldaptr</code> allows you to save queried data to a local database as its being downloaded. One function will start fetching data based on your API request object, save them to a database, and keep going until everything has been downloaded. If your internet drops or you turn off your computer, you can just run the function again and it will pick up where it left off.</p>
@@ -180,14 +180,14 @@ p.indented2 {margin-left:2em;}
 <strong>TIP</strong>: An alternative approach for getting a lot of data is to download Cal-Adapt data as rasters, then use functions like <code>st_extract()</code> and <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate()</a></code> to query your areas-of-interest. See the <a href="rasters-pt1.html">Rasters Part I</a> vignette for details.
 </p>
 </div>
-<div class="section level2">
-<h2 id="example-query-data-for-450-census-tracks">Example: Query Data for 450 Census Tracks<a class="anchor" aria-label="anchor" href="#example-query-data-for-450-census-tracks"></a>
-</h2>
+<div class="section level3">
+<h3 id="example-query-data-for-450-census-tracks">Example: Query Data for 450 Census Tracks<a class="anchor" aria-label="anchor" href="#example-query-data-for-450-census-tracks"></a>
+</h3>
 <p>In this example, we’ll get query daily historical temperature data for 453 census tracts in in Riverside County. Start by loading the required packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mtennekes/tmap" class="external-link">tmap</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
 <span class="fu"><a href="../reference/ca_settings.html">ca_settings</a></span><span class="op">(</span>console_colors <span class="op">=</span> <span class="st">"light"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>Next, we get the census tract ids for Riverside County. The easiest way to do this is using the built-in constant <code>aoipreset_idval</code>, which for census tracts includes all the ‘tract’ ids (geoid). The census tracts we’re interested in all start with 6065 (‘6’ is the FIPs code for California, and ‘065’ is the FIPs code for Riverside County):</p>
@@ -208,25 +208,25 @@ p.indented2 {margin-left:2em;}
   <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tasmin"</span>, <span class="st">"tasmax"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"day"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/ca_options.html">ca_options</a></span><span class="op">(</span>spatial_ag <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Cal-Adapt API Request</span></span>
-<span class="co"><span style="color: #0000BB; font-weight: bold;">#&gt; </span><span style="color: #0000BB;">Location(s): </span></span>
+<span class="co">#&gt; Cal-Adapt API Request</span>
+<span class="co">#&gt; Location(s): </span>
 <span class="co">#&gt;   AOI Preset: censustracts</span>
 <span class="co">#&gt;   tract(s): 6065030101, 6065030103, 6065030104, (+ 450 more)</span>
-<span class="co">#&gt; <span style="color: #0000BB;">Variable(s): </span>tasmin, tasmax</span>
-<span class="co">#&gt; <span style="color: #0000BB;">Temporal aggregration period(s): </span>day</span>
-<span class="co">#&gt; <span style="color: #0000BB;">Livneh data: </span>TRUE</span>
-<span class="co">#&gt; <span style="color: #0000BB;">Dates: </span>1980-01-01 to 2010-12-31</span>
-<span class="co">#&gt; <span style="color: #0000BB;">Options:</span></span>
-<span class="co"><span style="color: #0000BB;">#&gt;   spatial ag: </span>mean</span>
+<span class="co">#&gt; Variable(s): tasmin, tasmax</span>
+<span class="co">#&gt; Temporal aggregration period(s): day</span>
+<span class="co">#&gt; Livneh data: TRUE</span>
+<span class="co">#&gt; Dates: 1980-01-01 to 2010-12-31</span>
+<span class="co">#&gt; Options:</span>
+<span class="co">#&gt;   spatial ag: mean</span>
 <span class="co">#&gt; </span>
 
 <span class="va">rvrsde_tas_liv_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">General issues</span></span>
-<span class="co">#&gt; <span style="color: #00BB00; font-weight: bold;"> - none found</span></span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Issues for querying values</span></span>
-<span class="co">#&gt; <span style="color: #00BB00; font-weight: bold;"> - none found</span></span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Issues for downloading rasters</span></span>
-<span class="co">#&gt; <span style="color: #00BB00; font-weight: bold;"> - none found</span></span>
+<span class="co">#&gt; General issues</span>
+<span class="co">#&gt;  - none found</span>
+<span class="co">#&gt; Issues for querying values</span>
+<span class="co">#&gt;  - none found</span>
+<span class="co">#&gt; Issues for downloading rasters</span>
+<span class="co">#&gt;  - none found</span>
 <span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rvrsde_tas_liv_cap</span>, static <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="large-queries_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>We also have to define where the SQLite database file should go. A SQLite database is a single file, typically with an extension of <em>.db</em> or <em>.sqlite</em>. Ideally it should go in a stable location (i.e., not in the temp folder and not on removable media) because you’ll need to keep accessing it both to populate it and read the data for analysis.</p>
@@ -242,9 +242,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">## Define a new SQLite file name</span>
 <span class="va">rvrsde_liv_tas_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tracts_dir</span>, <span class="st">"rvrsde_liv_tas.sqlite"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="fetch-data">Fetch Data<a class="anchor" aria-label="anchor" href="#fetch-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="fetch-data">Fetch Data<a class="anchor" aria-label="anchor" href="#fetch-data"></a>
+</h3>
 <p>Next, we fetch data from the server using <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. This is similar to fetching data with <code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, but we also need to give it the file name of a SQLite database, and the name of a table in the database where the values will be saved. As with <code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, the climate variable(s) in a table must use the same units. Hence you could save minimum and maximum temperature in the same table, but not temperature and precipitation.</p>
 <p>The <code>lookup_tbls = TRUE</code> argument tells it to save columns of repetitive data (such as the GCM, scenario, spatial aggregation function, etc.) as integers joined to lookup tables. This is a bit like R’s factor data class, and can dramatically reduce the size of a database file. <code>new_recs_only = TRUE</code> tells it to only fetch data that isn’t already in the database (based on a ‘hash’ of the API call, which is saved in a separate table in the database).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -257,7 +257,7 @@ p.indented2 {margin-left:2em;}
 
 <span class="va">rvrsde_liv_tas_rtbl</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   SQL [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.0</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
 <span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
 <span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span>
 <span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -278,9 +278,9 @@ p.indented2 {margin-left:2em;}
 </p>
 <p><br></p>
 </div>
-<div class="section level1">
-<h1 id="remote-tibbles">Remote Tibbles<a class="anchor" aria-label="anchor" href="#remote-tibbles"></a>
-</h1>
+<div class="section level2">
+<h2 id="remote-tibbles">Remote Tibbles<a class="anchor" aria-label="anchor" href="#remote-tibbles"></a>
+</h2>
 <p><code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> returns a <em>remote tibble</em>, which you can think of as the front-end of a database which for the most part looks and acts like a regular tibble (with a few exceptions). However the values of remote tibble are not held in memory, which you can tell by looking at the size:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span>units <span class="op">=</span> <span class="st">"Mb"</span><span class="op">)</span>
@@ -290,7 +290,7 @@ p.indented2 {margin-left:2em;}
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   SQL [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.0</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
 <span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
 <span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span>
 <span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -320,7 +320,7 @@ p.indented2 {margin-left:2em;}
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 1]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.0</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
 <span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
 <span class="co">#&gt;          n</span>
 <span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -331,7 +331,7 @@ p.indented2 {margin-left:2em;}
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tract</span> <span class="op">==</span> <span class="fl">6065030101</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">dt</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1980"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">val</span><span class="op">)</span> 
 <span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.0</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
 <span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
 <span class="co">#&gt;    dt           val</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -353,7 +353,7 @@ p.indented2 {margin-left:2em;}
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">tract</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>mean_daily_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">val</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.0</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
 <span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
 <span class="co">#&gt;         tract mean_daily_min</span>
 <span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -387,9 +387,9 @@ p.indented2 {margin-left:2em;}
 <span class="co">#&gt; tibble [732 x 2] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ dt : chr [1:732] "1980-01-01" "1980-01-02" "1980-01-03" "1980-01-04" ...</span>
 <span class="co">#&gt;  $ val: num [1:732] 7.41 5.3 5.62 3.57 3.25 ...</span></code></pre></div>
-<div class="section level2">
-<h2 id="mounting-an-existing-sqlite-database-as-a-remote-tibble">Mounting an existing SQLite database as a remote tibble<a class="anchor" aria-label="anchor" href="#mounting-an-existing-sqlite-database-as-a-remote-tibble"></a>
-</h2>
+<div class="section level3">
+<h3 id="mounting-an-existing-sqlite-database-as-a-remote-tibble">Mounting an existing SQLite database as a remote tibble<a class="anchor" aria-label="anchor" href="#mounting-an-existing-sqlite-database-as-a-remote-tibble"></a>
+</h3>
 <p>When you start a new R session, you’ll need to reestablish the connection to your SQLite database in order to work with the data as remote tibble. If the database was created with <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, you can re-load or ‘mount’ it as remote tibble with <code><a href="../reference/ca_db_read.html">ca_db_read()</a></code>, passing the name of a SQLite database.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rvrsde_liv_tas_fn</span>
@@ -397,7 +397,7 @@ p.indented2 {margin-left:2em;}
 <span class="va">x_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_db_read.html">ca_db_read</a></span><span class="op">(</span><span class="va">rvrsde_liv_tas_fn</span><span class="op">)</span>
 <span class="va">x_tbl</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   SQL [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.0</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
 <span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
 <span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span>
 <span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -415,9 +415,9 @@ p.indented2 {margin-left:2em;}
 <p><br></p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="reading-databases-with-sql">Reading databases with SQL<a class="anchor" aria-label="anchor" href="#reading-databases-with-sql"></a>
-</h1>
+<div class="section level2">
+<h2 id="reading-databases-with-sql">Reading databases with SQL<a class="anchor" aria-label="anchor" href="#reading-databases-with-sql"></a>
+</h2>
 <p>You aren’t limited to interacting with SQLite databases via remote tibbles, and you don’t need caladaptr functions to access them. You can connect to them directly, and read / edit the data using SQL. SQL is powerful and flexible language for working with relational databases, and is supported in R through the <a href="https://dbi.r-dbi.org/" class="external-link">DBI</a> package.</p>
 <p>To help you write SQL statements, <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> will show you what’s in a SQLite database created by <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. You can pass the name of a SQLite database file, or a remote tibble created by <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, to <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code>. The output includes tables, fields, primary keys, and indices in a database. It will also show the SQL expression for the primary data table(s) if lookup tables were used.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -554,22 +554,22 @@ p.indented2 {margin-left:2em;}
 </p>
 <p><br></p>
 </div>
-<div class="section level1">
-<h1 id="optimizating-database-performance">Optimizating Database Performance<a class="anchor" aria-label="anchor" href="#optimizating-database-performance"></a>
-</h1>
-<p>Two aspects of database optimization are managing the size of the database on disk, and speed of querying the data. Below are some general considerations for managing both of these aspects in SQLite databases.</p>
 <div class="section level2">
-<h2 id="how-many-databases">How many databases?<a class="anchor" aria-label="anchor" href="#how-many-databases"></a>
+<h2 id="optimizating-database-performance">Optimizating Database Performance<a class="anchor" aria-label="anchor" href="#optimizating-database-performance"></a>
 </h2>
+<p>Two aspects of database optimization are managing the size of the database on disk, and speed of querying the data. Below are some general considerations for managing both of these aspects in SQLite databases.</p>
+<div class="section level3">
+<h3 id="how-many-databases">How many databases?<a class="anchor" aria-label="anchor" href="#how-many-databases"></a>
+</h3>
 <p>When you save data to a database with <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, you get to choose how much data to put in a single table, how many tables to put in one database, and how many databases to create. Below are some general guidelines on how many databases to use:</p>
 <ul>
 <li><p>SQLite databases are contained in a single file, and can hold many tables. However there is little or no performance gain in having multiple tables in a single database (aside from lookup tables), compared to separate databases. There may also be a performance hit if you have multiple large tables in a database. Also if you need access to them simultaneously, you may have to manage the connections yourself (i.e., dbplyr may limit the number of parallel connections or queries to a single database).</p></li>
 <li><p>At the other end of the spectrum, you generally don’t want to have lots of database connections open simultaneously. Even if you don’t see the connections (because dbplyr manages them for you), each database requires it’s own connection, which takes a bit of overhead. If you access database files in a loop, be sure to delete the remote tibbles or manually close the connections so they don’t accumulate.</p></li>
 </ul>
 </div>
-<div class="section level2">
-<h2 id="how-many-tables">How many tables?<a class="anchor" aria-label="anchor" href="#how-many-tables"></a>
-</h2>
+<div class="section level3">
+<h3 id="how-many-tables">How many tables?<a class="anchor" aria-label="anchor" href="#how-many-tables"></a>
+</h3>
 <p>In terms of how much data to put in one table, some general points to consider:</p>
 <ul>
 <li><p>Databases like SQLite are designed to handle millions of records, that’s what they’re designed for. It’s unlikely you would reach the technical limits of what the database can handle.</p></li>
@@ -587,9 +587,9 @@ p.indented2 {margin-left:2em;}
 <strong>TIP</strong>: When in doubt, save one dataset in one data table, and one data table in one database. Delete remote tibbles when you no longer need them to free up the database connections.
 </p>
 </div>
-<div class="section level2">
-<h2 id="indices">Indices<a class="anchor" aria-label="anchor" href="#indices"></a>
-</h2>
+<div class="section level3">
+<h3 id="indices">Indices<a class="anchor" aria-label="anchor" href="#indices"></a>
+</h3>
 <p>You can create indices for specific fields in specific tables. Indices are like a phone book for a field, and improve the speed of operations that utilize that field (such as filters or joins). The downside to indices is they increase the size of the database on disk. A general good practice is to create indices for fields that you expect to use for joins, filters, and sorting (including the location id field), but not others. For more info, see the documentation on <a href="https://www.sqlite.org/queryplanner.html" class="external-link">SQLite.org</a>.</p>
 <p>You can create indices by passing field name(s) to the <code>indices</code> argument when you first populate a table with <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. The downside is a slightly slower write speed, because the index has to be updated every time data is written to the table. Once a database is created, additional data brought in via <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> will be automatically indexed, but additional indices can not be created with the indices argument.</p>
 <p>An alternative approach is to skip indices while downloading, and instead add them after all the data have been downloaded, but before you start analysis. You can see which fields have indices using <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> (above), or directly using functions from DBI.</p>
@@ -598,7 +598,7 @@ p.indented2 {margin-left:2em;}
 <code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/ca_db_indices.html">ca_db_indices</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="st">"rvrsde_tas"</span>, idx_fld_add <span class="op">=</span> <span class="st">"tract"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/ca_db_info.html">ca_db_info</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #00BB00; font-weight: bold;">rvrsde_tas.tract added</span></span>
+<span class="co">#&gt; <span style="color: #00BB00;">rvrsde_tas.tract added</span></span>
 <span class="co">#&gt; <span style="color: #555555;">No indices deleted</span></span>
 <span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Cal-Adapt Query Database</span></span>
 <span class="co"><span style="color: #0000BB; font-weight: bold;">#&gt; </span><span style="color: #0000BB;">Source: </span>C:/Users/Andy/AppData/Roaming/R/data/R/caladaptr/tracts_liv/rvrsde_liv_tas.sqlite</span>
@@ -642,9 +642,9 @@ p.indented2 {margin-left:2em;}
 <strong>TIP</strong>: You might want to wait to see how slow your analyses are before deciding to create indices, which will increase the size of the database. If the wait time is tolerable, and you don’t have to run the summary very often, adding indices may not be necessary.
 </p>
 </div>
-<div class="section level2">
-<h2 id="reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell">Reducing the Number of API Calls by Grouping Locations by Loca Grid Cell<a class="anchor" aria-label="anchor" href="#reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell"></a>
-</h2>
+<div class="section level3">
+<h3 id="reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell">Reducing the Number of API Calls by Grouping Locations by Loca Grid Cell<a class="anchor" aria-label="anchor" href="#reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell"></a>
+</h3>
 <p>LOCA grid cells are approximately 6km (3.7 mi) on each side. All locations within the same grid cell will therefore have the same values for any LOCA downscaled climate variables, projected or historic, modeled or observed. If you have more than one point location per grid cell, it doesn’t make sense to query the server for each one because they’ll all return the same values. This provides a way to reduce the number of total calls to the server.</p>
 <p>In the next example, we’ll get climate data for all the schools in CA (over 10,000). Because there are so many schools, and many of them are close together (especially in cities), we’ll first spatial join them to the LOCA grid. Next we’ll take grids that have schools in them, find their centroids, create an API request object for the centroids, and fetch data. We can then join the results back to the schools by the LOCA grid id.</p>
 <p>First we import the schools which we get from the <a href="https://data-cdegis.opendata.arcgis.com/" class="external-link">California Department of Education GeoHub</a>:</p>
@@ -767,12 +767,12 @@ p.indented2 {margin-left:2em;}
   <span class="fu"><a href="../reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">2080</span>, end <span class="op">=</span> <span class="fl">2099</span><span class="op">)</span>
 
 <span class="va">locaschl_et_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">General issues</span></span>
-<span class="co">#&gt; <span style="color: #00BB00; font-weight: bold;"> - none found</span></span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Issues for querying values</span></span>
-<span class="co">#&gt; <span style="color: #00BB00; font-weight: bold;"> - none found</span></span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Issues for downloading rasters</span></span>
-<span class="co">#&gt; <span style="color: #00BB00; font-weight: bold;"> - none found</span></span></code></pre></div>
+<span class="co">#&gt; General issues</span>
+<span class="co">#&gt;  - none found</span>
+<span class="co">#&gt; Issues for querying values</span>
+<span class="co">#&gt;  - none found</span>
+<span class="co">#&gt; Issues for downloading rasters</span>
+<span class="co">#&gt;  - none found</span></code></pre></div>
 <p>Next, we fetch the data. Because this is still a lot of locations, we’ll use <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> to save it in a database:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span>
@@ -788,7 +788,7 @@ p.indented2 {margin-left:2em;}
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">locaschl_et_rtbl</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 8]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.0</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
 <span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\schools\loca_schl.sqlite]</span></span>
 <span class="co">#&gt;      id cvar  scenario gcm        period spag  dt           val</span>
 <span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -861,7 +861,7 @@ p.indented2 {margin-left:2em;}
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

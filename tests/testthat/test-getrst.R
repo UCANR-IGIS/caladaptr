@@ -10,8 +10,7 @@ test_that("ca_getrst_stars works", {
   skip_on_cran()
   skip_if_offline()
   simppoly_cap <- ca_example_apireq(3) %>% ca_options(spatial_ag = "none")
-  #simppoly_fn <- simppoly_cap %>% ca_getrst_stars(out_dir = "./test_data", quiet = FALSE)
-  simppoly_fn <- simppoly_cap %>% ca_getrst_stars(out_dir = tempdir(), quiet = FALSE)
+  simppoly_fn <- simppoly_cap %>% ca_getrst_stars(out_dir = tempdir(), quiet = TRUE)
   expect_equal(length(simppoly_fn), 1)
   expect_true(file.exists(simppoly_fn))
   simppoly_stars_lst <- ca_stars_read(simppoly_fn)
@@ -20,6 +19,4 @@ test_that("ca_getrst_stars works", {
 })
 
 ## Need a test for 6D merging
-
-
 

@@ -9,8 +9,9 @@
 
 format.ca_apireq <- function(x, ...) {
 
-  accent1 <- getOption("ca_accent1", paste0)
-  accent2 <- getOption("ca_accent2", paste0)
+  ## Get the function(s) we'll use to style messages
+  accent1 <- if (interactive()) getOption("ca_accent1", I) else I
+  accent2 <- if (interactive()) getOption("ca_accent2", I) else I
 
   loc1 <- accent2("Location(s): ")
 
@@ -131,7 +132,7 @@ format.ca_apireq <- function(x, ...) {
 #' @export
 
 print.ca_apireq <- function(x, ...) {
-  accent1 <- getOption("ca_accent1", paste0)
+  accent1 <- if (interactive()) getOption("ca_accent1", I) else I
   cat(accent1("Cal-Adapt API Request\n"))
   cat(format(x), "\n")
 }
@@ -257,7 +258,7 @@ plot.ca_apireq <- function(x,
     api_map
 
   } else if (x$loc$type == "zip") {
-    msg <- getOption("ca_message", paste0)
+    msg <- if (interactive()) getOption("ca_message", I) else I
     message(msg("Sorry, plotting this location type is not yet supported"))
 
   }

@@ -60,41 +60,44 @@ ca_preflight <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TR
                       pf = TRUE)
 
   if (!quiet) {
-    ## Get the function(s) we'll use to style messages
-    accent1 <- getOption("ca_accent1", I)
-    accent2 <- getOption("ca_accent2", I)
-    success_fmt <- getOption("ca_success", I)
 
-    message(accent1("General issues"))
+    ## Get the function(s) we'll use to style messages
+    accent1 <- if (interactive()) getOption("ca_accent1", I) else I
+    accent2 <- if (interactive()) getOption("ca_accent2", I) else I
+    success_fmt <- if (interactive()) getOption("ca_success", I) else I
+
+    msg_chr <- accent1("General issues")
     if (length(msgs_lst$genl_msgs) > 0) {
       for (msg_one in msgs_lst$genl_msgs) {
-        message(accent2(paste0(" - ", msg_one)))
+        msg_chr <- paste0(msg_chr, "\n", accent2(paste0(" - ", msg_one)))
       }
     } else {
-      message(success_fmt(paste0(" - none found")))
+      msg_chr <- paste0(msg_chr, "\n", success_fmt(paste0(" - none found")))
     }
 
     if ("getvals" %in% check_for) {
-      message(accent1("Issues for querying values"))
+      msg_chr <- paste0(msg_chr, "\n", accent1("Issues for querying values"))
       if (length(msgs_lst$gval_msgs) > 0) {
         for (msg_one in msgs_lst$gval_msgs) {
-          message(accent2(paste0(" - ", msg_one)))
+          msg_chr <- paste0(msg_chr, "\n", accent2(paste0(" - ", msg_one)))
         }
       } else {
-        message(success_fmt(paste0(" - none found")))
+        msg_chr <- paste0(msg_chr, "\n", success_fmt(paste0(" - none found")))
       }
     }
 
     if ("getrst" %in% check_for) {
-      message(accent1("Issues for downloading rasters"))
+      msg_chr <- paste0(msg_chr, "\n", accent1("Issues for downloading rasters"))
       if (length(msgs_lst$grst_msgs) > 0) {
         for (msg_one in msgs_lst$grst_msgs) {
-          message(accent2(paste0(" - ", msg_one)))
+          msg_chr <- paste0(msg_chr, "\n", accent2(paste0(" - ", msg_one)))
         }
       } else {
-        message(success_fmt(paste0(" - none found")))
+        msg_chr <- paste0(msg_chr, "\n", success_fmt(paste0(" - none found")))
       }
     }
+
+    message(msg_chr)
 
   }
 
@@ -105,6 +108,4 @@ ca_preflight <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TR
   }
 
 }
-
-
 

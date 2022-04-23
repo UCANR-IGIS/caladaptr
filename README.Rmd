@@ -11,9 +11,6 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
-# library(httptest)
-# ## start_vignette()
-# start_vignette("D:/GitHub/cal-adapt/caladaptr")
 ```
 
 # caladaptR <a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" style="padding:15px;"/></a>

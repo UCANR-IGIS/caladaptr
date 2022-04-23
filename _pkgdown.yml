@@ -21,7 +21,7 @@ authors:
     text: "Developed by"
 reference:
   - title: API Request Constructors
-    desc: Functions that build a Cal-Adapt API request object
+    desc: Constructor functions to build a Cal-Adapt API request object
     contents:
       - ca_loc_aoipreset
       - ca_loc_pt
@@ -60,12 +60,13 @@ reference:
       - ca_catalog_fetch
       - ca_catalog_search
   - title: Working with Area-of-Interest Presets
-    desc: Constants and functions to help you specify an area-of-interest preset for an API request object, and get the geometry
+    desc: Constants and functions to help you specify a preset Area-of-Interest & get geoms
     contents:
       - aoipreset_idflds
       - aoipreset_idval
       - aoipreset_types
       - ca_aoipreset_geom
+      - bbox_resize
   - title: Managing SQLite databases
     desc: Working with local SQLite databases
     contents:
