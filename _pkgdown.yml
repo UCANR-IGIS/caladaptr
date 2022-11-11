@@ -87,6 +87,14 @@ reference:
       - ca_settings
       - ca_getcache
       - ca_setcache
+  - title: Printing and plotting
+    desc: Print and plot objects
+    contents:
+      - format.ca_apireq
+      - print.ca_apireq
+      - plot.ca_apireq
+      - format.ca_db_info
+      - print.ca_db_info
 
 navbar:
   type: inverse
@@ -132,13 +140,13 @@ navbar:
        - text: caladpatr.apps package
          href: https://github.com/ucanr-igis/caladaptr.apps/
     pres_wrkshps:
-      text: Pres & Workshops
+      text: Videos
       menu:
-       - text: Overview
+       - text: caladaptR Overview
          href: https://youtu.be/6sDwXPbSYOQ
-       - text: Code Example
+       - text: Code Demo
          href: https://youtu.be/APCIBs35BJg
-       - text: "Workshop: Working with Cal-Adapt Data in R (Feb 2022)"
-         href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_feb22/
+       - text: "Workshop: Working with Cal-Adapt Climate Data in R (April 2022)"
+         href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_apr22/
        - text: "Workshop: Getting Started (Oct 2021)"
          href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/

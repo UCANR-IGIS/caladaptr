@@ -1,7 +1,12 @@
+# caladaptr 0.6.7 (2022-11-11)
+
+* `test-getvals-db()`: updated a test
+* data catalog updated
+
 # caladaptr 0.6.6 (2022-04-16)
 
-* `ca_preflight`: modified to render messages differently in non-interactive contexts (i.e., Rmarkdown)
-* `format.ca_apireq`, `print.ca_apireq`: modified how output appears in RMarkdown documents (color codes removed)
+* `ca_preflight()`: modified to render messages differently in non-interactive contexts (i.e., Rmarkdown)
+* `format.ca_apireq()`, `print.ca_apireq()`: modified how output appears in RMarkdown documents (color codes removed)
 * `bbox_resize()`: utility function to resize a bounding box object (returned by `sf::st_bbox()`) by passing either a scaling factor or a fixed offset; used internally but exported for convenience.
 * data catalog updated
 

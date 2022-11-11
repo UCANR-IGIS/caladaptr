@@ -32,6 +32,6 @@ Values that can be used to identify features in AOI Preset
 \item \code{aoipreset_idflds}: AOI Preset id fields
 
 \item \code{aoipreset_idval}: Values that can be used to identify features
-}}
 
+}}
 \keyword{aoipreset}

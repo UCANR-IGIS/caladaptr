@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt via the API
-Version: 0.6.6
-Date: 2022-04-16
+Version: 0.6.7
+Date: 2022-11-11
 Authors@R: c(person(given = "Andy",
                   family = "Lyons", 
                   role = c("aut", "cre"),
@@ -15,7 +15,7 @@ Authors@R: c(person(given = "Andy",
 BugReports: https://github.com/ucanr-igis/caladaptr/issues
 URL: https://ucanr-igis.github.io/caladaptr
 Description: Base functions for importing climate data using the 
-    Cal-Adapt API.
+    Cal-Adapt API <https://cal-adapt.org/>.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -42,7 +42,7 @@ Imports:
     units,
     utils,
     zip
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Suggests: 
     chillR,
     cubelyr,

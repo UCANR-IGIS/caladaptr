@@ -1,3 +1,5 @@
+caladaptR
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -24,22 +26,22 @@ analysis and visualization:
 
 `caladaptr` allows you to:
 
--   query any of Cal-Adapt’s \~950 raster data layers
--   retrieve values by point, a preset area-of-interest (e.g., census
-    tract), or a user-provided polygon
--   cache large queries in a local SQLite database
--   download cropped rasters as TIFs and import them into R as stars
-    objects
+- query any of Cal-Adapt’s \~950 raster data layers
+- retrieve values by point, a preset area-of-interest (e.g., census
+  tract), or a user-provided polygon
+- cache large queries in a local SQLite database
+- download cropped rasters as TIFs and import them into R as stars
+  objects
 
 `caladaptr` functions have been designed to:
 
--   be pipe friendly
--   return tibbles for compatibility with tidyverse packages
--   return values with encoded units (managed by the
-    [units](https://cran.r-project.org/package=units) package)
--   accept and return `sf` data frames where spatial objects are needed
--   return rasters as spatiotemporal arrays
-    ([`stars`](https://r-spatial.github.io/stars/) objects)
+- be pipe friendly
+- return tibbles for compatibility with tidyverse packages
+- return values with encoded units (managed by the
+  [units](https://cran.r-project.org/package=units) package)
+- accept and return `sf` data frames where spatial objects are needed
+- return rasters as spatiotemporal arrays
+  ([`stars`](https://r-spatial.github.io/stars/) objects)
 
 `caladaptr` does not support downloading the original NetCDF rasters nor
 station data (e.g., sea level rise, stream gauges). For these data, see
@@ -51,25 +53,25 @@ the Data Download tool or FTP server on
 ## Installation
 
 `caladaptr` is available on
-<a href="https://ajlyons.r-universe.dev/" target="_blank" rel="noopener">r-universe</a>.
-To install it, you can run:
+<a href="https://ajlyons.r-universe.dev/" target="_blank"
+rel="noopener">r-universe</a>. To install it, you can run:
 
     options(repos = c(ajlyons = 'https://ajlyons.r-universe.dev',
                       CRAN = 'https://cloud.r-project.org'))
     install.packages('caladaptr')
 
 Alternately, you can install it directly from
-<a href="https://github.com/ucanr-igis/caladaptr" target="_blank" rel="noopener">GitHub</a>.
-(This requires the `remotes` package plus
-<a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank" rel="noopener">RTools</a>
-for Windows users.)
+<a href="https://github.com/ucanr-igis/caladaptr" target="_blank"
+rel="noopener">GitHub</a>. (This requires the `remotes` package plus
+<a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank"
+rel="noopener">RTools</a> for Windows users.)
 
     remotes::install_github("ucanr-igis/caladaptr")
 
 If you are trying (and failing) to install `caladaptr` on
-<a href="https://rstudio.cloud/" target="_blank" rel="noopener">RStudio Cloud</a>
-(or another Linux machine), try to install `sf` by itself, and then
-`caladaptr`.
+<a href="https://rstudio.cloud/" target="_blank" rel="noopener">RStudio
+Cloud</a> (or another Linux machine), try to install `sf` by itself, and
+then `caladaptr`.
 
     if (!require(sf)) install.packages("sf")
     options(repos = c(ajlyons = 'https://ajlyons.r-universe.dev',
@@ -81,12 +83,12 @@ If you are trying (and failing) to install `caladaptr` on
 In general, there are three steps to retrieving Cal-Adapt data with
 `caladaptr`:
 
-1.  Create an ‘API request object’
+1)  Create an ‘API request object’
 
-2.  Feed the API request into a function that fetches data (either
+2)  Feed the API request into a function that fetches data (either
     values or rasters)
 
-3.  Wrangle the data that comes back into the format required for your
+3)  Wrangle the data that comes back into the format required for your
     analysis
 
 ## Example: Projected Annual Temperature at a Point Location
@@ -111,7 +113,7 @@ from Scripps, for a single point location.
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.6.4)
+#> caladaptr (version 0.6.7)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 
@@ -149,15 +151,15 @@ data into a tibble by passing the API request to `ca_getvals_tbl()`:
 ``` r
 sac_tasmax_tbl <- sac_tasmax_cap %>% ca_getvals_tbl(quiet = TRUE)
 head(sac_tasmax_tbl)
-#> # A tibble: 6 x 8
-#>      id cvar   period gcm        scenario spag  dt           val
-#>   <int> <fct>  <fct>  <fct>      <fct>    <fct> <chr>        [K]
-#> 1     1 tasmax year   HadGEM2-ES rcp45    none  2040-12-31  299.
-#> 2     1 tasmax year   HadGEM2-ES rcp45    none  2041-12-31  299.
-#> 3     1 tasmax year   HadGEM2-ES rcp45    none  2042-12-31  299.
-#> 4     1 tasmax year   HadGEM2-ES rcp45    none  2043-12-31  300.
-#> 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31  300.
-#> 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31  298.
+#> # A tibble: 6 × 8
+#>      id cvar   period gcm        scenario spag  dt          val
+#>   <int> <fct>  <fct>  <fct>      <fct>    <fct> <chr>       [K]
+#> 1     1 tasmax year   HadGEM2-ES rcp45    none  2040-12-31 299.
+#> 2     1 tasmax year   HadGEM2-ES rcp45    none  2041-12-31 299.
+#> 3     1 tasmax year   HadGEM2-ES rcp45    none  2042-12-31 299.
+#> 4     1 tasmax year   HadGEM2-ES rcp45    none  2043-12-31 300.
+#> 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31 300.
+#> 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31 298.
 dim(sac_tasmax_tbl)
 #> [1] 620   8
 ```
@@ -177,15 +179,15 @@ library(dplyr)
 library(units)
 sac_tasmax_tbl2 <- sac_tasmax_tbl %>% mutate(temp_f = set_units(val, degF))
 head(sac_tasmax_tbl2)
-#> # A tibble: 6 x 9
-#>      id cvar   period gcm        scenario spag  dt           val temp_f
-#>   <int> <fct>  <fct>  <fct>      <fct>    <fct> <chr>        [K] [degF]
-#> 1     1 tasmax year   HadGEM2-ES rcp45    none  2040-12-31  299.   78.1
-#> 2     1 tasmax year   HadGEM2-ES rcp45    none  2041-12-31  299.   78.0
-#> 3     1 tasmax year   HadGEM2-ES rcp45    none  2042-12-31  299.   77.8
-#> 4     1 tasmax year   HadGEM2-ES rcp45    none  2043-12-31  300.   79.7
-#> 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31  300.   79.5
-#> 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31  298.   77.2
+#> # A tibble: 6 × 9
+#>      id cvar   period gcm        scenario spag  dt          val temp_f
+#>   <int> <fct>  <fct>  <fct>      <fct>    <fct> <chr>       [K] [degF]
+#> 1     1 tasmax year   HadGEM2-ES rcp45    none  2040-12-31 299.   78.1
+#> 2     1 tasmax year   HadGEM2-ES rcp45    none  2041-12-31 299.   78.0
+#> 3     1 tasmax year   HadGEM2-ES rcp45    none  2042-12-31 299.   77.8
+#> 4     1 tasmax year   HadGEM2-ES rcp45    none  2043-12-31 300.   79.7
+#> 5     1 tasmax year   HadGEM2-ES rcp45    none  2044-12-31 300.   79.5
+#> 6     1 tasmax year   HadGEM2-ES rcp45    none  2045-12-31 298.   77.2
 ```
 
 Now we can plot it:

@@ -15,7 +15,7 @@ ca_livneh(x = ca_apireq(), livneh = TRUE)
 Specify Livneh data should be retrieved in a Cal-Adapt API call
 }
 \details{
-
+Convenience function to create an API request object for one of the Livneh datasets
 }
 \seealso{
 \code{\link{ca_catalog_rs}}

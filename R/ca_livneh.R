@@ -7,6 +7,8 @@
 #'
 #' @details
 #'
+#' Convenience function to create an API request object for one of the Livneh datasets
+#'
 #' @seealso \code{\link{ca_catalog_rs}}
 #'
 #' @export

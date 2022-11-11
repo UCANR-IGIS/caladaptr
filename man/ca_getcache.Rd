@@ -44,9 +44,9 @@ A custom location can be set with \code{ca_setcache}.
 }
 \section{Functions}{
 \itemize{
-\item \code{ca_setcache}: Set cache directory
-}}
+\item \code{ca_setcache()}: Set cache directory
 
+}}
 \seealso{
 \code{\link{ca_catalog_rs}}, \code{\link{ca_aoipreset_geom}}, \code{\link{ca_locagrid_geom}}
 }
