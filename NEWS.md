@@ -1,3 +1,7 @@
+# caladaptr 0.6.8 (2022-11-29)
+
+* `ca_getvals_db()`, `ca_getvals_tbl()`: trapped an error where a preset AOI falls outside the LOCA grid (e.g., Farallon Islands HUC10 watershed)
+
 # caladaptr 0.6.7 (2022-11-11)
 
 * `test-getvals-db()`: updated a test

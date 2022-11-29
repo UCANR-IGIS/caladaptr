@@ -497,110 +497,118 @@ ca_getvals_db <- function(x, db_fn, db_tbl, omit_col = NULL, indices = NULL, new
           ## Get the data values (one per date)
           these_vals <- unlist(qry_content$data)
 
-          ## Not converting to units object because that isn't compatible with SQLite
+          ## Must check the values also. Some AOI presets (e.g., watershed 319, Farralon Islands)
+          ## lie outside the LOCA grid and return a valid response but all the values are null.
+          if (length(these_vals) > 0) {
 
-          ## Time to write out some data!! First see if the 'values' table has been created or not.
-          new_tbl <- !db_tbl %in% dbListTables(mydb)
+            ## Not converting to units object because that isn't compatible with SQLite
 
-          if (new_tbl) {
+            ## Time to write out some data!! First see if the 'values' table has been created or not.
+            new_tbl <- !db_tbl %in% dbListTables(mydb)
 
-            ## We have to create the values table. It doesn't exist yet.
+            if (new_tbl) {
 
-            ## Get the field type for the feat_id column
-            if (is.integer(api_tbl[[feat_id_fldname]])) {
-              feat_id_type <- "INTEGER"
-            } else if (is.numeric(api_tbl[[feat_id_fldname]])) {
-              feat_id_type <- "NUMERIC"
-            } else if (is.character(api_tbl[[feat_id_fldname]])) {
-              feat_id_type <- "TEXT"
-            } else {
-              stop("DONT KNOW THE FIELD TYPE OF THE FEAT_ID COLUMN IN API_TBL. PLEASE CONTACT THE PACKAGE AUTHOR FOR HELP.")
-            }
+              ## We have to create the values table. It doesn't exist yet.
 
-            if (lookup_tbls) {
-
-              # sql_flds and sql_indices are both pieces of SQL expression that we will build up.
-              ## They will ultimately be used to create the table and indices
-
-              ## Start the list of field definitions with the feat_id column
-              sql_flds <- paste0(feat_id_fldname, " ", feat_id_type, " NOT NULL")
-
-              ## Initialize a variable to hold a SQL expression that will be used to create the indices
-              sql_indices <- character(0)
-
-              ## Add an index expression for the feature id
-              if ("feat_id" %in% indices || feat_id_fldname %in% indices) {
-                sql_indices <- c(sql_indices,
-                                 paste0("CREATE INDEX `", db_tbl, ".", feat_id_fldname,
-                                        "` ON `", db_tbl, "`(`", feat_id_fldname, "`);"))
+              ## Get the field type for the feat_id column
+              if (is.integer(api_tbl[[feat_id_fldname]])) {
+                feat_id_type <- "INTEGER"
+              } else if (is.numeric(api_tbl[[feat_id_fldname]])) {
+                feat_id_type <- "NUMERIC"
+              } else if (is.character(api_tbl[[feat_id_fldname]])) {
+                feat_id_type <- "TEXT"
+              } else {
+                stop("DONT KNOW THE FIELD TYPE OF THE FEAT_ID COLUMN IN API_TBL. PLEASE CONTACT THE PACKAGE AUTHOR FOR HELP.")
               }
 
-              ## Define the lookup tables that are needed
-              flds_make <- lkp_tbl_names
+              if (lookup_tbls) {
 
-              ## Add field definition and index creation expressions for other fields
-              for (fld in flds_make) {
-                sql_flds <- c(sql_flds,
-                              paste0(fld, "_id INTEGER NOT NULL REFERENCES ", fld, "s"))
+                # sql_flds and sql_indices are both pieces of SQL expression that we will build up.
+                ## They will ultimately be used to create the table and indices
 
-                if (fld %in% indices) {
+                ## Start the list of field definitions with the feat_id column
+                sql_flds <- paste0(feat_id_fldname, " ", feat_id_type, " NOT NULL")
+
+                ## Initialize a variable to hold a SQL expression that will be used to create the indices
+                sql_indices <- character(0)
+
+                ## Add an index expression for the feature id
+                if ("feat_id" %in% indices || feat_id_fldname %in% indices) {
                   sql_indices <- c(sql_indices,
-                                   paste0("CREATE INDEX `", db_tbl, ".", fld, "_id` ON `", db_tbl, "`(`", fld, "_id`);"))
+                                   paste0("CREATE INDEX `", db_tbl, ".", feat_id_fldname,
+                                          "` ON `", db_tbl, "`(`", feat_id_fldname, "`);"))
                 }
-              }
 
+                ## Define the lookup tables that are needed
+                flds_make <- lkp_tbl_names
 
-              ## Create the values table
+                ## Add field definition and index creation expressions for other fields
+                for (fld in flds_make) {
+                  sql_flds <- c(sql_flds,
+                                paste0(fld, "_id INTEGER NOT NULL REFERENCES ", fld, "s"))
 
-              ## Add additional field expressions  for the values table for dt and val (no indices needed)
-              sql_flds <- c(sql_flds, "dt TEXT NOT NULL", "val NUMERIC NOT NULL")   ## val could also be REAL?
+                  if (fld %in% indices) {
+                    sql_indices <- c(sql_indices,
+                                     paste0("CREATE INDEX `", db_tbl, ".", fld, "_id` ON `", db_tbl, "`(`", fld, "_id`);"))
+                  }
+                }
 
-              ## Create the values table
-              sql_create_my_table <- paste0("CREATE TABLE `", db_tbl, "` (",
-                                            paste(sql_flds, collapse = ", "), ");")
-              dbExecute(mydb, sql_create_my_table)
+                ## Create the values table
 
-              # Generate indices for the foreign key fields in the vals table
-              for (sql_create_index in sql_indices) {
-                dbExecute(mydb, sql_create_index)
+                ## Add additional field expressions  for the values table for dt and val (no indices needed)
+                sql_flds <- c(sql_flds, "dt TEXT NOT NULL", "val NUMERIC NOT NULL")   ## val could also be REAL?
+
+                ## Create the values table
+                sql_create_my_table <- paste0("CREATE TABLE `", db_tbl, "` (",
+                                              paste(sql_flds, collapse = ", "), ");")
+                dbExecute(mydb, sql_create_my_table)
+
+                # Generate indices for the foreign key fields in the vals table
+                for (sql_create_index in sql_indices) {
+                  dbExecute(mydb, sql_create_index)
+                }
+
               }
 
             }
 
-          }
-
-          ## Write the data. This statement works regardless of using lookup tables or not
-          dbWriteTable(mydb, name = db_tbl,
-                       value = data.frame(api_tbl[i, apicall_cols_keep],
-                                          dt = substr(unlist(qry_content$index), 1, 10),
-                                          val = these_vals),
-                       append = TRUE)
-
-          ## Next, write the hash_int value to the hashes table if it wasn't found
-          ## earlier (regardless of new_recs_only).
-          ## No need to append it to hashes_already_in_db because this call wont be called
-          ## again in this loop
-
-          if (!hash_in_db) {
-            dbWriteTable(mydb, name = db_hashes_tbl,
-                         value = data.frame(hash_int = hash_int),
+            ## Write the data. This statement works regardless of using lookup tables or not
+            dbWriteTable(mydb, name = db_tbl,
+                         value = data.frame(api_tbl[i, apicall_cols_keep],
+                                            dt = substr(unlist(qry_content$index), 1, 10),
+                                            val = these_vals),
                          append = TRUE)
-          }
 
-          ## Commit the transaction every nth call
-          if (trans_len > 0) {
-            calls_made <- calls_made + 1
-            if (calls_made %% trans_len == 0) {
-              ##dbExecute(mydb, "COMMIT;")
-              dbCommit(mydb)
-              if (debug) message(accent2(" - COMMIT"))
+            ## Next, write the hash_int value to the hashes table if it wasn't found
+            ## earlier (regardless of new_recs_only).
+            ## No need to append it to hashes_already_in_db because this call wont be called
+            ## again in this loop
 
-              ## num_vals_downloaded, " values downloaded since last pause point.")))
-
-              ## Start a new transaction
-              dbBegin(mydb)
-
+            if (!hash_in_db) {
+              dbWriteTable(mydb, name = db_hashes_tbl,
+                           value = data.frame(hash_int = hash_int),
+                           append = TRUE)
             }
+
+            ## Commit the transaction every nth call
+            if (trans_len > 0) {
+              calls_made <- calls_made + 1
+              if (calls_made %% trans_len == 0) {
+                ##dbExecute(mydb, "COMMIT;")
+                dbCommit(mydb)
+                if (debug) message(accent2(" - COMMIT"))
+
+                ## num_vals_downloaded, " values downloaded since last pause point.")))
+
+                ## Start a new transaction
+                dbBegin(mydb)
+
+              }
+            }
+
+          } else {
+            ## Indices (i.e., dates) were returned, but no values. Location may be outside the extent?
+            if (debug) message(msg_fmt(" - no values returned!"))
           }
 
         } else {

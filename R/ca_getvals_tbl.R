@@ -235,20 +235,29 @@ ca_getvals_tbl <- function(x, quiet = FALSE, debug = FALSE, stop_on_err = TRUE, 
         ## Get the data values (one per date)
         these_vals <- unlist(qry_content$data)
 
-        ## Set units
-        rs_units_chr <- api_tbl[i, "rs_units", drop = TRUE]
-        if (!is.na(rs_units_chr)) {
-          if (rs_units_chr == "C") {rs_units_chr <- "celsius"}
-          these_vals <- set_units(these_vals,
-                                  value = rs_units_chr,
-                                  mode = "standard")
-        }
+        ## Must check the values also. Some AOI presets (e.g., watershed 319, Farralon Islands)
+        ## lie outside the LOCA grid and return a valid response but all the values are null.
+        if (length(these_vals) > 0) {
 
-        ## Append these rows to the tibble
-        res_tbl <- rbind(res_tbl,
-                         tibble(api_tbl[i, apicall_cols_keep],
-                                dt = substr(unlist(qry_content$index), 1, 10),
-                                val = these_vals))
+          ## Set units
+          rs_units_chr <- api_tbl[i, "rs_units", drop = TRUE]
+          if (!is.na(rs_units_chr)) {
+            if (rs_units_chr == "C") {rs_units_chr <- "celsius"}
+            these_vals <- set_units(these_vals,
+                                    value = rs_units_chr,
+                                    mode = "standard")
+          }
+
+          ## Append these rows to the tibble
+          res_tbl <- rbind(res_tbl,
+                           tibble(api_tbl[i, apicall_cols_keep],
+                                  dt = substr(unlist(qry_content$index), 1, 10),
+                                  val = these_vals))
+        } else {
+          ## Nothing returned - date fell outside of range? location outside extent?
+          if (debug) message(msg_fmt(" - no values returned!"))
+
+        }
 
       } else {
         ## Nothing returned - date fell outside of range? location outside extent?
