@@ -3,12 +3,12 @@ caladaptR
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# caladaptR <a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" style="padding:15px;"/></a>
+<a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" style="padding:15px;"/></a>
 
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![caladaptr status
 badge](https://ajlyons.r-universe.dev/badges/caladaptr)](https://ajlyons.r-universe.dev)
 <!-- badges: end -->

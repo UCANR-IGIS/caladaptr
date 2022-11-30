@@ -108,7 +108,8 @@ navbar:
     - news
     - rnotebooks
     - shinyapps
-    - pres_wrkshps
+    - videos
+    - workshops
     right: github
   components:
     home:
@@ -139,14 +140,17 @@ navbar:
          href: https://ucanr-igis.shinyapps.io/chill/
        - text: caladpatr.apps package
          href: https://github.com/ucanr-igis/caladaptr.apps/
-    pres_wrkshps:
+    videos:
       text: Videos
       menu:
        - text: caladaptR Overview
          href: https://youtu.be/6sDwXPbSYOQ
        - text: Code Demo
          href: https://youtu.be/APCIBs35BJg
-       - text: "Workshop: Working with Cal-Adapt Climate Data in R (April 2022)"
+    workshops:
+      text: Workshops
+      menu:
+       - text: "Working with Cal-Adapt Climate Data in R (April 2022)"
          href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_apr22/
-       - text: "Workshop: Getting Started (Oct 2021)"
+       - text: "Getting Started (Oct 2021)"
          href: https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/
