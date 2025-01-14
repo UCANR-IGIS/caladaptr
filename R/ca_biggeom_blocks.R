@@ -34,7 +34,7 @@
 ca_biggeom_blocks <- function(x, block_area_mi2 = 10000) {
 
   ## Define the target area and width in m2
-  target_area_m2 <- set_units(block_area_m2, "mi^2") %>% set_units("m^2") ##  51,800 km2
+  target_area_m2 <- set_units(block_area_mi2, "mi^2") %>% set_units("m^2") ##  51,800 km2
   target_width_m <- target_area_m2 %>% sqrt() %>% round()         ## about 228 km
 
   ## We'll use web mercator (units = m)
