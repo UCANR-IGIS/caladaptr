@@ -1,3 +1,7 @@
+# caladaptr 0.6.9 (2025-01-13)
+
+* add variale `block_area_mi2` argument to `ca_biggeom_blocks`
+
 # caladaptr 0.6.8 (2022-11-29)
 
 * `ca_getvals_db()`, `ca_getvals_tbl()`: trapped an error where a preset AOI falls outside the LOCA grid (e.g., Farallon Islands HUC10 watershed)
