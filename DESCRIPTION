@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt via the API
-Version: 0.6.8
-Date: 2022-11-29
+Version: 0.6.9
+Date: 2025-01-13
 Authors@R: c(person(given = "Andy",
                   family = "Lyons", 
                   role = c("aut", "cre"),
