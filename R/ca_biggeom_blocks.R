@@ -1,6 +1,8 @@
 #' Split a large geom into blocks small enough to ask the API for rasters
 #'
 #' @param x A big geom
+#' @param block_area_mi2 Numeric area in square miles for each block.
+#'   Smaller values => more sub-polygons. Default = 10,000.
 #'
 #' @details The Cal-Adapt API has a limit of around 20,000 mi^2 as the maximum area for which you can download a raster.
 #' This function will take a sf data frame larger than this and return blocks that cover the same extent. Subsequently you can
@@ -29,11 +31,10 @@
 #'
 #'
 #' }
-
-ca_biggeom_blocks <- function(x) {
+ca_biggeom_blocks <- function(x, block_area_m2 = 10000) {
 
   ## Define the target area and width in m2
-  target_area_m2 <- set_units(20000, "mi^2") %>% set_units("m^2") ##  51,800 km2
+  target_area_m2 <- set_units(block_area_m2, "mi^2") %>% set_units("m^2") ##  51,800 km2
   target_width_m <- target_area_m2 %>% sqrt() %>% round()         ## about 228 km
 
   ## We'll use web mercator (units = m)
