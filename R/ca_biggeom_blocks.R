@@ -31,7 +31,7 @@
 #'
 #'
 #' }
-ca_biggeom_blocks <- function(x, block_area_mi2 = 10000) {
+ca_biggeom_blocks <- function(x, block_area_mi2 = 18000) { # 18000 mi2 ~= 46,600 km2
 
   ## Define the target area and width in m2
   target_area_m2 <- set_units(block_area_mi2, "mi^2") %>% set_units("m^2") ##  51,800 km2
