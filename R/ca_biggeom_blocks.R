@@ -2,7 +2,7 @@
 #'
 #' @param x A big geom
 #' @param block_area_mi2 Numeric area in square miles for each block.
-#'   Smaller values => more sub-polygons. Default = 10,000.
+#'   Smaller values => more sub-polygons. Default = 18,000. API limit is 20k. 
 #'
 #' @details The Cal-Adapt API has a limit of around 20,000 mi^2 as the maximum area for which you can download a raster.
 #' This function will take a sf data frame larger than this and return blocks that cover the same extent. Subsequently you can
