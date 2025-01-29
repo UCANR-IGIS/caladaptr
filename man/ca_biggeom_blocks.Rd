@@ -4,10 +4,13 @@
 \alias{ca_biggeom_blocks}
 \title{Split a large geom into blocks small enough to ask the API for rasters}
 \usage{
-ca_biggeom_blocks(x)
+ca_biggeom_blocks(x, block_area_mi2 = 18000)
 }
 \arguments{
 \item{x}{A big geom}
+
+\item{block_area_mi2}{Numeric area in square miles for each block.
+Smaller values => more sub-polygons. Default = 18,000. API limit is 20k.}
 }
 \value{
 A polygon simple feature data frame covering the same extent as \code{x}
