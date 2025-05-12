@@ -152,7 +152,7 @@ print.ca_apireq <- function(x, ...) {
 #' @export
 
 plot.ca_apireq <- function(x,
-                           basemap = c("Esri.NatGeoWorldMap", "OpenStreetMap")[1],
+                           basemap = c("Esri.WorldStreetMap", "OpenStreetMap")[2],
                            locagrid = FALSE,
                            static = FALSE, ...) {
 
@@ -172,7 +172,7 @@ plot.ca_apireq <- function(x,
 
     api_map <- tm_shape(pts_sf) +
       tm_basemap(basemap) +
-      tm_symbols(col = "red", alpha = 0.8, size = 0.2, group = "Query Location(s)") +
+      tm_symbols(col = "red", fill_alpha = 0.8, size = 0.2, group = "Query Location(s)") +
       tm_view(symbol.size.fixed = TRUE)
 
     if (locagrid) {
@@ -213,7 +213,7 @@ plot.ca_apireq <- function(x,
 
       api_map <- tm_shape(polyuse_sf) +
         tm_basemap(basemap) +
-        tm_polygons(col = "red", alpha = 0.2, group = "Query Location(s)")
+        tm_polygons(col = "red", fill_alpha = 0.2, group = "Query Location(s)")
 
       if (locagrid) {
         ## Get the bounding box of the features, buffer by 10km
@@ -237,12 +237,12 @@ plot.ca_apireq <- function(x,
       ## Polygon layer
       api_map <- tm_shape(loc_webmerc) +
         tm_basemap(basemap) +
-        tm_polygons(col = "red", alpha = 0.2, group = "Query Location(s)")
+        tm_polygons(col = "red", fill_alpha = 0.2, group = "Query Location(s)")
 
     } else {   ## point layer
       api_map <- tm_shape(loc_webmerc) +
         tm_basemap(basemap) +
-        tm_symbols(col = "red", alpha = 0.8, size = 0.2, group = "Query Location(s)") +
+        tm_symbols(col = "red", fill_alpha = 0.8, size = 0.2, group = "Query Location(s)") +
         tm_view(symbol.size.fixed = TRUE)
     }
 

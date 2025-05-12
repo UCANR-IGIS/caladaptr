@@ -120,6 +120,7 @@ ca_apicalls <- function(x, slug_check = TRUE, date_check = TRUE, loc_check = TRU
     if (loc_check) {
       ## Verify the point(s) are in the Cal-Adapt area
       qry_pts_sf <- st_as_sf(x$loc$val[ ,2:3], coords = c("x","y"), crs = 4326)
+
       suppressMessages({
         pts_in_loca_area_mat <- qry_pts_sf %>% st_intersects(loca_area_sf, sparse = FALSE)
       })

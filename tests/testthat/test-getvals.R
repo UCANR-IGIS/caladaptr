@@ -43,50 +43,12 @@ with_mock_api({
     expect_equal(sum(as.numeric(aoi_baseflow_tbl$val)), 21.3644, tolerance = 0.001)
   })
 
-  ###############################################################
-  ## Fourth fetch test - sf data frame with two polygons,
-  ## 1 GCM, 1 RCP, 30 yrs of annual data
-  ## Can't use httptest because this involves a POST request
-  ###############################################################
-
-  # capture_requests({
-  #   cnty2_cap <- ca_example_apireq(4)
-  #   cnty2_cap_tbl <- ca_getvals_tbl(cnty2_cap)
-  # })
-
-  test_that("Fetching data for a two-feature sf polygon", {
-    skip_on_cran()
-    skip_if_offline()
-
-    cnty2_cap <- ca_example_apireq(4)
-    cnty2_cap_tbl <- cnty2_cap %>% ca_getvals_tbl(quiet = TRUE)
-    expect_s3_class(cnty2_cap_tbl, "tbl_df")
-    expect_equal(nrow(cnty2_cap_tbl), 42)
-    expect_equal(ncol(cnty2_cap_tbl), 8)
-    expect_equal(as.numeric(sum(cnty2_cap_tbl$val)), 11723.3056, tolerance = 0.0001)
-  })
-
-  #####################################################################################
-  ## Third fetch test - sf object one feature, 1 GCM, 1 scenario, 3 years of daily data
-  #####################################################################################
-
-  test_that("Fetching data for a one-feature sf polygon", {
-    skip_on_cran()
-    skip_if_offline()
-
-    simp_poly_cap <- ca_example_apireq(3)
-    simp_poly_tbl <- simp_poly_cap %>% ca_getvals_tbl(quiet = TRUE)
-    expect_s3_class(simp_poly_tbl, "tbl_df")
-    expect_equal(nrow(simp_poly_tbl), 1096)
-    expect_s3_class(simp_poly_tbl, "tbl_df")
-    expect_equal(as.numeric(sum(simp_poly_tbl$val)), 0.04269988, tolerance = 0.0001)
-  })
 
 })   ## with mock API
 
 #####################################################################################
-## Fourth fetch test - sf object one feature, Livneh data
-## For some reason this one fail inside mockAPI(), so we put it outside.
+## Fetch test - sf object one feature, Livneh data
+## Fails inside mockAPI() (probably b/c it involves a POST request), so we put it outside.
 #####################################################################################
 
 test_that("Fetching data for five AOI presets (census tracts, daily tasmin/tasmax, Livneh", {
@@ -101,4 +63,46 @@ test_that("Fetching data for five AOI presets (census tracts, daily tasmin/tasma
   expect_equal(names(liv_tbl), c("tract", "cvar", "period", "slug", "spag", "dt", "val"))
   expect_equal(as.numeric(sum(liv_tbl$val)), 508522.5, tolerance = 0.01)
 })
+
+#####################################################################################
+## Third fetch test - sf object one feature, 1 GCM, 1 scenario, 3 years of daily data
+## Fails inside mockAPI() (probably b/c it involves a POST request), so we put it outside.
+#####################################################################################
+
+test_that("Fetching data for a one-feature sf polygon", {
+  skip_on_cran()
+  skip_if_offline()
+
+  simp_poly_cap <- ca_example_apireq(3)
+  simp_poly_tbl <- simp_poly_cap %>% ca_getvals_tbl(quiet = TRUE)
+  expect_s3_class(simp_poly_tbl, "tbl_df")
+  expect_equal(nrow(simp_poly_tbl), 1096)
+  expect_s3_class(simp_poly_tbl, "tbl_df")
+  expect_equal(as.numeric(sum(simp_poly_tbl$val)), 0.04269988, tolerance = 0.0001)
+})
+
+###############################################################
+## Fetch test - sf data frame with two polygons,
+## 1 GCM, 1 RCP, 30 yrs of annual data
+## Can't use httptest because this involves a POST request
+## This also fails within mockAPI(), so we put it outside.
+###############################################################
+
+test_that("Fetching data for a two-feature sf polygon", {
+  skip_on_cran()
+  skip_if_offline()
+
+  cnty2_cap <- ca_example_apireq(4)
+  cnty2_cap_tbl <- cnty2_cap %>% ca_getvals_tbl(quiet = TRUE)
+  expect_s3_class(cnty2_cap_tbl, "tbl_df")
+  expect_equal(nrow(cnty2_cap_tbl), 42)
+  expect_equal(ncol(cnty2_cap_tbl), 8)
+  expect_equal(as.numeric(sum(cnty2_cap_tbl$val)), 11723.3056, tolerance = 0.0001)
+})
+
+
+# capture_requests({
+#   cnty2_cap <- ca_example_apireq(4)
+#   cnty2_cap_tbl <- ca_getvals_tbl(cnty2_cap)
+# })
 

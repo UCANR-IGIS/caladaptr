@@ -67,7 +67,7 @@ test_that("We can save values to a brand new sqlite database", {
   expect_equal(ncol(liv_tmp1_rtbl), 7)
   expect_s3_class(liv_tmp1_rtbl, "tbl_dbi")
   expect_s3_class(liv_tmp1_rtbl, "tbl_SQLiteConnection")
-  expect_setequal(c("src", "lazy_query"), names(liv_tmp1_rtbl))
+  expect_setequal(c("tract","cvar","period","slug","spag","dt","val"), colnames(liv_tmp1_rtbl))
   expect_true(file.exists(paste0(liv_tmp_fn, ".txt")))
   rm(liv_tmp1_rtbl)
 })

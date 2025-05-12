@@ -1,11 +1,11 @@
 title: caladaptr
-url: http://ucanr-igis.github.io/caladapt
+url: https://ucanr-igis.github.io/caladaptr/
 template:
-  params:
-    bootswatch: flatly
-    ganalytics: UA-81567502-3
+  bootstrap: 5
+  bootswatch: cerulean
 development:
-  mode: release
+  mode: unreleased
+  version_label: default
 repo:
   url:
     home: https://github.com/ucanr-igis/caladaptr/
@@ -19,6 +19,9 @@ authors:
   footer:
     roles: [cre]
     text: "Developed by"
+home:
+  sidebar:
+    structure: [links, license, community, citation, authors, dev]
 reference:
   - title: API Request Constructors
     desc: Constructor functions to build a Cal-Adapt API request object

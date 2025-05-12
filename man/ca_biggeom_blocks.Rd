@@ -4,10 +4,12 @@
 \alias{ca_biggeom_blocks}
 \title{Split a large geom into blocks small enough to ask the API for rasters}
 \usage{
-ca_biggeom_blocks(x)
+ca_biggeom_blocks(x, block_area_mi2 = 18000)
 }
 \arguments{
 \item{x}{A big geom}
+
+\item{block_area_mi2}{Maximum area for each block in square miles. See details.}
 }
 \value{
 A polygon simple feature data frame covering the same extent as \code{x}
@@ -16,9 +18,12 @@ A polygon simple feature data frame covering the same extent as \code{x}
 Split a large geom into blocks small enough to ask the API for rasters
 }
 \details{
-The Cal-Adapt API has a limit of around 20,000 mi^2 as the maximum area for which you can download a raster.
-This function will take a sf data frame larger than this and return blocks that cover the same extent. Subsequently you can
+The Cal-Adapt API has a limit on the maximum area for which you can download a raster.
+This function will take a sf object larger than this and return blocks that cover the same extent. Subsequently you can
 download rasters for the individual blocks and mosaic them into the full area using ca_stars_mosaic.
+
+The size limit of the API is around 20,000 square miles (51,800 km2). The default value for `block_area_mi2` 18,000 mi^2 (46,600 km2)
+to provide a bit of a buffer. Smaller values will result in more polygons.
 
 Note while this function can help you work around the maximum area you can download tifs via the API, it won't help you get
 spatially aggregated values from a large area using the API. For that, you would need to a) use this function to download rasters,

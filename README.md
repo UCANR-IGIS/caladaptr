@@ -2,15 +2,13 @@ caladaptR
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-<a href='http://ucanr-igis.github.io/caladaptr'><img src='man/figures/logo.gif' align="right" height="150" style="padding:15px;"/></a>
-
 <!-- badges: start -->
 
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![caladaptr status
 badge](https://ajlyons.r-universe.dev/badges/caladaptr)](https://ajlyons.r-universe.dev)
+
 <!-- badges: end -->
 
 ## Features
@@ -26,7 +24,7 @@ analysis and visualization:
 
 `caladaptr` allows you to:
 
-- query any of Cal-Adapt’s \~950 raster data layers
+- query any of Cal-Adapt’s ~935 raster data layers
 - retrieve values by point, a preset area-of-interest (e.g., census
   tract), or a user-provided polygon
 - cache large queries in a local SQLite database
@@ -113,7 +111,7 @@ from Scripps, for a single point location.
 
 ``` r
 library(caladaptr)
-#> caladaptr (version 0.6.8)
+#> caladaptr (version 0.7.0)
 #> URL: https://ucanr-igis.github.io/caladaptr
 #> Bug reports: https://github.com/ucanr-igis/caladaptr/issues
 
@@ -228,11 +226,11 @@ dataset(s), and time frame.
 
 **Dataset functions** (pick one group):
 
-| Functions                                                  | Dataset                                                              |
-|------------------------------------------------------------|----------------------------------------------------------------------|
+| Functions | Dataset |
+|----|----|
 | `ca_gcm()` + `ca_scenario()` + `ca_cvar()` + `ca_period()` | LOCA downscaled modeled climate data (including all Scripps and VIC) |
-| `ca_livneh()` + `ca_cvar()` + `ca_period()`                | Livneh data (observed historical)                                    |
-| `ca_slug()`                                                | Everything else                                                      |
+| `ca_livneh()` + `ca_cvar()` + `ca_period()` | Livneh data (observed historical) |
+| `ca_slug()` | Everything else |
 
 `ca_example_apireq()` is a convenience function that returns sample API
 requests for testing. You can use `ca_preflight()` to check an API

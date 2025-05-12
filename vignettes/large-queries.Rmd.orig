@@ -1,0 +1,425 @@
+---
+title: "Large Queries"
+output:
+  rmarkdown::html_vignette:
+    fig_height: 4
+    fig_width: 6
+vignette: >
+  %\VignetteIndexEntry{Large Queries}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{css echo = FALSE}
+p.indented2 {margin-left:2em;}
+```
+
+
+```{r setup_chunk01, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.cap = ""
+)
+```
+
+## Introduction
+
+Suppose your project requires you to get climate data for every census track in California (which is over 8000). Or maybe you need daily projected temperature for every school in the state, for multiple emissions scenarios and multiple GCMs. That's a lot of data, and a lot of API calls.
+
+When downloading large volumes of data, you generally want to run one command that does everything for you, and is smart enough not to download the same data more than once. You probably also don't want to lose what you've already gotten if your computer crashes or the internet goes down.
+
+To address these challenges, `caldaptr` allows you to save queried data to a local database as its being downloaded. One function will start fetching data based on your API request object, save them to a database, and keep going until everything has been downloaded. If your internet drops or you turn off your computer, you can just run the function again and it will pick up where it left off.
+
+This vignette will explain how to use `ca_getvals_db()` to download data to a local SQLite database, how to work with the data either as a remote tibble or with SQL expressions, and how to optimize the performance of the database by creating indices.
+
+<p class="indented2">
+**TIP**: An alternative approach for getting a lot of data is to download Cal-Adapt data as rasters, then use functions like `st_extract()` and `aggregate()` to query your areas-of-interest. See the [Rasters Part I](rasters-pt1.html) vignette for details.
+</p>
+
+## Example: Query Data for 450 Census Tracks
+
+In this example, we'll get query daily historical temperature data for 453 census tracts in in Riverside County. Start by loading the required packages:
+
+```{r load_packages_chunk02, message = FALSE}
+library(dplyr)
+library(sf)
+library(tmap)
+library(caladaptr)
+ca_settings(console_colors = "light", quiet = TRUE)
+```
+
+Next, we get the census tract ids for Riverside County. The easiest way to do this is using the built-in constant `aoipreset_idval`, which for census tracts includes all the 'tract' ids (geoid). The census tracts we're interested in all start with 6065 ('6' is the FIPs code for California, and '065' is the FIPs code for Riverside County):
+
+```{r rvrsde_trcts_int_define}
+rvrsde_trcts_int <- aoipreset_idval$censustracts$tract %>%
+  as.character() %>%
+  grep("^6065", ., value = TRUE) %>%
+  as.numeric()
+
+str(rvrsde_trcts_int)
+```
+
+Next, create an API request for these census tracts for the mean observed daily air temperature for 1980-2010 (i.e., Livneh data):
+
+```{r plot_rvrsde_tas_liv_cap, fig.width = 8, fig.height=2, fig.alt = "Map of census tracts in the API request"}
+(rvrsde_tas_liv_cap <- ca_loc_aoipreset(type="censustracts", idfld = "tract",
+                                        idval = rvrsde_trcts_int) %>%
+  ca_livneh(TRUE) %>%
+  ca_years(start = 1980, end = 2010) %>%
+  ca_cvar(c("tasmin", "tasmax")) %>%
+  ca_period("day") %>%
+  ca_options(spatial_ag = "mean"))
+
+rvrsde_tas_liv_cap %>% ca_preflight()
+
+# Omit `static = TRUE` to view an interactive map
+plot(rvrsde_tas_liv_cap, static = TRUE)
+```
+
+\
+
+We also have to define where the SQLite database file should go. A SQLite database is a single file, typically with an extension of *.db* or *.sqlite*. Ideally it should go in a stable location (i.e., not in the temp folder and not on removable media) because you'll need to keep accessing it both to populate it and read the data for analysis.
+
+Other than picking a directory and giving it a name, you don't have to do anything special. If the file doesn't exist when you first fetch data, it will be created on the fly.
+
+Here we'll put it in a sub-directory of the user's caladaptr 'data' directory.
+
+```{r rvrsde_liv_tas_fn_define}
+## Create a folder for the database
+data_dir <- tools::R_user_dir("caladaptr", which = "data")
+(tracts_dir <- file.path(data_dir, "tracts_liv") %>% normalizePath(mustWork = FALSE))
+if (!file.exists(tracts_dir)) dir.create(tracts_dir, recursive = TRUE)
+
+## Define a new SQLite file name
+rvrsde_liv_tas_fn <- file.path(tracts_dir, "rvrsde_liv_tas.sqlite") %>% normalizePath(mustWork = FALSE)
+```
+
+## Fetch Data
+
+Next, we fetch data from the server using `ca_getvals_db()`. This is similar to fetching data with `ca_getvals_tbl()`, but we also need to give it the file name of a SQLite database, and the name of a table in the database where the values will be saved. As with `ca_getvals_tbl()`, the climate variable(s) in a table must use the same units. Hence you could save minimum and maximum temperature in the same table, but not temperature and precipitation.
+
+The `lookup_tbls = TRUE` argument tells it to save columns of repetitive data (such as the GCM, scenario, spatial aggregation function, etc.) as integers joined to lookup tables. This is a bit like R's factor data class, and can dramatically reduce the size of a database file. `new_recs_only = TRUE` tells it to only fetch data that isn't already in the database (based on a 'hash' of the API call, which is saved in a separate table in the database).
+
+```{r rvrsde_liv_tas_rtbl_define, message = TRUE}
+rvrsde_liv_tas_rtbl <- rvrsde_tas_liv_cap %>%
+  ca_getvals_db(db_fn = rvrsde_liv_tas_fn,
+                db_tbl = "rvrsde_tas",
+                lookup_tbls = TRUE,
+                new_recs_only = TRUE,
+                quiet = TRUE)
+
+rvrsde_liv_tas_rtbl
+```
+
+\
+
+<p class="indented2">
+**TIP**: Adding `debug = TRUE` to `ca_getvals_db()` will show additional information including how many more calls are required to complete the request.
+</p>
+
+\
+
+# Remote Tibbles
+
+`ca_getvals_db()` returns a *remote tibble*, which you can think of as the front-end of a database which for the most part looks and acts like a regular tibble (with a few exceptions). However the values of remote tibble are not held in memory, which you can tell by looking at the size:
+
+```{r rvrsde_liv_tas_rtbl_size}
+rvrsde_liv_tas_rtbl %>% object.size() %>% format(units = "Mb")
+```
+
+\
+
+
+When you print it out, you’ll notice that it mostly looks like a regular tibble, with a couple of differences. The name of the database is given, however the number of rows isn't provided because it only prints the first few rows:
+
+```{r rvrsde_liv_tas_rtbl_print}
+rvrsde_liv_tas_rtbl
+```
+
+Note how the values in the 'gcm' column and other columns are character, even though they're saved as integers connected to lookup tables. Under the hood, the remote tibble is based on a SQL expression that joins the values table to the lookup tables.
+
+Remote tibbles are powered on the backend by [dbplyr](https://dbplyr.tidyverse.org/), which handles the back-and-forth between your code and the database. For basic analyses, you can use the usual functions from dplyr, like `filter()`, `group_by()`, `summarize()`, etc. Data from the database will only be read into memory when absolutely necessary (i.e., when it comes time to print, plot, evaluate for input into another function, etc.).
+
+Note that not all base R functions and operators will work with remote tibbles. Whenever possible, use the dplyr version. For example to grab a column:
+
+```{r rvrsde_liv_tas_rtbl_tract}
+## dplyr pull() works to grab a column of values
+rvrsde_liv_tas_rtbl %>% pull(tract) %>% unique() %>% length()
+
+## The $ operator does not work with remote tibbles :-(
+## ERROR:
+## rvrsde_liv_tas_rtbl$tract
+```
+
+To find out how many rows are in a remote tibble, `nrow()` doesn't work but you can use `dplyr::count()`:
+
+```{r rvrsde_liv_tas_rtbl_count}
+rvrsde_liv_tas_rtbl %>% count()
+```
+
+`filter()` and `select()` work as expected. For example to get just the values for the first tract in 1980, we can run:
+
+```{r rvrsde_liv_tas_rtbl_dt_val}
+rvrsde_liv_tas_rtbl %>%
+  filter(tract == 6065030101, substring(dt, 1, 4) == "1980") %>%
+  select(dt, val)
+```
+
+
+To compute the mean minimum daily temperature by census tract, we can use `group_by()` with `summarize()`:
+
+```{r rvrsde_liv_tas_rtbl_grptract_mean_daily_min}
+rvrsde_liv_tas_rtbl %>%
+  filter(tract <= 6065030601) %>%
+  group_by(tract) %>%
+  summarize(mean_daily_min = mean(val, na.rm = TRUE))
+```
+
+Not every dplyr expression will work with remote tibbles however. Some valid R expressions simply don't have a SQL counterpart. The following statements work for regular tibbles but not remote tibbles. When you encounter problems like these, you can either [learn more SQL](https://www.sqlitetutorial.net/) to find a SQL approach to your objective, or convert the SQLite table to another R data class (like a regular tibble, or data.table).
+
+```{r rvrsde_liv_tas_rtbl_errors}
+## These expressions do not work with remote tibbles
+## rvrsde_liv_tas_rtbl %>% slice(1:500)                                           ## doesn't work
+
+## all_tracts <- rvrsde_liv_tas_rtbl %>% pull(tract) %>% unique()
+## rvrsde_liv_tas_rtbl %>% filter(tract %in% all_tracts[1:50])                    ## doesn't work
+
+##rvrsde_liv_tas_rtbl %>% filter(tract %in% c(6065047900,6065048100,6065048200))  ## works
+```
+
+To save or convert the results of a dplyr expression to a new tibble, add `collect()` at the end. This will force it to read values into memory:
+
+```{r my_new_tibble_define}
+my_new_tibble <- rvrsde_liv_tas_rtbl %>%
+  filter(tract == 6065030101, substring(dt, 1, 4) == "1980") %>%
+  select(dt, val) %>%
+  collect()
+
+str(my_new_tibble)
+```
+
+## Mounting an existing SQLite database as a remote tibble
+
+When you start a new R session, you'll need to reestablish the connection to your SQLite database in order to work with the data as remote tibble. If the database was created with `ca_getvals_db()`, you can re-load or 'mount' it as remote tibble with `ca_db_read()`, passing the name of a SQLite database.
+
+```{r x_tbl_define}
+rvrsde_liv_tas_fn
+x_tbl <- ca_db_read(rvrsde_liv_tas_fn)
+x_tbl
+```
+
+\
+
+# Reading databases with SQL
+
+You aren't limited to interacting with SQLite databases via remote tibbles, and you don't need caladaptr functions to access them. You can connect to them directly, and read / edit the data using SQL. SQL is powerful and flexible language for working with relational databases, and is supported in R through the [DBI](https://dbi.r-dbi.org/) package.
+
+To help you write SQL statements, `ca_db_info()` will show you what's in a SQLite database created by `ca_getvals_db()`. You can pass the name of a SQLite database file, or a remote tibble created by `ca_getvals_db()`, to `ca_db_info()`. The output includes tables, fields, primary keys, and indices in a database. It will also show the SQL expression for the primary data table(s) if lookup tables were used.
+
+```{r rvrsde_liv_tas_fn_info}
+rvrsde_liv_tas_fn %>% ca_db_info()
+```
+
+SQL is beyond the scope of this vignette, but below are some example of using DBI to send SQL statements to a SQLite database to query a table. See the documentation from [DBI](https://dbi.r-dbi.org/articles/dbi) and [SQLite Tutorial](https://www.sqlitetutorial.net/) for more information and examples.
+
+```{r tract_yr_tasmax_qry_define}
+library(DBI); library(RSQLite)
+
+## Grab the active database connection.
+## db_conn <- rvrsde_liv_tas_rtbl$src$con
+
+## If there wasn't an active connection, we could open one directly with
+db_conn <- dbConnect(SQLite(), dbname = rvrsde_liv_tas_fn)
+
+## List the tables
+dbListTables(db_conn)
+
+## Import one table in its entirety
+(dbReadTable(db_conn, "slugs"))
+
+## Use a SELECT query to read the first 12 records from rvrsde_tas
+first12_qry <- dbSendQuery(db_conn, "SELECT * FROM rvrsde_tas LIMIT 12;")
+(first12_tbl <- dbFetch(first12_qry))
+dbClearResult(first12_qry)
+
+## Get the mean and standard deviation of tasmax by tract and year
+tract_yr_tasmax_qry <- dbSendQuery(db_conn, "SELECT tract, cvar, substr(dt, 1, 4) as year,
+                                   avg(val) as avg_val, stdev(val) as sd_val
+                                   FROM rvrsde_tas LEFT JOIN cvars ON rvrsde_tas.cvar_id = cvars.cvar_id
+                                   WHERE cvar = 'tasmax'
+                                   GROUP BY tract, substr(dt, 1, 4)
+                                   LIMIT 40;")
+(tract_yr_tasmax_tbl <- dbFetch(tract_yr_tasmax_qry))
+dbClearResult(tract_yr_tasmax_qry)
+```
+
+<p class="indented2">
+**TIP**: SQL/SQLite and dplyr/R are good at different things. Databases are a good way to save large amounts of tabular data, and SQL works pretty well to filter rows, join tables, and compute simple summaries. dplyr/tidyverse/R are good at reshaping data, more complex summaries, and integration with other packages and methods. If you hit a wall in your analysis, think about how you can mix and match SQL and dplyr to leverage the strengths of each.
+</p>
+
+\
+
+# Optimizating Database Performance
+
+Two aspects of database optimization are managing the size of the database on disk, and speed of querying the data. Below are some general considerations for managing both of these aspects in SQLite databases.
+
+## How many databases?
+
+When you save data to a database with `ca_getvals_db()`, you get to choose how much data to put in a single table, how many tables to put in one database, and how many databases to create. Below are some general guidelines on how many databases to use:
+
+- SQLite databases are contained in a single file, and can hold many tables. However there is little or no performance gain in having multiple tables in a single database (aside from lookup tables), compared to separate databases. There may also be a performance hit if you have multiple large tables in a database. Also if you need access to them simultaneously, you may have to manage the connections yourself (i.e., dbplyr may limit the number of parallel connections or queries to a single database).
+
+- At the other end of the spectrum, you generally don't want to have lots of database connections open simultaneously. Even if you don't see the connections (because dbplyr manages them for you), each database requires it's own connection, which takes a bit of overhead. If you access database files in a loop, be sure to delete the remote tibbles or manually close the connections so they don't accumulate.
+
+## How many tables?
+
+In terms of how much data to put in one table, some general points to consider:
+
+- Databases like SQLite are designed to handle millions of records, that's what they're designed for. It's unlikely you would reach the technical limits of what the database can handle.
+
+- As a general guide, aim to have all the data for each analysis or summary in a single table. For example if you need minimum and maximum temperature for your analysis (maybe to compute growing degree days), put those values in the same table. This will perform better than retrieving the data from two different tables, and combining them in R.
+
+- A exception to the above rule is when data can't be combined in a single table for technical reasons. For example the following types of data generally can't be combined in the same table:
+
+    - Livneh and non-Livneh data (different columns)
+    - climate variables with different units (e.g., windspeed and precipitation)
+
+- As a general rule, large tables can be slower to query than smaller tables (although this can be improved with indices, see below). Thus once you get all the data for a single analysis in a single table, start a new table the next batch of data.
+
+<p class="indented2">
+**TIP**: When in doubt, save one dataset in one data table, and one data table in one database. Delete remote tibbles when you no longer need them to free up the database connections.
+</p>
+
+## Indices
+
+You can create indices for specific fields in specific tables. Indices are like a phone book for a field, and improve the speed of operations that utilize that field (such as filters or joins). The downside to indices is they increase the size of the database on disk. A general good practice is to create indices for fields that you expect to use for joins, filters, and sorting (including the location id field), but not others. For more info, see the documentation on  [SQLite.org](https://www.sqlite.org/queryplanner.html).
+
+You can create indices by passing field name(s) to the `indices` argument when you first populate a table with `ca_getvals_db()`. The downside is a slightly slower write speed, because the index has to be updated every time data is written to the table. Once a database is created, additional data brought in via  `ca_getvals_db()` will be automatically indexed, but additional indices can not be created with the indices argument.
+
+An alternative approach is to skip indices while downloading, and instead add them after all the data have been downloaded, but before you start analysis. You can see which fields have indices using `ca_db_info()` (above), or directly using functions from DBI.
+
+You can add or delete indices to an existing database using `ca_db_indices()`. For example to add an index on the 'tract' column (which will speed up filters and joins on this column), you could run:
+
+```{r rvrsde_liv_tas_rtbl_info2}
+rvrsde_liv_tas_rtbl %>%
+  ca_db_indices(tbl = "rvrsde_tas", idx_fld_add = "tract") %>%
+  ca_db_info()
+```
+
+<p class="indented2">
+**TIP**: You might want to wait to see how slow your analyses are before deciding to create  indices, which will increase the size of the database. If the wait time is tolerable, and you don't have to run the summary very often, adding indices may not be necessary.
+</p>
+
+## Reducing the Number of API Calls by Grouping Locations by Loca Grid Cell
+
+LOCA grid cells are approximately 6km (3.7 mi) on each side. All locations within the same grid cell will therefore have the same values for any LOCA downscaled climate variables, projected or historic, modeled or observed. If you have more than one point location per grid cell, it doesn't make sense to query the server for each one because they'll all return the same values. This provides a way to reduce the number of total calls to the server.
+
+In the next example, we'll get climate data for all the schools in CA (over 10,000). Because there are so many schools, and many of them are close together (especially in cities), we'll first spatial join them to the LOCA grid. Next we'll take grids that have schools in them, find their centroids, create an API request object for the centroids, and fetch data. We can then join the results back to the schools by the LOCA grid id.
+
+First we import the schools which we get from the [California Department of Education GeoHub](https://data-cdegis.opendata.arcgis.com/):
+
+```{r ca_schools_sf_define, fig.alt = "Map of CA schools"}
+library(sf)
+ca_schools_url <- "https://raw.githubusercontent.com/ucanr-igis/caladaptr-res/main/geoms/ca_schools.geojson"
+ca_schools_sf <- st_read(ca_schools_url, quiet = TRUE)
+dim(ca_schools_sf)
+ca_schools_sf
+tm_shape(ca_schools_sf) + tm_dots(col = "gray")
+```
+
+\
+
+Next, import the LOCA grid:
+
+```{r locagrid_sf_define}
+(locagrid_sf <- ca_locagrid_geom())
+```
+
+To illustrate the distribution of points relative to LOCA grid cells, we can overlay them to a zoomed in area in the central valley:
+
+```{r ca_schools_sf_map, fig.alt = "Map showing a schools in a section of the central valley overlaid with the LOCA grid cells"}
+tm_shape(ca_schools_sf, bbox = c(-121.0896, 37.56298, -120.38750, 38.17253)) +
+  tm_dots(col = "#333333") +
+tm_shape(locagrid_sf) +
+  tm_borders(col = "#0080c0")
+```
+
+Next, we do a spatial join of the points and the LOCA grid cells. The end result will be a new column `id` in the schools layer, which is the id number of the LOCA grid cell it falls in:
+
+```{r ca_schools_loca_sf_def}
+ca_schools_loca_sf <- ca_schools_sf %>% st_join(locagrid_sf)
+ca_schools_loca_sf %>% st_drop_geometry() %>% head()
+```
+
+Next, grab the unique values of the `id` column:
+
+
+```{r loca_ids_schools_define}
+loca_ids_schools <- ca_schools_loca_sf %>% pull(id) %>% unique()
+str(loca_ids_schools)
+```
+
+This means instead of 10,043 locations, we only have to query 1,624. That's a pretty big savings, particularly considering that in our example each location requires 4 API calls (one for each GCM).
+
+Next we create a point layer for the 1,624 LOCA grid cells that contain schools. We could pass the grid cells as polygons, but passing them as points means we don't have to worry about the Cal-Adapt server getting values for adjacent cells, and we don't have to specify a spatial aggregation function.
+
+
+```{r loca_ctr_sf_define}
+loca_ctr_sf <- locagrid_sf %>%
+  filter(id %in% loca_ids_schools) %>%
+  st_centroid()
+loca_ctr_sf %>% head()
+```
+
+Next, create the API request. Here we'll get monthly evapotranspiration at the end of the century:
+
+```{r locaschl_et_cap_preflight}
+locaschl_et_cap <- ca_loc_sf(loc = loca_ctr_sf, idfld = "id") %>%
+  ca_gcm(gcms[1:4]) %>%
+  ca_scenario("rcp85") %>%
+  ca_cvar("et") %>%
+  ca_period("month") %>%
+  ca_years(start = 2080, end = 2099)
+
+locaschl_et_cap %>% ca_preflight()
+```
+
+Next, we fetch the data. Because this is still a lot of locations, we'll use `ca_getvals_db()` to save it in a database:
+
+```{r locaschl_et_rtbl_def}
+data_dir <- tools::R_user_dir("caladaptr", which = "data")
+schools_dir <- file.path(data_dir, "schools") %>% normalizePath(mustWork = FALSE)
+if (!file.exists(schools_dir)) dir.create(schools_dir, recursive = TRUE)
+
+## Define a new SQLite file name
+locaschl_fn <- file.path(schools_dir, "loca_schl.sqlite") %>% normalizePath(mustWork = FALSE)
+
+## Fetch data
+locaschl_et_rtbl <- locaschl_et_cap %>%
+  ca_getvals_db(db_fn = locaschl_fn, db_tbl = "locaschl_et", new_recs_only = TRUE, quiet = TRUE)
+
+head(locaschl_et_rtbl)
+```
+
+Suppose your analysis calls for mean ET for all years and all GCMs combined. You can generate that metric for each LOCA grid with:
+
+```{r locaschl_meanet_tbl_def}
+locaschl_meanet_tbl <- locaschl_et_rtbl %>%
+  group_by(id) %>%
+  summarise(mean_et = mean(val, na.rm = TRUE)) %>%
+  collect()
+
+locaschl_meanet_tbl %>% head()
+```
+
+We can now join the summary of ET for each LOCA grid cell back to the schools layer, using the grid `id` as the join field.
+
+```{r ca_schools_et_sf_def}
+ca_schools_et_sf <- ca_schools_loca_sf %>%
+  left_join(locaschl_meanet_tbl, by = "id")
+
+ca_schools_et_sf %>% head()
+```
+

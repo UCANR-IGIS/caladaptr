@@ -2,7 +2,7 @@ test_that("ca_biggeom_blocks works on the CA state border", {
   skip_on_cran()
   skip_if_offline()
   ca_bnd_sf <- sf::st_read("https://raw.githubusercontent.com/ucanr-igis/caladaptr-res/main/geoms/ca_bnd.geojson", quiet = TRUE)
-  ca_bnd_blocks_sf <- ca_biggeom_blocks(ca_bnd_sf)
+  ca_bnd_blocks_sf <- ca_biggeom_blocks(ca_bnd_sf, block_area_mi2 = 20000)
   expect_equal(nrow(ca_bnd_blocks_sf), 18)
 })
 

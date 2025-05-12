@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{ca_apireq}(
   x,
-  basemap = c("Esri.NatGeoWorldMap", "OpenStreetMap")[1],
+  basemap = c("Esri.WorldStreetMap", "OpenStreetMap")[2],
   locagrid = FALSE,
   static = FALSE,
   ...

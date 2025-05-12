@@ -28,7 +28,7 @@ ca_aoipreset_geom <- function(aoipreset, quiet = FALSE) {
 
   if (length(aoipreset) > 1) stop("Sorry, aoipreset can only accept a single value")
 
-  if (!aoipreset %in% aoipreset_types) {
+  if (!aoipreset %in% caladaptr::aoipreset_types) {
     stop(paste0("unknown preset(s): ", aoipreset))
   }
 

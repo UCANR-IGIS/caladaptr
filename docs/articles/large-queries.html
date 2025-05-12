@@ -4,164 +4,98 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Large Queries • caladaptr</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Large Queries">
-<meta property="og:description" content="caladaptr">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-81567502-3"></script><script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-81567502-3');
-</script>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Large Queries">
 </head>
-<body data-spy="scroll" data-target="#toc">
-    
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">caladaptr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
-      </span>
-    </div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/api-requests.html">API Requests</a>
-    </li>
-    <li>
-      <a href="../articles/large-queries.html">Large Queries</a>
-    </li>
-    <li>
-      <a href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a>
-    </li>
-    <li>
-      <a href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a>
-    </li>
-    <li>
-      <a href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a>
-    </li>
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="inverse" aria-label="Site navigation"><div class="container">
+
+    <a class="navbar-brand me-2" href="../index.html">caladaptr</a>
+
+    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.7.0</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fas fa-home fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/api-requests.html">API Requests</a></li>
+    <li><a class="dropdown-item" href="../articles/large-queries.html">Large Queries</a></li>
+    <li><a class="dropdown-item" href="../articles/rasters-pt1.html">Rasters Part I: Download, Combine, Subset, and Compute Pixel Summaries</a></li>
+    <li><a class="dropdown-item" href="../articles/rasters-pt2.html">Rasters Part II: Six-Dimensional Climate Data Cubes and Spatial Queries</a></li>
+    <li><a class="dropdown-item" href="../articles/rasters-pt3.html">Rasters Part III: Downloading Rasters for Large Areas</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Notebooks
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html" class="external-link">Introduction</a>
-    </li>
-    <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html" class="external-link">Compute Chill</a>
-    </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-notebooks" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Notebooks</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-notebooks">
+<li><a class="dropdown-item" href="https://ucanr-igis.github.io/caladaptr-res/notebooks/caladaptr_intro.nb.html">Introduction</a></li>
+    <li><a class="dropdown-item" href="https://ucanr-igis.github.io/caladaptr-res/notebooks/chill.nb.html">Compute Chill</a></li>
   </ul>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Shiny Apps
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="https://caladaptr.shinyapps.io/timeseries/" class="external-link">Annual Data Time Series</a>
-    </li>
-    <li>
-      <a href="https://ucanr-igis.shinyapps.io/chill/" class="external-link">Projected Chill Hours</a>
-    </li>
-    <li>
-      <a href="https://github.com/ucanr-igis/caladaptr.apps/" class="external-link">caladpatr.apps package</a>
-    </li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-shiny-apps" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Shiny Apps</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-shiny-apps">
+<li><a class="external-link dropdown-item" href="https://caladaptr.shinyapps.io/timeseries/">Annual Data Time Series</a></li>
+    <li><a class="external-link dropdown-item" href="https://ucanr-igis.shinyapps.io/chill/">Projected Chill Hours</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/ucanr-igis/caladaptr.apps/">caladpatr.apps package</a></li>
   </ul>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Pres &amp; Workshops
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="https://youtu.be/6sDwXPbSYOQ" class="external-link">Overview</a>
-    </li>
-    <li>
-      <a href="https://youtu.be/APCIBs35BJg" class="external-link">Code Example</a>
-    </li>
-    <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_feb22/" class="external-link">Workshop: Working with Cal-Adapt Data in R (Feb 2022)</a>
-    </li>
-    <li>
-      <a href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/" class="external-link">Workshop: Getting Started (Oct 2021)</a>
-    </li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-videos" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Videos</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-videos">
+<li><a class="external-link dropdown-item" href="https://youtu.be/6sDwXPbSYOQ">caladaptR Overview</a></li>
+    <li><a class="external-link dropdown-item" href="https://youtu.be/APCIBs35BJg">Code Demo</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-workshops" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Workshops</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-workshops">
+<li><a class="dropdown-item" href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_apr22/">Working with Cal-Adapt Climate Data in R (April 2022)</a></li>
+    <li><a class="dropdown-item" href="https://ucanr-igis.github.io/caladaptr-res/workshops/ca_intro_oct21/">Getting Started (Oct 2021)</a></li>
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/ucanr-igis/caladaptr/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ucanr-igis/caladaptr/"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
-      
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Large Queries</h1>
+
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+      <img src="../logo.png" class="logo" alt=""><h1>Large Queries</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ucanr-igis/caladaptr/blob/master/vignettes/large-queries.Rmd" class="external-link"><code>vignettes/large-queries.Rmd</code></a></small>
-      <div class="hidden name"><code>large-queries.Rmd</code></div>
-
+      <div class="d-none name"><code>large-queries.Rmd</code></div>
     </div>
 
     
@@ -172,705 +106,860 @@ p.indented2 {margin-left:2em;}
 <div class="section level3">
 <h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
-<p>Suppose your project requires you to get climate data for every census track in California (which is over 8000). Or maybe you need daily projected temperature for every school in the state, for multiple emissions scenarios and multiple GCMs. That’s a lot of data, and a lot of API calls.</p>
-<p>When downloading large volumes of data, you generally want to run one command that does everything for you, and is smart enough not to download the same data more than once. You probably also don’t want to lose what you’ve already gotten if your computer crashes or the internet goes down.</p>
-<p>To address these challenges, <code>caldaptr</code> allows you to save queried data to a local database as its being downloaded. One function will start fetching data based on your API request object, save them to a database, and keep going until everything has been downloaded. If your internet drops or you turn off your computer, you can just run the function again and it will pick up where it left off.</p>
-<p>This vignette will explain how to use <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> to download data to a local SQLite database, how to work with the data either as a remote tibble or with SQL expressions, and how to optimize the performance of the database by creating indices.</p>
+<p>Suppose your project requires you to get climate data for every
+census track in California (which is over 8000). Or maybe you need daily
+projected temperature for every school in the state, for multiple
+emissions scenarios and multiple GCMs. That’s a lot of data, and a lot
+of API calls.</p>
+<p>When downloading large volumes of data, you generally want to run one
+command that does everything for you, and is smart enough not to
+download the same data more than once. You probably also don’t want to
+lose what you’ve already gotten if your computer crashes or the internet
+goes down.</p>
+<p>To address these challenges, <code>caldaptr</code> allows you to save
+queried data to a local database as its being downloaded. One function
+will start fetching data based on your API request object, save them to
+a database, and keep going until everything has been downloaded. If your
+internet drops or you turn off your computer, you can just run the
+function again and it will pick up where it left off.</p>
+<p>This vignette will explain how to use <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> to
+download data to a local SQLite database, how to work with the data
+either as a remote tibble or with SQL expressions, and how to optimize
+the performance of the database by creating indices.</p>
 <p class="indented2">
-<strong>TIP</strong>: An alternative approach for getting a lot of data is to download Cal-Adapt data as rasters, then use functions like <code>st_extract()</code> and <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html" class="external-link">aggregate()</a></code> to query your areas-of-interest. See the <a href="rasters-pt1.html">Rasters Part I</a> vignette for details.
+<strong>TIP</strong>: An alternative approach for getting a lot of data
+is to download Cal-Adapt data as rasters, then use functions like
+<code>st_extract()</code> and <code><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate()</a></code> to query your
+areas-of-interest. See the <a href="rasters-pt1.html">Rasters Part I</a>
+vignette for details.
 </p>
 </div>
 <div class="section level3">
 <h3 id="example-query-data-for-450-census-tracks">Example: Query Data for 450 Census Tracks<a class="anchor" aria-label="anchor" href="#example-query-data-for-450-census-tracks"></a>
 </h3>
-<p>In this example, we’ll get query daily historical temperature data for 453 census tracts in in Riverside County. Start by loading the required packages:</p>
+<p>In this example, we’ll get query daily historical temperature data
+for 453 census tracts in in Riverside County. Start by loading the
+required packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr" class="external-link">caladaptr</a></span><span class="op">)</span>
-<span class="fu"><a href="../reference/ca_settings.html">ca_settings</a></span><span class="op">(</span>console_colors <span class="op">=</span> <span class="st">"light"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>Next, we get the census tract ids for Riverside County. The easiest way to do this is using the built-in constant <code>aoipreset_idval</code>, which for census tracts includes all the ‘tract’ ids (geoid). The census tracts we’re interested in all start with 6065 (‘6’ is the FIPs code for California, and ‘065’ is the FIPs code for Riverside County):</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ucanr-igis.github.io/caladaptr">caladaptr</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/ca_settings.html">ca_settings</a></span><span class="op">(</span>console_colors <span class="op">=</span> <span class="st">"light"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Next, we get the census tract ids for Riverside County. The easiest
+way to do this is using the built-in constant
+<code>aoipreset_idval</code>, which for census tracts includes all the
+‘tract’ ids (geoid). The census tracts we’re interested in all start
+with 6065 (‘6’ is the FIPs code for California, and ‘065’ is the FIPs
+code for Riverside County):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_trcts_int</span> <span class="op">&lt;-</span> <span class="va">aoipreset_idval</span><span class="op">$</span><span class="va">censustracts</span><span class="op">$</span><span class="va">tract</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^6065"</span>, <span class="va">.</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">rvrsde_trcts_int</span><span class="op">)</span>
-<span class="co">#&gt;  num [1:453] 6.07e+09 6.07e+09 6.07e+09 6.07e+09 6.07e+09 ...</span></code></pre></div>
-<p>Next, create an API request for these census tracts for the mean observed daily air temperature for 1980-2010 (i.e., Livneh data):</p>
+<code class="sourceCode R"><span><span class="va">rvrsde_trcts_int</span> <span class="op">&lt;-</span> <span class="va">aoipreset_idval</span><span class="op">$</span><span class="va">censustracts</span><span class="op">$</span><span class="va">tract</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^6065"</span>, <span class="va">.</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">rvrsde_trcts_int</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  num [1:453] 6.07e+09 6.07e+09 6.07e+09 6.07e+09 6.07e+09 ...</span></span></code></pre></div>
+<p>Next, create an API request for these census tracts for the mean
+observed daily air temperature for 1980-2010 (i.e., Livneh data):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">rvrsde_tas_liv_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_loc_aoipreset.html">ca_loc_aoipreset</a></span><span class="op">(</span>type<span class="op">=</span><span class="st">"censustracts"</span>, idfld <span class="op">=</span> <span class="st">"tract"</span>, 
-                                        idval <span class="op">=</span> <span class="va">rvrsde_trcts_int</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_livneh.html">ca_livneh</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">1980</span>, end <span class="op">=</span> <span class="fl">2010</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tasmin"</span>, <span class="st">"tasmax"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"day"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_options.html">ca_options</a></span><span class="op">(</span>spatial_ag <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Cal-Adapt API Request</span>
-<span class="co">#&gt; Location(s): </span>
-<span class="co">#&gt;   AOI Preset: censustracts</span>
-<span class="co">#&gt;   tract(s): 6065030101, 6065030103, 6065030104, (+ 450 more)</span>
-<span class="co">#&gt; Variable(s): tasmin, tasmax</span>
-<span class="co">#&gt; Temporal aggregration period(s): day</span>
-<span class="co">#&gt; Livneh data: TRUE</span>
-<span class="co">#&gt; Dates: 1980-01-01 to 2010-12-31</span>
-<span class="co">#&gt; Options:</span>
-<span class="co">#&gt;   spatial ag: mean</span>
-<span class="co">#&gt; </span>
-
-<span class="va">rvrsde_tas_liv_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; General issues</span>
-<span class="co">#&gt;  - none found</span>
-<span class="co">#&gt; Issues for querying values</span>
-<span class="co">#&gt;  - none found</span>
-<span class="co">#&gt; Issues for downloading rasters</span>
-<span class="co">#&gt;  - none found</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rvrsde_tas_liv_cap</span>, static <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p><img src="large-queries_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>We also have to define where the SQLite database file should go. A SQLite database is a single file, typically with an extension of <em>.db</em> or <em>.sqlite</em>. Ideally it should go in a stable location (i.e., not in the temp folder and not on removable media) because you’ll need to keep accessing it both to populate it and read the data for analysis.</p>
-<p>Other than picking a directory and giving it a name, you don’t have to do anything special. If the file doesn’t exist when you first fetch data, it will be created on the fly.</p>
-<p>Here we’ll put it in a sub-directory of the user’s caladaptr ‘data’ directory.</p>
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">rvrsde_tas_liv_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_loc_aoipreset.html">ca_loc_aoipreset</a></span><span class="op">(</span>type<span class="op">=</span><span class="st">"censustracts"</span>, idfld <span class="op">=</span> <span class="st">"tract"</span>,</span>
+<span>                                        idval <span class="op">=</span> <span class="va">rvrsde_trcts_int</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_livneh.html">ca_livneh</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">1980</span>, end <span class="op">=</span> <span class="fl">2010</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tasmin"</span>, <span class="st">"tasmax"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"day"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_options.html">ca_options</a></span><span class="op">(</span>spatial_ag <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Cal-Adapt API Request</span></span>
+<span><span class="co">#&gt; Location(s): </span></span>
+<span><span class="co">#&gt;   AOI Preset: censustracts</span></span>
+<span><span class="co">#&gt;   tract(s): 6065030101, 6065030103, 6065030104, (+ 450 more)</span></span>
+<span><span class="co">#&gt; Variable(s): tasmin, tasmax</span></span>
+<span><span class="co">#&gt; Temporal aggregration period(s): day</span></span>
+<span><span class="co">#&gt; Livneh data: TRUE</span></span>
+<span><span class="co">#&gt; Dates: 1980-01-01 to 2010-12-31</span></span>
+<span><span class="co">#&gt; Options:</span></span>
+<span><span class="co">#&gt;   spatial ag: mean</span></span>
+<span><span class="co">#&gt; </span></span>
+<span></span>
+<span><span class="va">rvrsde_tas_liv_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; General issues</span></span>
+<span><span class="co">#&gt;  - none found</span></span>
+<span><span class="co">#&gt; Issues for querying values</span></span>
+<span><span class="co">#&gt;  - none found</span></span>
+<span><span class="co">#&gt; Issues for downloading rasters</span></span>
+<span><span class="co">#&gt;  - none found</span></span>
+<span></span>
+<span><span class="co"># Omit `static = TRUE` to view an interactive map</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rvrsde_tas_liv_cap</span>, static <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="figure/plot_rvrsde_tas_liv_cap-1.png" alt="Map of census tracts in the API request"></p>
+<p><br></p>
+<p>We also have to define where the SQLite database file should go. A
+SQLite database is a single file, typically with an extension of
+<em>.db</em> or <em>.sqlite</em>. Ideally it should go in a stable
+location (i.e., not in the temp folder and not on removable media)
+because you’ll need to keep accessing it both to populate it and read
+the data for analysis.</p>
+<p>Other than picking a directory and giving it a name, you don’t have
+to do anything special. If the file doesn’t exist when you first fetch
+data, it will be created on the fly.</p>
+<p>Here we’ll put it in a sub-directory of the user’s caladaptr ‘data’
+directory.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Create a folder for the database</span>
-<span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span>
-<span class="op">(</span><span class="va">tracts_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"tracts_liv"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "C:\\Users\\Andy\\AppData\\Roaming\\R\\data\\R\\caladaptr\\tracts_liv"</span>
-<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">tracts_dir</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">tracts_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co">## Define a new SQLite file name</span>
-<span class="va">rvrsde_liv_tas_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tracts_dir</span>, <span class="st">"rvrsde_liv_tas.sqlite"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## Create a folder for the database</span></span>
+<span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">tracts_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"tracts_liv"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "C:\\Users\\Andy\\AppData\\Roaming\\R\\data\\R\\caladaptr\\tracts_liv"</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">tracts_dir</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">tracts_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Define a new SQLite file name</span></span>
+<span><span class="va">rvrsde_liv_tas_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tracts_dir</span>, <span class="st">"rvrsde_liv_tas.sqlite"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="fetch-data">Fetch Data<a class="anchor" aria-label="anchor" href="#fetch-data"></a>
 </h3>
-<p>Next, we fetch data from the server using <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. This is similar to fetching data with <code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, but we also need to give it the file name of a SQLite database, and the name of a table in the database where the values will be saved. As with <code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, the climate variable(s) in a table must use the same units. Hence you could save minimum and maximum temperature in the same table, but not temperature and precipitation.</p>
-<p>The <code>lookup_tbls = TRUE</code> argument tells it to save columns of repetitive data (such as the GCM, scenario, spatial aggregation function, etc.) as integers joined to lookup tables. This is a bit like R’s factor data class, and can dramatically reduce the size of a database file. <code>new_recs_only = TRUE</code> tells it to only fetch data that isn’t already in the database (based on a ‘hash’ of the API call, which is saved in a separate table in the database).</p>
+<p>Next, we fetch data from the server using
+<code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. This is similar to fetching data with
+<code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, but we also need to give it the file name
+of a SQLite database, and the name of a table in the database where the
+values will be saved. As with <code><a href="../reference/ca_getvals_tbl.html">ca_getvals_tbl()</a></code>, the climate
+variable(s) in a table must use the same units. Hence you could save
+minimum and maximum temperature in the same table, but not temperature
+and precipitation.</p>
+<p>The <code>lookup_tbls = TRUE</code> argument tells it to save columns
+of repetitive data (such as the GCM, scenario, spatial aggregation
+function, etc.) as integers joined to lookup tables. This is a bit like
+R’s factor data class, and can dramatically reduce the size of a
+database file. <code>new_recs_only = TRUE</code> tells it to only fetch
+data that isn’t already in the database (based on a ‘hash’ of the API
+call, which is saved in a separate table in the database).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op">&lt;-</span> <span class="va">rvrsde_tas_liv_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_getvals_db.html">ca_getvals_db</a></span><span class="op">(</span>db_fn <span class="op">=</span> <span class="va">rvrsde_liv_tas_fn</span>, 
-                db_tbl <span class="op">=</span> <span class="st">"rvrsde_tas"</span>, 
-                lookup_tbls <span class="op">=</span> <span class="cn">TRUE</span>,
-                new_recs_only <span class="op">=</span> <span class="cn">TRUE</span>,
-                quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="va">rvrsde_liv_tas_rtbl</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   SQL [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
-<span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
-<span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span>
-<span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-01  7.41</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-02  5.30</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-03  5.62</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-04  3.57</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-05  3.25</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-06  7.05</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-07  8.45</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-08 11.5 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-09 11.4 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-10 10.9 </span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op">&lt;-</span> <span class="va">rvrsde_tas_liv_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_getvals_db.html">ca_getvals_db</a></span><span class="op">(</span>db_fn <span class="op">=</span> <span class="va">rvrsde_liv_tas_fn</span>,</span>
+<span>                db_tbl <span class="op">=</span> <span class="st">"rvrsde_tas"</span>,</span>
+<span>                lookup_tbls <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                new_recs_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">rvrsde_liv_tas_rtbl</span></span>
+<span><span class="co">#&gt; # Source:   SQL [?? x 7]</span></span>
+<span><span class="co">#&gt; # Database: sqlite 3.47.1 [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
+<span><span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span></span>
+<span><span class="co">#&gt;       &lt;int64&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-01  7.41</span></span>
+<span><span class="co">#&gt;  2 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-02  5.30</span></span>
+<span><span class="co">#&gt;  3 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-03  5.62</span></span>
+<span><span class="co">#&gt;  4 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-04  3.57</span></span>
+<span><span class="co">#&gt;  5 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-05  3.25</span></span>
+<span><span class="co">#&gt;  6 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-06  7.05</span></span>
+<span><span class="co">#&gt;  7 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-07  8.45</span></span>
+<span><span class="co">#&gt;  8 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-08 11.5 </span></span>
+<span><span class="co">#&gt;  9 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-09 11.4 </span></span>
+<span><span class="co">#&gt; 10 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-10 10.9 </span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p><br></p>
 <p class="indented2">
-<strong>TIP</strong>: Adding <code>debug = TRUE</code> to <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> will show additional information including how many more calls are required to complete the request.
+<strong>TIP</strong>: Adding <code>debug = TRUE</code> to
+<code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> will show additional information including
+how many more calls are required to complete the request.
 </p>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="remote-tibbles">Remote Tibbles<a class="anchor" aria-label="anchor" href="#remote-tibbles"></a>
 </h2>
-<p><code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> returns a <em>remote tibble</em>, which you can think of as the front-end of a database which for the most part looks and acts like a regular tibble (with a few exceptions). However the values of remote tibble are not held in memory, which you can tell by looking at the size:</p>
+<p><code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> returns a <em>remote tibble</em>, which
+you can think of as the front-end of a database which for the most part
+looks and acts like a regular tibble (with a few exceptions). However
+the values of remote tibble are not held in memory, which you can tell
+by looking at the size:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span>units <span class="op">=</span> <span class="st">"Mb"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "0 Mb"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span>units <span class="op">=</span> <span class="st">"Mb"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "0 Mb"</span></span></code></pre></div>
 <p><br></p>
-<p>When you print it out, you’ll notice that it mostly looks like a regular tibble, with a couple of differences. The name of the database is given, however the number of rows isn’t provided because it only prints the first few rows:</p>
+<p>When you print it out, you’ll notice that it mostly looks like a
+regular tibble, with a couple of differences. The name of the database
+is given, however the number of rows isn’t provided because it only
+prints the first few rows:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   SQL [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
-<span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
-<span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span>
-<span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-01  7.41</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-02  5.30</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-03  5.62</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-04  3.57</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-05  3.25</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-06  7.05</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-07  8.45</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-08 11.5 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-09 11.4 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-10 10.9 </span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with more rows</span></span></code></pre></div>
-<p>Note how the values in the ‘gcm’ column and other columns are character, even though they’re saved as integers connected to lookup tables. Under the hood, the remote tibble is based on a SQL expression that joins the values table to the lookup tables.</p>
-<p>Remote tibbles are powered on the backend by <a href="https://dbplyr.tidyverse.org/" class="external-link">dbplyr</a>, which handles the back-and-forth between your code and the database. For basic analyses, you can use the usual functions from dplyr, like <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize()</a></code>, etc. Data from the database will only be read into memory when absolutely necessary (i.e., when it comes time to print, plot, evaluate for input into another function, etc.).</p>
-<p>Note that not all base R functions and operators will work with remote tibbles. Whenever possible, use the dplyr version. For example to grab a column:</p>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_rtbl</span></span>
+<span><span class="co">#&gt; # Source:   SQL [?? x 7]</span></span>
+<span><span class="co">#&gt; # Database: sqlite 3.47.1 [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
+<span><span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span></span>
+<span><span class="co">#&gt;       &lt;int64&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-01  7.41</span></span>
+<span><span class="co">#&gt;  2 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-02  5.30</span></span>
+<span><span class="co">#&gt;  3 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-03  5.62</span></span>
+<span><span class="co">#&gt;  4 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-04  3.57</span></span>
+<span><span class="co">#&gt;  5 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-05  3.25</span></span>
+<span><span class="co">#&gt;  6 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-06  7.05</span></span>
+<span><span class="co">#&gt;  7 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-07  8.45</span></span>
+<span><span class="co">#&gt;  8 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-08 11.5 </span></span>
+<span><span class="co">#&gt;  9 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-09 11.4 </span></span>
+<span><span class="co">#&gt; 10 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-10 10.9 </span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<p>Note how the values in the ‘gcm’ column and other columns are
+character, even though they’re saved as integers connected to lookup
+tables. Under the hood, the remote tibble is based on a SQL expression
+that joins the values table to the lookup tables.</p>
+<p>Remote tibbles are powered on the backend by <a href="https://dbplyr.tidyverse.org/" class="external-link">dbplyr</a>, which handles the
+back-and-forth between your code and the database. For basic analyses,
+you can use the usual functions from dplyr, like <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter()</a></code>,
+<code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize()</a></code>, etc. Data from the
+database will only be read into memory when absolutely necessary (i.e.,
+when it comes time to print, plot, evaluate for input into another
+function, etc.).</p>
+<p>Note that not all base R functions and operators will work with
+remote tibbles. Whenever possible, use the dplyr version. For example to
+grab a column:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## dplyr pull() works to grab a column of values</span>
-<span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">tract</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] 453</span>
-
-<span class="co">## The $ operator does not work with remote tibbles :-(</span>
-<span class="va">rvrsde_liv_tas_rtbl</span><span class="op">$</span><span class="va">tract</span> 
-<span class="co">#&gt; NULL</span></code></pre></div>
-<p>To find out how many rows are in a remote tibble, <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow()</a></code> doesn’t work but you can use <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">dplyr::count()</a></code>:</p>
+<code class="sourceCode R"><span><span class="co">## dplyr pull() works to grab a column of values</span></span>
+<span><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">tract</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 453</span></span>
+<span></span>
+<span><span class="co">## The $ operator does not work with remote tibbles :-(</span></span>
+<span><span class="co">## ERROR:</span></span>
+<span><span class="co">## rvrsde_liv_tas_rtbl$tract</span></span></code></pre></div>
+<p>To find out how many rows are in a remote tibble, <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow()</a></code>
+doesn’t work but you can use <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">dplyr::count()</a></code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 1]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
-<span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
-<span class="co">#&gt;          n</span>
-<span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 10<span style="text-decoration: underline;">258</span>638</span></code></pre></div>
-<p><code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select()</a></code> work as expected. For example to get just the values for the first tract in 1980, we can run:</p>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # Source:   SQL [?? x 1]</span></span>
+<span><span class="co">#&gt; # Database: sqlite 3.47.1 [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
+<span><span class="co">#&gt;          n</span></span>
+<span><span class="co">#&gt;      &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 10258638</span></span></code></pre></div>
+<p><code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select()</a></code> work as expected. For
+example to get just the values for the first tract in 1980, we can
+run:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tract</span> <span class="op">==</span> <span class="fl">6065030101</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">dt</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1980"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">val</span><span class="op">)</span> 
-<span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
-<span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
-<span class="co">#&gt;    dt           val</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 1980-01-01  7.41</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 1980-01-02  5.30</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 1980-01-03  5.62</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 1980-01-04  3.57</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 1980-01-05  3.25</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 1980-01-06  7.05</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 1980-01-07  8.45</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 1980-01-08 11.5 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 1980-01-09 11.4 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 1980-01-10 10.9 </span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with more rows</span></span></code></pre></div>
-<p>To compute the mean minimum daily temperature by census tract, we can use <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code> with <code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize()</a></code>:</p>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tract</span> <span class="op">==</span> <span class="fl">6065030101</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">dt</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1980"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">val</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # Source:   SQL [?? x 2]</span></span>
+<span><span class="co">#&gt; # Database: sqlite 3.47.1 [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
+<span><span class="co">#&gt;    dt           val</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 1980-01-01  7.41</span></span>
+<span><span class="co">#&gt;  2 1980-01-02  5.30</span></span>
+<span><span class="co">#&gt;  3 1980-01-03  5.62</span></span>
+<span><span class="co">#&gt;  4 1980-01-04  3.57</span></span>
+<span><span class="co">#&gt;  5 1980-01-05  3.25</span></span>
+<span><span class="co">#&gt;  6 1980-01-06  7.05</span></span>
+<span><span class="co">#&gt;  7 1980-01-07  8.45</span></span>
+<span><span class="co">#&gt;  8 1980-01-08 11.5 </span></span>
+<span><span class="co">#&gt;  9 1980-01-09 11.4 </span></span>
+<span><span class="co">#&gt; 10 1980-01-10 10.9 </span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<p>To compute the mean minimum daily temperature by census tract, we can
+use <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code> with <code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize()</a></code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tract</span> <span class="op">&lt;=</span> <span class="fl">6065030601</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">tract</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>mean_daily_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">val</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
-<span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
-<span class="co">#&gt;         tract mean_daily_min</span>
-<span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101           18.6</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>103           18.7</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>104           18.7</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>200           18.8</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>300           18.8</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>400           18.8</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>501           18.4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>502           18.4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>503           18.4</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>601           18.3</span></code></pre></div>
-<p>Not every dplyr expression will work with remote tibbles however. Some valid R expressions simply don’t have a SQL counterpart. The following statements work for regular tibbles but not remote tibbles. When you encounter problems like these, you can either <a href="https://www.sqlitetutorial.net/" class="external-link">learn more SQL</a> to find a SQL approach to your objective, or convert the SQLite table to another R data class (like a regular tibble, or data.table).</p>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tract</span> <span class="op">&lt;=</span> <span class="fl">6065030601</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">tract</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>mean_daily_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">val</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # Source:   SQL [?? x 2]</span></span>
+<span><span class="co">#&gt; # Database: sqlite 3.47.1 [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
+<span><span class="co">#&gt;         tract mean_daily_min</span></span>
+<span><span class="co">#&gt;       &lt;int64&gt;          &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 6065030101           18.6</span></span>
+<span><span class="co">#&gt;  2 6065030103           18.7</span></span>
+<span><span class="co">#&gt;  3 6065030104           18.7</span></span>
+<span><span class="co">#&gt;  4 6065030200           18.8</span></span>
+<span><span class="co">#&gt;  5 6065030300           18.8</span></span>
+<span><span class="co">#&gt;  6 6065030400           18.8</span></span>
+<span><span class="co">#&gt;  7 6065030501           18.4</span></span>
+<span><span class="co">#&gt;  8 6065030502           18.4</span></span>
+<span><span class="co">#&gt;  9 6065030503           18.4</span></span>
+<span><span class="co">#&gt; 10 6065030601           18.3</span></span></code></pre></div>
+<p>Not every dplyr expression will work with remote tibbles however.
+Some valid R expressions simply don’t have a SQL counterpart. The
+following statements work for regular tibbles but not remote tibbles.
+When you encounter problems like these, you can either <a href="https://www.sqlitetutorial.net/" class="external-link">learn more SQL</a> to find a SQL
+approach to your objective, or convert the SQLite table to another R
+data class (like a regular tibble, or data.table).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## These expressions do not work with remote tibbles</span>
-<span class="co">## rvrsde_liv_tas_rtbl %&gt;% slice(1:500)                                           ## doesn't work</span>
-
-<span class="co">## all_tracts &lt;- rvrsde_liv_tas_rtbl %&gt;% pull(tract) %&gt;% unique()</span>
-<span class="co">## rvrsde_liv_tas_rtbl %&gt;% filter(tract %in% all_tracts[1:50])                    ## doesn't work</span>
-
-<span class="co">##rvrsde_liv_tas_rtbl %&gt;% filter(tract %in% c(6065047900,6065048100,6065048200))  ## works</span></code></pre></div>
-<p>To save or convert the results of a dplyr expression to a new tibble, add <code><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect()</a></code> at the end. This will force it to read values into memory:</p>
+<code class="sourceCode R"><span><span class="co">## These expressions do not work with remote tibbles</span></span>
+<span><span class="co">## rvrsde_liv_tas_rtbl %&gt;% slice(1:500)                                           ## doesn't work</span></span>
+<span></span>
+<span><span class="co">## all_tracts &lt;- rvrsde_liv_tas_rtbl %&gt;% pull(tract) %&gt;% unique()</span></span>
+<span><span class="co">## rvrsde_liv_tas_rtbl %&gt;% filter(tract %in% all_tracts[1:50])                    ## doesn't work</span></span>
+<span></span>
+<span><span class="co">##rvrsde_liv_tas_rtbl %&gt;% filter(tract %in% c(6065047900,6065048100,6065048200))  ## works</span></span></code></pre></div>
+<p>To save or convert the results of a dplyr expression to a new tibble,
+add <code><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect()</a></code> at the end. This will force it to read values
+into memory:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">my_new_tibble</span> <span class="op">&lt;-</span> <span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tract</span> <span class="op">==</span> <span class="fl">6065030101</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">dt</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1980"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">val</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">my_new_tibble</span><span class="op">)</span>
-<span class="co">#&gt; tibble [732 x 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;  $ dt : chr [1:732] "1980-01-01" "1980-01-02" "1980-01-03" "1980-01-04" ...</span>
-<span class="co">#&gt;  $ val: num [1:732] 7.41 5.3 5.62 3.57 3.25 ...</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">my_new_tibble</span> <span class="op">&lt;-</span> <span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tract</span> <span class="op">==</span> <span class="fl">6065030101</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">dt</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1980"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">val</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">my_new_tibble</span><span class="op">)</span></span>
+<span><span class="co">#&gt; tibble [732 × 2] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;  $ dt : chr [1:732] "1980-01-01" "1980-01-02" "1980-01-03" "1980-01-04" ...</span></span>
+<span><span class="co">#&gt;  $ val: num [1:732] 7.41 5.3 5.62 3.57 3.25 ...</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="mounting-an-existing-sqlite-database-as-a-remote-tibble">Mounting an existing SQLite database as a remote tibble<a class="anchor" aria-label="anchor" href="#mounting-an-existing-sqlite-database-as-a-remote-tibble"></a>
 </h3>
-<p>When you start a new R session, you’ll need to reestablish the connection to your SQLite database in order to work with the data as remote tibble. If the database was created with <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, you can re-load or ‘mount’ it as remote tibble with <code><a href="../reference/ca_db_read.html">ca_db_read()</a></code>, passing the name of a SQLite database.</p>
+<p>When you start a new R session, you’ll need to reestablish the
+connection to your SQLite database in order to work with the data as
+remote tibble. If the database was created with
+<code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, you can re-load or ‘mount’ it as remote
+tibble with <code><a href="../reference/ca_db_read.html">ca_db_read()</a></code>, passing the name of a SQLite
+database.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_fn</span>
-<span class="co">#&gt; [1] "C:\\Users\\Andy\\AppData\\Roaming\\R\\data\\R\\caladaptr\\tracts_liv\\rvrsde_liv_tas.sqlite"</span>
-<span class="va">x_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_db_read.html">ca_db_read</a></span><span class="op">(</span><span class="va">rvrsde_liv_tas_fn</span><span class="op">)</span>
-<span class="va">x_tbl</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   SQL [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
-<span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
-<span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span>
-<span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-01  7.41</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-02  5.30</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-03  5.62</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-04  3.57</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-05  3.25</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-06  7.05</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-07  8.45</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-08 11.5 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-09 11.4 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">6</span>065<span style="text-decoration: underline;">030</span>101 tasmin day    tasmin_day_livneh mean  1980-01-10 10.9 </span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with more rows</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_fn</span></span>
+<span><span class="co">#&gt; [1] "C:\\Users\\Andy\\AppData\\Roaming\\R\\data\\R\\caladaptr\\tracts_liv\\rvrsde_liv_tas.sqlite"</span></span>
+<span><span class="va">x_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_db_read.html">ca_db_read</a></span><span class="op">(</span><span class="va">rvrsde_liv_tas_fn</span><span class="op">)</span></span>
+<span><span class="va">x_tbl</span></span>
+<span><span class="co">#&gt; # Source:   SQL [?? x 7]</span></span>
+<span><span class="co">#&gt; # Database: sqlite 3.47.1 [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite]</span></span>
+<span><span class="co">#&gt;         tract cvar   period slug              spag  dt           val</span></span>
+<span><span class="co">#&gt;       &lt;int64&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-01  7.41</span></span>
+<span><span class="co">#&gt;  2 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-02  5.30</span></span>
+<span><span class="co">#&gt;  3 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-03  5.62</span></span>
+<span><span class="co">#&gt;  4 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-04  3.57</span></span>
+<span><span class="co">#&gt;  5 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-05  3.25</span></span>
+<span><span class="co">#&gt;  6 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-06  7.05</span></span>
+<span><span class="co">#&gt;  7 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-07  8.45</span></span>
+<span><span class="co">#&gt;  8 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-08 11.5 </span></span>
+<span><span class="co">#&gt;  9 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-09 11.4 </span></span>
+<span><span class="co">#&gt; 10 6065030101 tasmin day    tasmin_day_livneh mean  1980-01-10 10.9 </span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p><br></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="reading-databases-with-sql">Reading databases with SQL<a class="anchor" aria-label="anchor" href="#reading-databases-with-sql"></a>
 </h2>
-<p>You aren’t limited to interacting with SQLite databases via remote tibbles, and you don’t need caladaptr functions to access them. You can connect to them directly, and read / edit the data using SQL. SQL is powerful and flexible language for working with relational databases, and is supported in R through the <a href="https://dbi.r-dbi.org/" class="external-link">DBI</a> package.</p>
-<p>To help you write SQL statements, <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> will show you what’s in a SQLite database created by <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. You can pass the name of a SQLite database file, or a remote tibble created by <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, to <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code>. The output includes tables, fields, primary keys, and indices in a database. It will also show the SQL expression for the primary data table(s) if lookup tables were used.</p>
+<p>You aren’t limited to interacting with SQLite databases via remote
+tibbles, and you don’t need caladaptr functions to access them. You can
+connect to them directly, and read / edit the data using SQL. SQL is
+powerful and flexible language for working with relational databases,
+and is supported in R through the <a href="https://dbi.r-dbi.org/" class="external-link">DBI</a> package.</p>
+<p>To help you write SQL statements, <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> will show
+you what’s in a SQLite database created by <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>.
+You can pass the name of a SQLite database file, or a remote tibble
+created by <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, to <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code>.
+The output includes tables, fields, primary keys, and indices in a
+database. It will also show the SQL expression for the primary data
+table(s) if lookup tables were used.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_fn</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_db_info.html">ca_db_info</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Cal-Adapt Query Database</span></span>
-<span class="co"><span style="color: #0000BB; font-weight: bold;">#&gt; </span><span style="color: #0000BB;">Source: </span>C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #0000BB;">Cal-Adapt data tables:</span></span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> rvrsde_tas</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>tract; cvar_id; period_id; slug_id; spag_id; dt; val</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>10258638</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">SQL: </span>SELECT tract, cvar, period, slug, spag, dt, val FROM rvrsde_tas LEFT JOIN cvars ON rvrsde_tas.cvar_id = cvars.cvar_id LEFT JOIN periods ON rvrsde_tas.period_id = periods.period_id LEFT JOIN slugs ON rvrsde_tas.slug_id = slugs.slug_id LEFT JOIN spags ON rvrsde_tas.spag_id = spags.spag_id</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #0000BB;">Lookup tables:</span></span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> cvars</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>cvar_id<span style="color: #0000BB; font-weight: bold;">*</span>; cvar</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>11</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> periods</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>period_id<span style="color: #0000BB; font-weight: bold;">*</span>; period</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>4</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> slugs</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>slug_id<span style="color: #0000BB; font-weight: bold;">*</span>; slug</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>2</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> spags</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>spag_id<span style="color: #0000BB; font-weight: bold;">*</span>; spag</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>6</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #0000BB;">API Request Hashes Tables:</span></span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> rvrsde_tas_hashes</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>hash_int<span style="color: #0000BB; font-weight: bold;">*</span></span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>906</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span></code></pre></div>
-<p>SQL is beyond the scope of this vignette, but below are some example of using DBI to send SQL statements to a SQLite database to query a table. See the documentation from <a href="https://dbi.r-dbi.org/articles/dbi" class="external-link">DBI</a> and <a href="https://www.sqlitetutorial.net/" class="external-link">SQLite Tutorial</a> for more information and examples.</p>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_fn</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_db_info.html">ca_db_info</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Cal-Adapt Query Database</span></span>
+<span><span class="co">#&gt; Source: C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\tracts_liv\rvrsde_liv_tas.sqlite</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Cal-Adapt data tables:</span></span>
+<span><span class="co">#&gt;  rvrsde_tas</span></span>
+<span><span class="co">#&gt;    - Fields: tract; cvar_id; period_id; slug_id; spag_id; dt; val</span></span>
+<span><span class="co">#&gt;    - Num rows: 10258638</span></span>
+<span><span class="co">#&gt;    - Indices: rvrsde_tas.tract</span></span>
+<span><span class="co">#&gt;    - SQL: SELECT tract, cvar, period, slug, spag, dt, val FROM rvrsde_tas LEFT JOIN cvars ON rvrsde_tas.cvar_id = cvars.cvar_id LEFT JOIN periods ON rvrsde_tas.period_id = periods.period_id LEFT JOIN slugs ON rvrsde_tas.slug_id = slugs.slug_id LEFT JOIN spags ON rvrsde_tas.spag_id = spags.spag_id</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lookup tables:</span></span>
+<span><span class="co">#&gt;  cvars</span></span>
+<span><span class="co">#&gt;    - Fields: cvar_id*; cvar</span></span>
+<span><span class="co">#&gt;    - Num rows: 11</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  periods</span></span>
+<span><span class="co">#&gt;    - Fields: period_id*; period</span></span>
+<span><span class="co">#&gt;    - Num rows: 4</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  slugs</span></span>
+<span><span class="co">#&gt;    - Fields: slug_id*; slug</span></span>
+<span><span class="co">#&gt;    - Num rows: 2</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  spags</span></span>
+<span><span class="co">#&gt;    - Fields: spag_id*; spag</span></span>
+<span><span class="co">#&gt;    - Num rows: 6</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; API Request Hashes Tables:</span></span>
+<span><span class="co">#&gt;  rvrsde_tas_hashes</span></span>
+<span><span class="co">#&gt;    - Fields: hash_int*</span></span>
+<span><span class="co">#&gt;    - Num rows: 906</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span></code></pre></div>
+<p>SQL is beyond the scope of this vignette, but below are some example
+of using DBI to send SQL statements to a SQLite database to query a
+table. See the documentation from <a href="https://dbi.r-dbi.org/articles/dbi" class="external-link">DBI</a> and <a href="https://www.sqlitetutorial.net/" class="external-link">SQLite Tutorial</a> for more
+information and examples.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span>
-
-<span class="co">## Grab the active database connection. </span>
-<span class="co">## db_conn &lt;- rvrsde_liv_tas_rtbl$src$con</span>
-
-<span class="co">## If there wasn't an active connection, we could open one directly with</span>
-<span class="va">db_conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, dbname <span class="op">=</span> <span class="va">rvrsde_liv_tas_fn</span><span class="op">)</span>
-
-<span class="co">## List the tables</span>
-<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">db_conn</span><span class="op">)</span>
-<span class="co">#&gt; [1] "cvars"             "periods"           "rvrsde_tas"       </span>
-<span class="co">#&gt; [4] "rvrsde_tas_hashes" "slugs"             "spags"</span>
-
-<span class="co">## Import one table in its entirety</span>
-<span class="op">(</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbReadTable.html" class="external-link">dbReadTable</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"slugs"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;   slug_id              slug</span>
-<span class="co">#&gt; 1       1 tasmin_day_livneh</span>
-<span class="co">#&gt; 2       2 tasmax_day_livneh</span>
-
-<span class="co">## Use a SELECT query to read the first 12 records from rvrsde_tas</span>
-<span class="va">first12_qry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbSendQuery.html" class="external-link">dbSendQuery</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"SELECT * FROM rvrsde_tas LIMIT 12;"</span><span class="op">)</span>
-<span class="op">(</span><span class="va">first12_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbFetch.html" class="external-link">dbFetch</a></span><span class="op">(</span><span class="va">first12_qry</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;         tract cvar_id period_id slug_id spag_id         dt    val</span>
-<span class="co">#&gt; 1  6065030101       2         1       1       2 1980-01-01  7.415</span>
-<span class="co">#&gt; 2  6065030101       2         1       1       2 1980-01-02  5.295</span>
-<span class="co">#&gt; 3  6065030101       2         1       1       2 1980-01-03  5.620</span>
-<span class="co">#&gt; 4  6065030101       2         1       1       2 1980-01-04  3.575</span>
-<span class="co">#&gt; 5  6065030101       2         1       1       2 1980-01-05  3.250</span>
-<span class="co">#&gt; 6  6065030101       2         1       1       2 1980-01-06  7.050</span>
-<span class="co">#&gt; 7  6065030101       2         1       1       2 1980-01-07  8.450</span>
-<span class="co">#&gt; 8  6065030101       2         1       1       2 1980-01-08 11.460</span>
-<span class="co">#&gt; 9  6065030101       2         1       1       2 1980-01-09 11.380</span>
-<span class="co">#&gt; 10 6065030101       2         1       1       2 1980-01-10 10.935</span>
-<span class="co">#&gt; 11 6065030101       2         1       1       2 1980-01-11 11.345</span>
-<span class="co">#&gt; 12 6065030101       2         1       1       2 1980-01-12 13.175</span>
-<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbClearResult.html" class="external-link">dbClearResult</a></span><span class="op">(</span><span class="va">first12_qry</span><span class="op">)</span>
-
-<span class="co">## Get the mean and standard deviation of tasmax by tract and year </span>
-<span class="va">tract_yr_tasmax_qry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbSendQuery.html" class="external-link">dbSendQuery</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"SELECT tract, cvar, substr(dt, 1, 4) as year, 
-                                   avg(val) as avg_val, stdev(val) as sd_val
-                                   FROM rvrsde_tas LEFT JOIN cvars ON rvrsde_tas.cvar_id = cvars.cvar_id
-                                   WHERE cvar = 'tasmax'
-                                   GROUP BY tract, substr(dt, 1, 4)
-                                   LIMIT 40;"</span><span class="op">)</span>
-<span class="op">(</span><span class="va">tract_yr_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbFetch.html" class="external-link">dbFetch</a></span><span class="op">(</span><span class="va">tract_yr_tasmax_qry</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;         tract   cvar year  avg_val   sd_val</span>
-<span class="co">#&gt; 1  6065030101 tasmax 1980 26.21607 6.852663</span>
-<span class="co">#&gt; 2  6065030101 tasmax 1981 26.34479 7.350711</span>
-<span class="co">#&gt; 3  6065030101 tasmax 1982 23.53210 7.387218</span>
-<span class="co">#&gt; 4  6065030101 tasmax 1983 25.14408 7.513801</span>
-<span class="co">#&gt; 5  6065030101 tasmax 1984 26.83633 7.069716</span>
-<span class="co">#&gt; 6  6065030101 tasmax 1985 25.93858 7.863726</span>
-<span class="co">#&gt; 7  6065030101 tasmax 1986 26.52530 6.510764</span>
-<span class="co">#&gt; 8  6065030101 tasmax 1987 25.36882 7.144761</span>
-<span class="co">#&gt; 9  6065030101 tasmax 1988 26.46512 7.067632</span>
-<span class="co">#&gt; 10 6065030101 tasmax 1989 26.54858 7.057848</span>
-<span class="co">#&gt; 11 6065030101 tasmax 1990 26.55011 7.615560</span>
-<span class="co">#&gt; 12 6065030101 tasmax 1991 26.15068 6.723376</span>
-<span class="co">#&gt; 13 6065030101 tasmax 1992 26.40520 7.267906</span>
-<span class="co">#&gt; 14 6065030101 tasmax 1993 25.93308 6.787862</span>
-<span class="co">#&gt; 15 6065030101 tasmax 1994 26.03052 7.195865</span>
-<span class="co">#&gt; 16 6065030101 tasmax 1995 26.25166 7.524154</span>
-<span class="co">#&gt; 17 6065030101 tasmax 1996 26.99464 7.454512</span>
-<span class="co">#&gt; 18 6065030101 tasmax 1997 27.09871 7.136586</span>
-<span class="co">#&gt; 19 6065030101 tasmax 1998 25.47475 7.428966</span>
-<span class="co">#&gt; 20 6065030101 tasmax 1999 26.48893 6.935570</span>
-<span class="co">#&gt; 21 6065030101 tasmax 2000 27.02283 6.932329</span>
-<span class="co">#&gt; 22 6065030101 tasmax 2001 26.40905 7.781031</span>
-<span class="co">#&gt; 23 6065030101 tasmax 2002 26.80597 6.768257</span>
-<span class="co">#&gt; 24 6065030101 tasmax 2003 27.23386 7.296919</span>
-<span class="co">#&gt; 25 6065030101 tasmax 2004 26.89044 7.072354</span>
-<span class="co">#&gt; 26 6065030101 tasmax 2005 26.25752 7.259982</span>
-<span class="co">#&gt; 27 6065030101 tasmax 2006 27.78707 7.590995</span>
-<span class="co">#&gt; 28 6065030101 tasmax 2007 27.32666 7.516599</span>
-<span class="co">#&gt; 29 6065030101 tasmax 2008 26.72738 7.864197</span>
-<span class="co">#&gt; 30 6065030101 tasmax 2009 27.45423 7.349510</span>
-<span class="co">#&gt; 31 6065030101 tasmax 2010 26.02900 7.585175</span>
-<span class="co">#&gt; 32 6065030103 tasmax 1980 26.28562 6.856170</span>
-<span class="co">#&gt; 33 6065030103 tasmax 1981 26.45149 7.315280</span>
-<span class="co">#&gt; 34 6065030103 tasmax 1982 23.77380 7.349562</span>
-<span class="co">#&gt; 35 6065030103 tasmax 1983 25.21624 7.458894</span>
-<span class="co">#&gt; 36 6065030103 tasmax 1984 26.99472 7.132914</span>
-<span class="co">#&gt; 37 6065030103 tasmax 1985 26.03365 7.810316</span>
-<span class="co">#&gt; 38 6065030103 tasmax 1986 26.61862 6.484041</span>
-<span class="co">#&gt; 39 6065030103 tasmax 1987 25.53032 7.147122</span>
-<span class="co">#&gt; 40 6065030103 tasmax 1988 26.58549 7.030189</span>
-<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbClearResult.html" class="external-link">dbClearResult</a></span><span class="op">(</span><span class="va">tract_yr_tasmax_qry</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Grab the active database connection.</span></span>
+<span><span class="co">## db_conn &lt;- rvrsde_liv_tas_rtbl$src$con</span></span>
+<span></span>
+<span><span class="co">## If there wasn't an active connection, we could open one directly with</span></span>
+<span><span class="va">db_conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, dbname <span class="op">=</span> <span class="va">rvrsde_liv_tas_fn</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## List the tables</span></span>
+<span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">db_conn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "cvars"             "periods"           "rvrsde_tas"        "rvrsde_tas_hashes" "slugs"             "spags"</span></span>
+<span></span>
+<span><span class="co">## Import one table in its entirety</span></span>
+<span><span class="op">(</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbReadTable.html" class="external-link">dbReadTable</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"slugs"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   slug_id              slug</span></span>
+<span><span class="co">#&gt; 1       1 tasmin_day_livneh</span></span>
+<span><span class="co">#&gt; 2       2 tasmax_day_livneh</span></span>
+<span></span>
+<span><span class="co">## Use a SELECT query to read the first 12 records from rvrsde_tas</span></span>
+<span><span class="va">first12_qry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbSendQuery.html" class="external-link">dbSendQuery</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"SELECT * FROM rvrsde_tas LIMIT 12;"</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">first12_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbFetch.html" class="external-link">dbFetch</a></span><span class="op">(</span><span class="va">first12_qry</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         tract cvar_id period_id slug_id spag_id         dt    val</span></span>
+<span><span class="co">#&gt; 1  6065030101       2         1       1       2 1980-01-01  7.415</span></span>
+<span><span class="co">#&gt; 2  6065030101       2         1       1       2 1980-01-02  5.295</span></span>
+<span><span class="co">#&gt; 3  6065030101       2         1       1       2 1980-01-03  5.620</span></span>
+<span><span class="co">#&gt; 4  6065030101       2         1       1       2 1980-01-04  3.575</span></span>
+<span><span class="co">#&gt; 5  6065030101       2         1       1       2 1980-01-05  3.250</span></span>
+<span><span class="co">#&gt; 6  6065030101       2         1       1       2 1980-01-06  7.050</span></span>
+<span><span class="co">#&gt; 7  6065030101       2         1       1       2 1980-01-07  8.450</span></span>
+<span><span class="co">#&gt; 8  6065030101       2         1       1       2 1980-01-08 11.460</span></span>
+<span><span class="co">#&gt; 9  6065030101       2         1       1       2 1980-01-09 11.380</span></span>
+<span><span class="co">#&gt; 10 6065030101       2         1       1       2 1980-01-10 10.935</span></span>
+<span><span class="co">#&gt; 11 6065030101       2         1       1       2 1980-01-11 11.345</span></span>
+<span><span class="co">#&gt; 12 6065030101       2         1       1       2 1980-01-12 13.175</span></span>
+<span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbClearResult.html" class="external-link">dbClearResult</a></span><span class="op">(</span><span class="va">first12_qry</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Get the mean and standard deviation of tasmax by tract and year</span></span>
+<span><span class="va">tract_yr_tasmax_qry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbSendQuery.html" class="external-link">dbSendQuery</a></span><span class="op">(</span><span class="va">db_conn</span>, <span class="st">"SELECT tract, cvar, substr(dt, 1, 4) as year,</span></span>
+<span><span class="st">                                   avg(val) as avg_val, stdev(val) as sd_val</span></span>
+<span><span class="st">                                   FROM rvrsde_tas LEFT JOIN cvars ON rvrsde_tas.cvar_id = cvars.cvar_id</span></span>
+<span><span class="st">                                   WHERE cvar = 'tasmax'</span></span>
+<span><span class="st">                                   GROUP BY tract, substr(dt, 1, 4)</span></span>
+<span><span class="st">                                   LIMIT 40;"</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">tract_yr_tasmax_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbFetch.html" class="external-link">dbFetch</a></span><span class="op">(</span><span class="va">tract_yr_tasmax_qry</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         tract   cvar year  avg_val   sd_val</span></span>
+<span><span class="co">#&gt; 1  6065030101 tasmax 1980 26.21607 6.852663</span></span>
+<span><span class="co">#&gt; 2  6065030101 tasmax 1981 26.34479 7.350711</span></span>
+<span><span class="co">#&gt; 3  6065030101 tasmax 1982 23.53210 7.387218</span></span>
+<span><span class="co">#&gt; 4  6065030101 tasmax 1983 25.14408 7.513801</span></span>
+<span><span class="co">#&gt; 5  6065030101 tasmax 1984 26.83633 7.069716</span></span>
+<span><span class="co">#&gt; 6  6065030101 tasmax 1985 25.93858 7.863726</span></span>
+<span><span class="co">#&gt; 7  6065030101 tasmax 1986 26.52530 6.510764</span></span>
+<span><span class="co">#&gt; 8  6065030101 tasmax 1987 25.36882 7.144761</span></span>
+<span><span class="co">#&gt; 9  6065030101 tasmax 1988 26.46512 7.067632</span></span>
+<span><span class="co">#&gt; 10 6065030101 tasmax 1989 26.54858 7.057848</span></span>
+<span><span class="co">#&gt; 11 6065030101 tasmax 1990 26.55011 7.615560</span></span>
+<span><span class="co">#&gt; 12 6065030101 tasmax 1991 26.15068 6.723376</span></span>
+<span><span class="co">#&gt; 13 6065030101 tasmax 1992 26.40520 7.267906</span></span>
+<span><span class="co">#&gt; 14 6065030101 tasmax 1993 25.93308 6.787862</span></span>
+<span><span class="co">#&gt; 15 6065030101 tasmax 1994 26.03052 7.195865</span></span>
+<span><span class="co">#&gt; 16 6065030101 tasmax 1995 26.25166 7.524154</span></span>
+<span><span class="co">#&gt; 17 6065030101 tasmax 1996 26.99464 7.454512</span></span>
+<span><span class="co">#&gt; 18 6065030101 tasmax 1997 27.09871 7.136586</span></span>
+<span><span class="co">#&gt; 19 6065030101 tasmax 1998 25.47475 7.428966</span></span>
+<span><span class="co">#&gt; 20 6065030101 tasmax 1999 26.48893 6.935570</span></span>
+<span><span class="co">#&gt; 21 6065030101 tasmax 2000 27.02283 6.932329</span></span>
+<span><span class="co">#&gt; 22 6065030101 tasmax 2001 26.40905 7.781031</span></span>
+<span><span class="co">#&gt; 23 6065030101 tasmax 2002 26.80597 6.768257</span></span>
+<span><span class="co">#&gt; 24 6065030101 tasmax 2003 27.23386 7.296919</span></span>
+<span><span class="co">#&gt; 25 6065030101 tasmax 2004 26.89044 7.072354</span></span>
+<span><span class="co">#&gt; 26 6065030101 tasmax 2005 26.25752 7.259982</span></span>
+<span><span class="co">#&gt; 27 6065030101 tasmax 2006 27.78707 7.590995</span></span>
+<span><span class="co">#&gt; 28 6065030101 tasmax 2007 27.32666 7.516599</span></span>
+<span><span class="co">#&gt; 29 6065030101 tasmax 2008 26.72738 7.864197</span></span>
+<span><span class="co">#&gt; 30 6065030101 tasmax 2009 27.45423 7.349510</span></span>
+<span><span class="co">#&gt; 31 6065030101 tasmax 2010 26.02900 7.585175</span></span>
+<span><span class="co">#&gt; 32 6065030103 tasmax 1980 26.28562 6.856170</span></span>
+<span><span class="co">#&gt; 33 6065030103 tasmax 1981 26.45149 7.315280</span></span>
+<span><span class="co">#&gt; 34 6065030103 tasmax 1982 23.77380 7.349562</span></span>
+<span><span class="co">#&gt; 35 6065030103 tasmax 1983 25.21624 7.458894</span></span>
+<span><span class="co">#&gt; 36 6065030103 tasmax 1984 26.99472 7.132914</span></span>
+<span><span class="co">#&gt; 37 6065030103 tasmax 1985 26.03365 7.810316</span></span>
+<span><span class="co">#&gt; 38 6065030103 tasmax 1986 26.61862 6.484041</span></span>
+<span><span class="co">#&gt; 39 6065030103 tasmax 1987 25.53032 7.147122</span></span>
+<span><span class="co">#&gt; 40 6065030103 tasmax 1988 26.58549 7.030189</span></span>
+<span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbClearResult.html" class="external-link">dbClearResult</a></span><span class="op">(</span><span class="va">tract_yr_tasmax_qry</span><span class="op">)</span></span></code></pre></div>
 <p class="indented2">
-<strong>TIP</strong>: SQL/SQLite and dplyr/R are good at different things. Databases are a good way to save large amounts of tabular data, and SQL works pretty well to filter rows, join tables, and compute simple summaries. dplyr/tidyverse/R are good at reshaping data, more complex summaries, and integration with other packages and methods. If you hit a wall in your analysis, think about how you can mix and match SQL and dplyr to leverage the strengths of each.
+<strong>TIP</strong>: SQL/SQLite and dplyr/R are good at different
+things. Databases are a good way to save large amounts of tabular data,
+and SQL works pretty well to filter rows, join tables, and compute
+simple summaries. dplyr/tidyverse/R are good at reshaping data, more
+complex summaries, and integration with other packages and methods. If
+you hit a wall in your analysis, think about how you can mix and match
+SQL and dplyr to leverage the strengths of each.
 </p>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="optimizating-database-performance">Optimizating Database Performance<a class="anchor" aria-label="anchor" href="#optimizating-database-performance"></a>
 </h2>
-<p>Two aspects of database optimization are managing the size of the database on disk, and speed of querying the data. Below are some general considerations for managing both of these aspects in SQLite databases.</p>
+<p>Two aspects of database optimization are managing the size of the
+database on disk, and speed of querying the data. Below are some general
+considerations for managing both of these aspects in SQLite
+databases.</p>
 <div class="section level3">
 <h3 id="how-many-databases">How many databases?<a class="anchor" aria-label="anchor" href="#how-many-databases"></a>
 </h3>
-<p>When you save data to a database with <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>, you get to choose how much data to put in a single table, how many tables to put in one database, and how many databases to create. Below are some general guidelines on how many databases to use:</p>
+<p>When you save data to a database with <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>,
+you get to choose how much data to put in a single table, how many
+tables to put in one database, and how many databases to create. Below
+are some general guidelines on how many databases to use:</p>
 <ul>
-<li><p>SQLite databases are contained in a single file, and can hold many tables. However there is little or no performance gain in having multiple tables in a single database (aside from lookup tables), compared to separate databases. There may also be a performance hit if you have multiple large tables in a database. Also if you need access to them simultaneously, you may have to manage the connections yourself (i.e., dbplyr may limit the number of parallel connections or queries to a single database).</p></li>
-<li><p>At the other end of the spectrum, you generally don’t want to have lots of database connections open simultaneously. Even if you don’t see the connections (because dbplyr manages them for you), each database requires it’s own connection, which takes a bit of overhead. If you access database files in a loop, be sure to delete the remote tibbles or manually close the connections so they don’t accumulate.</p></li>
+<li><p>SQLite databases are contained in a single file, and can hold
+many tables. However there is little or no performance gain in having
+multiple tables in a single database (aside from lookup tables),
+compared to separate databases. There may also be a performance hit if
+you have multiple large tables in a database. Also if you need access to
+them simultaneously, you may have to manage the connections yourself
+(i.e., dbplyr may limit the number of parallel connections or queries to
+a single database).</p></li>
+<li><p>At the other end of the spectrum, you generally don’t want to
+have lots of database connections open simultaneously. Even if you don’t
+see the connections (because dbplyr manages them for you), each database
+requires it’s own connection, which takes a bit of overhead. If you
+access database files in a loop, be sure to delete the remote tibbles or
+manually close the connections so they don’t accumulate.</p></li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="how-many-tables">How many tables?<a class="anchor" aria-label="anchor" href="#how-many-tables"></a>
 </h3>
-<p>In terms of how much data to put in one table, some general points to consider:</p>
+<p>In terms of how much data to put in one table, some general points to
+consider:</p>
 <ul>
-<li><p>Databases like SQLite are designed to handle millions of records, that’s what they’re designed for. It’s unlikely you would reach the technical limits of what the database can handle.</p></li>
-<li><p>As a general guide, aim to have all the data for each analysis or summary in a single table. For example if you need minimum and maximum temperature for your analysis (maybe to compute growing degree days), put those values in the same table. This will perform better than retrieving the data from two different tables, and combining them in R.</p></li>
+<li><p>Databases like SQLite are designed to handle millions of records,
+that’s what they’re designed for. It’s unlikely you would reach the
+technical limits of what the database can handle.</p></li>
+<li><p>As a general guide, aim to have all the data for each analysis or
+summary in a single table. For example if you need minimum and maximum
+temperature for your analysis (maybe to compute growing degree days),
+put those values in the same table. This will perform better than
+retrieving the data from two different tables, and combining them in
+R.</p></li>
 <li>
-<p>A exception to the above rule is when data can’t be combined in a single table for technical reasons. For example the following types of data generally can’t be combined in the same table:</p>
+<p>A exception to the above rule is when data can’t be combined in a
+single table for technical reasons. For example the following types of
+data generally can’t be combined in the same table:</p>
 <ul>
 <li>Livneh and non-Livneh data (different columns)</li>
-<li>climate variables with different units (e.g., windspeed and precipitation)</li>
+<li>climate variables with different units (e.g., windspeed and
+precipitation)</li>
 </ul>
 </li>
-<li><p>As a general rule, large tables can be slower to query than smaller tables (although this can be improved with indices, see below). Thus once you get all the data for a single analysis in a single table, start a new table the next batch of data.</p></li>
+<li><p>As a general rule, large tables can be slower to query than
+smaller tables (although this can be improved with indices, see below).
+Thus once you get all the data for a single analysis in a single table,
+start a new table the next batch of data.</p></li>
 </ul>
 <p class="indented2">
-<strong>TIP</strong>: When in doubt, save one dataset in one data table, and one data table in one database. Delete remote tibbles when you no longer need them to free up the database connections.
+<strong>TIP</strong>: When in doubt, save one dataset in one data table,
+and one data table in one database. Delete remote tibbles when you no
+longer need them to free up the database connections.
 </p>
 </div>
 <div class="section level3">
 <h3 id="indices">Indices<a class="anchor" aria-label="anchor" href="#indices"></a>
 </h3>
-<p>You can create indices for specific fields in specific tables. Indices are like a phone book for a field, and improve the speed of operations that utilize that field (such as filters or joins). The downside to indices is they increase the size of the database on disk. A general good practice is to create indices for fields that you expect to use for joins, filters, and sorting (including the location id field), but not others. For more info, see the documentation on <a href="https://www.sqlite.org/queryplanner.html" class="external-link">SQLite.org</a>.</p>
-<p>You can create indices by passing field name(s) to the <code>indices</code> argument when you first populate a table with <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. The downside is a slightly slower write speed, because the index has to be updated every time data is written to the table. Once a database is created, additional data brought in via <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> will be automatically indexed, but additional indices can not be created with the indices argument.</p>
-<p>An alternative approach is to skip indices while downloading, and instead add them after all the data have been downloaded, but before you start analysis. You can see which fields have indices using <code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> (above), or directly using functions from DBI.</p>
-<p>You can add or delete indices to an existing database using <code><a href="../reference/ca_db_indices.html">ca_db_indices()</a></code>. For example to add an index on the ‘tract’ column (which will speed up filters and joins on this column), you could run:</p>
+<p>You can create indices for specific fields in specific tables.
+Indices are like a phone book for a field, and improve the speed of
+operations that utilize that field (such as filters or joins). The
+downside to indices is they increase the size of the database on disk. A
+general good practice is to create indices for fields that you expect to
+use for joins, filters, and sorting (including the location id field),
+but not others. For more info, see the documentation on <a href="https://www.sqlite.org/queryplanner.html" class="external-link">SQLite.org</a>.</p>
+<p>You can create indices by passing field name(s) to the
+<code>indices</code> argument when you first populate a table with
+<code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code>. The downside is a slightly slower write
+speed, because the index has to be updated every time data is written to
+the table. Once a database is created, additional data brought in via
+<code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> will be automatically indexed, but
+additional indices can not be created with the indices argument.</p>
+<p>An alternative approach is to skip indices while downloading, and
+instead add them after all the data have been downloaded, but before you
+start analysis. You can see which fields have indices using
+<code><a href="../reference/ca_db_info.html">ca_db_info()</a></code> (above), or directly using functions from
+DBI.</p>
+<p>You can add or delete indices to an existing database using
+<code><a href="../reference/ca_db_indices.html">ca_db_indices()</a></code>. For example to add an index on the ‘tract’
+column (which will speed up filters and joins on this column), you could
+run:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/ca_db_indices.html">ca_db_indices</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="st">"rvrsde_tas"</span>, idx_fld_add <span class="op">=</span> <span class="st">"tract"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/ca_db_info.html">ca_db_info</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #00BB00;">rvrsde_tas.tract added</span></span>
-<span class="co">#&gt; <span style="color: #555555;">No indices deleted</span></span>
-<span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">Cal-Adapt Query Database</span></span>
-<span class="co"><span style="color: #0000BB; font-weight: bold;">#&gt; </span><span style="color: #0000BB;">Source: </span>C:/Users/Andy/AppData/Roaming/R/data/R/caladaptr/tracts_liv/rvrsde_liv_tas.sqlite</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #0000BB;">Cal-Adapt data tables:</span></span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> rvrsde_tas</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>tract; cvar_id; period_id; slug_id; spag_id; dt; val</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>10258638</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>rvrsde_tas.tract</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">SQL: </span>SELECT tract, cvar, period, slug, spag, dt, val FROM rvrsde_tas LEFT JOIN cvars ON rvrsde_tas.cvar_id = cvars.cvar_id LEFT JOIN periods ON rvrsde_tas.period_id = periods.period_id LEFT JOIN slugs ON rvrsde_tas.slug_id = slugs.slug_id LEFT JOIN spags ON rvrsde_tas.spag_id = spags.spag_id</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #0000BB;">Lookup tables:</span></span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> cvars</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>cvar_id<span style="color: #0000BB; font-weight: bold;">*</span>; cvar</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>11</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> periods</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>period_id<span style="color: #0000BB; font-weight: bold;">*</span>; period</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>4</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> slugs</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>slug_id<span style="color: #0000BB; font-weight: bold;">*</span>; slug</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>2</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> spags</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>spag_id<span style="color: #0000BB; font-weight: bold;">*</span>; spag</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>6</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; <span style="color: #0000BB;">API Request Hashes Tables:</span></span>
-<span class="co">#&gt; <span style="color: #BB00BB; font-weight: bold;"> rvrsde_tas_hashes</span></span>
-<span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; </span>   - <span style="color: #BB00BB;">Fields: </span>hash_int<span style="color: #0000BB; font-weight: bold;">*</span></span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Num rows: </span>906</span>
-<span class="co">#&gt;    - <span style="color: #BB00BB;">Indices: </span>none</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rvrsde_liv_tas_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_db_indices.html">ca_db_indices</a></span><span class="op">(</span>tbl <span class="op">=</span> <span class="st">"rvrsde_tas"</span>, idx_fld_add <span class="op">=</span> <span class="st">"tract"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_db_info.html">ca_db_info</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; rvrsde_tas.tract is already indexed, skipping</span></span>
+<span><span class="co">#&gt; No indices added</span></span>
+<span><span class="co">#&gt; No indices deleted</span></span>
+<span><span class="co">#&gt; Cal-Adapt Query Database</span></span>
+<span><span class="co">#&gt; Source: C:/Users/Andy/AppData/Roaming/R/data/R/caladaptr/tracts_liv/rvrsde_liv_tas.sqlite</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Cal-Adapt data tables:</span></span>
+<span><span class="co">#&gt;  rvrsde_tas</span></span>
+<span><span class="co">#&gt;    - Fields: tract; cvar_id; period_id; slug_id; spag_id; dt; val</span></span>
+<span><span class="co">#&gt;    - Num rows: 10258638</span></span>
+<span><span class="co">#&gt;    - Indices: rvrsde_tas.tract</span></span>
+<span><span class="co">#&gt;    - SQL: SELECT tract, cvar, period, slug, spag, dt, val FROM rvrsde_tas LEFT JOIN cvars ON rvrsde_tas.cvar_id = cvars.cvar_id LEFT JOIN periods ON rvrsde_tas.period_id = periods.period_id LEFT JOIN slugs ON rvrsde_tas.slug_id = slugs.slug_id LEFT JOIN spags ON rvrsde_tas.spag_id = spags.spag_id</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lookup tables:</span></span>
+<span><span class="co">#&gt;  cvars</span></span>
+<span><span class="co">#&gt;    - Fields: cvar_id*; cvar</span></span>
+<span><span class="co">#&gt;    - Num rows: 11</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  periods</span></span>
+<span><span class="co">#&gt;    - Fields: period_id*; period</span></span>
+<span><span class="co">#&gt;    - Num rows: 4</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  slugs</span></span>
+<span><span class="co">#&gt;    - Fields: slug_id*; slug</span></span>
+<span><span class="co">#&gt;    - Num rows: 2</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  spags</span></span>
+<span><span class="co">#&gt;    - Fields: spag_id*; spag</span></span>
+<span><span class="co">#&gt;    - Num rows: 6</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; API Request Hashes Tables:</span></span>
+<span><span class="co">#&gt;  rvrsde_tas_hashes</span></span>
+<span><span class="co">#&gt;    - Fields: hash_int*</span></span>
+<span><span class="co">#&gt;    - Num rows: 906</span></span>
+<span><span class="co">#&gt;    - Indices: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span></code></pre></div>
 <p class="indented2">
-<strong>TIP</strong>: You might want to wait to see how slow your analyses are before deciding to create indices, which will increase the size of the database. If the wait time is tolerable, and you don’t have to run the summary very often, adding indices may not be necessary.
+<strong>TIP</strong>: You might want to wait to see how slow your
+analyses are before deciding to create indices, which will increase the
+size of the database. If the wait time is tolerable, and you don’t have
+to run the summary very often, adding indices may not be necessary.
 </p>
 </div>
 <div class="section level3">
-<h3 id="reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell">Reducing the Number of API Calls by Grouping Locations by Loca Grid Cell<a class="anchor" aria-label="anchor" href="#reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell"></a>
+<h3 id="reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell">Reducing the Number of API Calls by Grouping Locations by Loca Grid
+Cell<a class="anchor" aria-label="anchor" href="#reducing-the-number-of-api-calls-by-grouping-locations-by-loca-grid-cell"></a>
 </h3>
-<p>LOCA grid cells are approximately 6km (3.7 mi) on each side. All locations within the same grid cell will therefore have the same values for any LOCA downscaled climate variables, projected or historic, modeled or observed. If you have more than one point location per grid cell, it doesn’t make sense to query the server for each one because they’ll all return the same values. This provides a way to reduce the number of total calls to the server.</p>
-<p>In the next example, we’ll get climate data for all the schools in CA (over 10,000). Because there are so many schools, and many of them are close together (especially in cities), we’ll first spatial join them to the LOCA grid. Next we’ll take grids that have schools in them, find their centroids, create an API request object for the centroids, and fetch data. We can then join the results back to the schools by the LOCA grid id.</p>
-<p>First we import the schools which we get from the <a href="https://data-cdegis.opendata.arcgis.com/" class="external-link">California Department of Education GeoHub</a>:</p>
+<p>LOCA grid cells are approximately 6km (3.7 mi) on each side. All
+locations within the same grid cell will therefore have the same values
+for any LOCA downscaled climate variables, projected or historic,
+modeled or observed. If you have more than one point location per grid
+cell, it doesn’t make sense to query the server for each one because
+they’ll all return the same values. This provides a way to reduce the
+number of total calls to the server.</p>
+<p>In the next example, we’ll get climate data for all the schools in CA
+(over 10,000). Because there are so many schools, and many of them are
+close together (especially in cities), we’ll first spatial join them to
+the LOCA grid. Next we’ll take grids that have schools in them, find
+their centroids, create an API request object for the centroids, and
+fetch data. We can then join the results back to the schools by the LOCA
+grid id.</p>
+<p>First we import the schools which we get from the <a href="https://data-cdegis.opendata.arcgis.com/" class="external-link">California Department of
+Education GeoHub</a>:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="va">ca_schools_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/ucanr-igis/caladaptr-res/main/geoms/ca_schools.geojson"</span>
-<span class="va">ca_schools_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">ca_schools_url</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">ca_schools_sf</span><span class="op">)</span>
-<span class="co">#&gt; [1] 10043     4</span>
-<span class="va">ca_schools_sf</span>
-<span class="co">#&gt; Simple feature collection with 10043 features and 3 fields</span>
-<span class="co">#&gt; Geometry type: POINT</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: -124.2856 ymin: 32.54807 xmax: -114.3958 ymax: 41.98865</span>
-<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
-<span class="co">#&gt; First 10 features:</span>
-<span class="co">#&gt;    OBJECTID                              SchoolName       SchoolType</span>
-<span class="co">#&gt; 1         1  Envision Academy for Arts &amp; Technology             High</span>
-<span class="co">#&gt; 2         2 Community School for Creative Education       Elementary</span>
-<span class="co">#&gt; 3         3                         Yu Ming Charter       Elementary</span>
-<span class="co">#&gt; 4         4                Urban Montessori Charter       Elementary</span>
-<span class="co">#&gt; 5         5                            Epic Charter           Middle</span>
-<span class="co">#&gt; 6         6      Alameda County Juvenile Hall/Court   Juvenile Court</span>
-<span class="co">#&gt; 7         7                Alameda County Community County Community</span>
-<span class="co">#&gt; 8         8                    Oakland Unity Middle           Middle</span>
-<span class="co">#&gt; 9         9    Connecting Waters Charter - East Bay             K-12</span>
-<span class="co">#&gt; 10       10                     Opportunity Academy County Community</span>
-<span class="co">#&gt;                      geometry</span>
-<span class="co">#&gt; 1  POINT (-122.2684 37.80468)</span>
-<span class="co">#&gt; 2  POINT (-122.2386 37.78464)</span>
-<span class="co">#&gt; 3  POINT (-122.2836 37.84737)</span>
-<span class="co">#&gt; 4   POINT (-122.188 37.78676)</span>
-<span class="co">#&gt; 5  POINT (-122.2296 37.77711)</span>
-<span class="co">#&gt; 6  POINT (-122.1182 37.71595)</span>
-<span class="co">#&gt; 7  POINT (-122.0979 37.65835)</span>
-<span class="co">#&gt; 8  POINT (-122.1908 37.75908)</span>
-<span class="co">#&gt; 9  POINT (-122.0251 37.60378)</span>
-<span class="co">#&gt; 10 POINT (-122.0979 37.65835)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">ca_schools_sf</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_symbols.html" class="external-link">tm_dots</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span></code></pre></div>
-<p><img src="large-queries_files/figure-html/ca_schools_sf-1.png" width="700"></p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="va">ca_schools_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/ucanr-igis/caladaptr-res/main/geoms/ca_schools.geojson"</span></span>
+<span><span class="va">ca_schools_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">ca_schools_url</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">ca_schools_sf</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 10043     4</span></span>
+<span><span class="va">ca_schools_sf</span></span>
+<span><span class="co">#&gt; Simple feature collection with 10043 features and 3 fields</span></span>
+<span><span class="co">#&gt; Geometry type: POINT</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -124.2856 ymin: 32.54807 xmax: -114.3958 ymax: 41.98865</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span><span class="co">#&gt; First 10 features:</span></span>
+<span><span class="co">#&gt;    OBJECTID                              SchoolName       SchoolType                   geometry</span></span>
+<span><span class="co">#&gt; 1         1  Envision Academy for Arts &amp; Technology             High POINT (-122.2684 37.80468)</span></span>
+<span><span class="co">#&gt; 2         2 Community School for Creative Education       Elementary POINT (-122.2386 37.78464)</span></span>
+<span><span class="co">#&gt; 3         3                         Yu Ming Charter       Elementary POINT (-122.2836 37.84737)</span></span>
+<span><span class="co">#&gt; 4         4                Urban Montessori Charter       Elementary  POINT (-122.188 37.78676)</span></span>
+<span><span class="co">#&gt; 5         5                            Epic Charter           Middle POINT (-122.2296 37.77711)</span></span>
+<span><span class="co">#&gt; 6         6      Alameda County Juvenile Hall/Court   Juvenile Court POINT (-122.1182 37.71595)</span></span>
+<span><span class="co">#&gt; 7         7                Alameda County Community County Community POINT (-122.0979 37.65835)</span></span>
+<span><span class="co">#&gt; 8         8                    Oakland Unity Middle           Middle POINT (-122.1908 37.75908)</span></span>
+<span><span class="co">#&gt; 9         9    Connecting Waters Charter - East Bay             K-12 POINT (-122.0251 37.60378)</span></span>
+<span><span class="co">#&gt; 10       10                     Opportunity Academy County Community POINT (-122.0979 37.65835)</span></span>
+<span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">ca_schools_sf</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_symbols.html" class="external-link">tm_dots</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="figure/ca_schools_sf_define-1.png" alt="Map of CA schools"></p>
+<p><br></p>
 <p>Next, import the LOCA grid:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">locagrid_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_locagrid_geom.html">ca_locagrid_geom</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Reading layer `locagrid' from data source </span>
-<span class="co">#&gt;   `C:\Users\Andy\AppData\Local\R\cache\R\caladaptr\locagrid.gpkg' </span>
-<span class="co">#&gt;   using driver `GPKG'</span>
-<span class="co">#&gt; Simple feature collection with 26517 features and 1 field</span>
-<span class="co">#&gt; Geometry type: POLYGON</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: -124.5625 ymin: 31.5625 xmax: -113.375 ymax: 43.75</span>
-<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
-<span class="co">#&gt; Simple feature collection with 26517 features and 1 field</span>
-<span class="co">#&gt; Geometry type: POLYGON</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: -124.5625 ymin: 31.5625 xmax: -113.375 ymax: 43.75</span>
-<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
-<span class="co">#&gt; First 10 features:</span>
-<span class="co">#&gt;       id                           geom</span>
-<span class="co">#&gt; 1  23693 POLYGON ((-124.1875 43.75, ...</span>
-<span class="co">#&gt; 2  23694 POLYGON ((-124.125 43.75, -...</span>
-<span class="co">#&gt; 3  23695 POLYGON ((-124.0625 43.75, ...</span>
-<span class="co">#&gt; 4  23696 POLYGON ((-124 43.75, -123....</span>
-<span class="co">#&gt; 5  23697 POLYGON ((-123.9375 43.75, ...</span>
-<span class="co">#&gt; 6  23698 POLYGON ((-123.875 43.75, -...</span>
-<span class="co">#&gt; 7  23699 POLYGON ((-123.8125 43.75, ...</span>
-<span class="co">#&gt; 8  23700 POLYGON ((-123.75 43.75, -1...</span>
-<span class="co">#&gt; 9  23701 POLYGON ((-123.6875 43.75, ...</span>
-<span class="co">#&gt; 10 23702 POLYGON ((-123.625 43.75, -...</span></code></pre></div>
-<p>To illustrate the distribution of points relative to LOCA grid cells, we can overlay them to a zoomed in area in the central valley:</p>
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">locagrid_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_locagrid_geom.html">ca_locagrid_geom</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Reading layer `locagrid' from data source `C:\Users\Andy\AppData\Local\R\cache\R\caladaptr\locagrid.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 26517 features and 1 field</span></span>
+<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -124.5625 ymin: 31.5625 xmax: -113.375 ymax: 43.75</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span><span class="co">#&gt; Simple feature collection with 26517 features and 1 field</span></span>
+<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -124.5625 ymin: 31.5625 xmax: -113.375 ymax: 43.75</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span><span class="co">#&gt; First 10 features:</span></span>
+<span><span class="co">#&gt;       id                           geom</span></span>
+<span><span class="co">#&gt; 1  23693 POLYGON ((-124.1875 43.75, ...</span></span>
+<span><span class="co">#&gt; 2  23694 POLYGON ((-124.125 43.75, -...</span></span>
+<span><span class="co">#&gt; 3  23695 POLYGON ((-124.0625 43.75, ...</span></span>
+<span><span class="co">#&gt; 4  23696 POLYGON ((-124 43.75, -123....</span></span>
+<span><span class="co">#&gt; 5  23697 POLYGON ((-123.9375 43.75, ...</span></span>
+<span><span class="co">#&gt; 6  23698 POLYGON ((-123.875 43.75, -...</span></span>
+<span><span class="co">#&gt; 7  23699 POLYGON ((-123.8125 43.75, ...</span></span>
+<span><span class="co">#&gt; 8  23700 POLYGON ((-123.75 43.75, -1...</span></span>
+<span><span class="co">#&gt; 9  23701 POLYGON ((-123.6875 43.75, ...</span></span>
+<span><span class="co">#&gt; 10 23702 POLYGON ((-123.625 43.75, -...</span></span></code></pre></div>
+<p>To illustrate the distribution of points relative to LOCA grid cells,
+we can overlay them to a zoomed in area in the central valley:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">ca_schools_sf</span>, bbox <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">121.0896</span>, <span class="fl">37.56298</span>, <span class="op">-</span><span class="fl">120.38750</span>, <span class="fl">38.17253</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_symbols.html" class="external-link">tm_dots</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"#333333"</span><span class="op">)</span> <span class="op">+</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">locagrid_sf</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"#0080c0"</span><span class="op">)</span></code></pre></div>
-<p><img src="large-queries_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
-<p>Next, we do a spatial join of the points and the LOCA grid cells. The end result will be a new column <code>id</code> in the schools layer, which is the id number of the LOCA grid cell it falls in:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">ca_schools_sf</span>, bbox <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">121.0896</span>, <span class="fl">37.56298</span>, <span class="op">-</span><span class="fl">120.38750</span>, <span class="fl">38.17253</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_symbols.html" class="external-link">tm_dots</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"#333333"</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">locagrid_sf</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"#0080c0"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Current projection unknown. Long lat coordinates (wgs84) assumed.</span></span></code></pre></div>
+<p><img src="figure/ca_schools_sf_map-1.png" alt="Map showing a schools in a section of the central valley overlaid with the LOCA grid cells"></p>
+<p>Next, we do a spatial join of the points and the LOCA grid cells. The
+end result will be a new column <code>id</code> in the schools layer,
+which is the id number of the LOCA grid cell it falls in:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ca_schools_loca_sf</span> <span class="op">&lt;-</span> <span class="va">ca_schools_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_join.html" class="external-link">st_join</a></span><span class="op">(</span><span class="va">locagrid_sf</span><span class="op">)</span>
-<span class="va">ca_schools_loca_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt;   OBJECTID                              SchoolName     SchoolType    id</span>
-<span class="co">#&gt; 1        1  Envision Academy for Arts &amp; Technology           High 39897</span>
-<span class="co">#&gt; 2        2 Community School for Creative Education     Elementary 39898</span>
-<span class="co">#&gt; 3        3                         Yu Ming Charter     Elementary 39750</span>
-<span class="co">#&gt; 4        4                Urban Montessori Charter     Elementary 39898</span>
-<span class="co">#&gt; 5        5                            Epic Charter         Middle 39898</span>
-<span class="co">#&gt; 6        6      Alameda County Juvenile Hall/Court Juvenile Court 40047</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ca_schools_loca_sf</span> <span class="op">&lt;-</span> <span class="va">ca_schools_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_join.html" class="external-link">st_join</a></span><span class="op">(</span><span class="va">locagrid_sf</span><span class="op">)</span></span>
+<span><span class="va">ca_schools_loca_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   OBJECTID                              SchoolName     SchoolType    id</span></span>
+<span><span class="co">#&gt; 1        1  Envision Academy for Arts &amp; Technology           High 39897</span></span>
+<span><span class="co">#&gt; 2        2 Community School for Creative Education     Elementary 39898</span></span>
+<span><span class="co">#&gt; 3        3                         Yu Ming Charter     Elementary 39750</span></span>
+<span><span class="co">#&gt; 4        4                Urban Montessori Charter     Elementary 39898</span></span>
+<span><span class="co">#&gt; 5        5                            Epic Charter         Middle 39898</span></span>
+<span><span class="co">#&gt; 6        6      Alameda County Juvenile Hall/Court Juvenile Court 40047</span></span></code></pre></div>
 <p>Next, grab the unique values of the <code>id</code> column:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">loca_ids_schools</span> <span class="op">&lt;-</span> <span class="va">ca_schools_loca_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">loca_ids_schools</span><span class="op">)</span>
-<span class="co">#&gt;  int [1:1624] 39897 39898 39750 40047 40191 40337 40046 40486 40045 40044 ...</span></code></pre></div>
-<p>This means instead of 10,043 locations, we only have to query 1,624. That’s a pretty big savings, particularly considering that in our example each location requires 4 API calls (one for each GCM).</p>
-<p>Next we create a point layer for the 1,624 LOCA grid cells that contain schools. We could pass the grid cells as polygons, but passing them as points means we don’t have to worry about the Cal-Adapt server getting values for adjacent cells, and we don’t have to specify a spatial aggregation function.</p>
+<code class="sourceCode R"><span><span class="va">loca_ids_schools</span> <span class="op">&lt;-</span> <span class="va">ca_schools_loca_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">loca_ids_schools</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  int [1:1624] 39897 39898 39750 40047 40191 40337 40046 40486 40045 40044 ...</span></span></code></pre></div>
+<p>This means instead of 10,043 locations, we only have to query 1,624.
+That’s a pretty big savings, particularly considering that in our
+example each location requires 4 API calls (one for each GCM).</p>
+<p>Next we create a point layer for the 1,624 LOCA grid cells that
+contain schools. We could pass the grid cells as polygons, but passing
+them as points means we don’t have to worry about the Cal-Adapt server
+getting values for adjacent cells, and we don’t have to specify a
+spatial aggregation function.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">loca_ctr_sf</span> <span class="op">&lt;-</span> <span class="va">locagrid_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">loca_ids_schools</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_centroid</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; Warning in st_centroid.sf(.): st_centroid assumes attributes are constant over</span>
-<span class="co">#&gt; geometries of x</span>
-<span class="va">loca_ctr_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; Simple feature collection with 6 features and 1 field</span>
-<span class="co">#&gt; Geometry type: POINT</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: -124.1563 ymin: 41.90625 xmax: -120.2812 ymax: 41.96875</span>
-<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
-<span class="co">#&gt;      id                       geom</span>
-<span class="co">#&gt; 1 28679 POINT (-121.9063 41.96875)</span>
-<span class="co">#&gt; 2 28686 POINT (-121.4687 41.96875)</span>
-<span class="co">#&gt; 3 28705 POINT (-120.2812 41.96875)</span>
-<span class="co">#&gt; 4 28817 POINT (-124.1563 41.90625)</span>
-<span class="co">#&gt; 5 28843 POINT (-122.5312 41.90625)</span>
-<span class="co">#&gt; 6 28846 POINT (-122.3437 41.90625)</span></code></pre></div>
-<p>Next, create the API request. Here we’ll get monthly evapotranspiration at the end of the century:</p>
+<code class="sourceCode R"><span><span class="va">loca_ctr_sf</span> <span class="op">&lt;-</span> <span class="va">locagrid_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">loca_ids_schools</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_centroid</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: st_centroid assumes attributes are constant over geometries</span></span>
+<span><span class="va">loca_ctr_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Simple feature collection with 6 features and 1 field</span></span>
+<span><span class="co">#&gt; Geometry type: POINT</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -124.1563 ymin: 41.90625 xmax: -120.2812 ymax: 41.96875</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span><span class="co">#&gt;      id                       geom</span></span>
+<span><span class="co">#&gt; 1 28679 POINT (-121.9063 41.96875)</span></span>
+<span><span class="co">#&gt; 2 28686 POINT (-121.4687 41.96875)</span></span>
+<span><span class="co">#&gt; 3 28705 POINT (-120.2812 41.96875)</span></span>
+<span><span class="co">#&gt; 4 28817 POINT (-124.1563 41.90625)</span></span>
+<span><span class="co">#&gt; 5 28843 POINT (-122.5312 41.90625)</span></span>
+<span><span class="co">#&gt; 6 28846 POINT (-122.3437 41.90625)</span></span></code></pre></div>
+<p>Next, create the API request. Here we’ll get monthly
+evapotranspiration at the end of the century:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">locaschl_et_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_loc_sf.html">ca_loc_sf</a></span><span class="op">(</span>loc <span class="op">=</span> <span class="va">loca_ctr_sf</span>, idfld <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="va">gcms</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_scenario.html">ca_scenario</a></span><span class="op">(</span><span class="st">"rcp85"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="st">"et"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"month"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">2080</span>, end <span class="op">=</span> <span class="fl">2099</span><span class="op">)</span>
-
-<span class="va">locaschl_et_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; General issues</span>
-<span class="co">#&gt;  - none found</span>
-<span class="co">#&gt; Issues for querying values</span>
-<span class="co">#&gt;  - none found</span>
-<span class="co">#&gt; Issues for downloading rasters</span>
-<span class="co">#&gt;  - none found</span></code></pre></div>
-<p>Next, we fetch the data. Because this is still a lot of locations, we’ll use <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> to save it in a database:</p>
+<code class="sourceCode R"><span><span class="va">locaschl_et_cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ca_loc_sf.html">ca_loc_sf</a></span><span class="op">(</span>loc <span class="op">=</span> <span class="va">loca_ctr_sf</span>, idfld <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_gcm.html">ca_gcm</a></span><span class="op">(</span><span class="va">gcms</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_scenario.html">ca_scenario</a></span><span class="op">(</span><span class="st">"rcp85"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_cvar.html">ca_cvar</a></span><span class="op">(</span><span class="st">"et"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_period.html">ca_period</a></span><span class="op">(</span><span class="st">"month"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_years.html">ca_years</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">2080</span>, end <span class="op">=</span> <span class="fl">2099</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">locaschl_et_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/ca_preflight.html">ca_preflight</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; General issues</span></span>
+<span><span class="co">#&gt;  - none found</span></span>
+<span><span class="co">#&gt; Issues for querying values</span></span>
+<span><span class="co">#&gt;  - none found</span></span>
+<span><span class="co">#&gt; Issues for downloading rasters</span></span>
+<span><span class="co">#&gt;  - none found</span></span></code></pre></div>
+<p>Next, we fetch the data. Because this is still a lot of locations,
+we’ll use <code><a href="../reference/ca_getvals_db.html">ca_getvals_db()</a></code> to save it in a database:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span>
-<span class="va">schools_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"schools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">schools_dir</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">schools_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co">## Define a new SQLite file name</span>
-<span class="va">locaschl_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">schools_dir</span>, <span class="st">"loca_schl.sqlite"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="co">## Fetch data</span>
-<span class="va">locaschl_et_rtbl</span> <span class="op">&lt;-</span> <span class="va">locaschl_et_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/ca_getvals_db.html">ca_getvals_db</a></span><span class="op">(</span>db_fn <span class="op">=</span> <span class="va">locaschl_fn</span>, db_tbl <span class="op">=</span> <span class="st">"locaschl_et"</span>, new_recs_only <span class="op">=</span> <span class="cn">TRUE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">locaschl_et_rtbl</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 8]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.2</span></span>
-<span class="co"><span style="color: #949494;">#&gt; #   [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\schools\loca_schl.sqlite]</span></span>
-<span class="co">#&gt;      id cvar  scenario gcm        period spag  dt           val</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">28</span>679 ET    rcp85    HadGEM2-ES month  none  2080-01-31 0.626</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> <span style="text-decoration: underline;">28</span>679 ET    rcp85    HadGEM2-ES month  none  2080-02-29 0.870</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> <span style="text-decoration: underline;">28</span>679 ET    rcp85    HadGEM2-ES month  none  2080-03-31 1.75 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> <span style="text-decoration: underline;">28</span>679 ET    rcp85    HadGEM2-ES month  none  2080-04-30 2.82 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> <span style="text-decoration: underline;">28</span>679 ET    rcp85    HadGEM2-ES month  none  2080-05-31 3.05 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> <span style="text-decoration: underline;">28</span>679 ET    rcp85    HadGEM2-ES month  none  2080-06-30 2.09</span></code></pre></div>
-<p>Suppose your analysis calls for mean ET for all years and all GCMs combined. You can generate that metric for each LOCA grid with:</p>
+<code class="sourceCode R"><span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"caladaptr"</span>, which <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span>
+<span><span class="va">schools_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"schools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">schools_dir</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">schools_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Define a new SQLite file name</span></span>
+<span><span class="va">locaschl_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">schools_dir</span>, <span class="st">"loca_schl.sqlite"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span>mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Fetch data</span></span>
+<span><span class="va">locaschl_et_rtbl</span> <span class="op">&lt;-</span> <span class="va">locaschl_et_cap</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/ca_getvals_db.html">ca_getvals_db</a></span><span class="op">(</span>db_fn <span class="op">=</span> <span class="va">locaschl_fn</span>, db_tbl <span class="op">=</span> <span class="st">"locaschl_et"</span>, new_recs_only <span class="op">=</span> <span class="cn">TRUE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">locaschl_et_rtbl</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # Source:   SQL [?? x 8]</span></span>
+<span><span class="co">#&gt; # Database: sqlite 3.47.1 [C:\Users\Andy\AppData\Roaming\R\data\R\caladaptr\schools\loca_schl.sqlite]</span></span>
+<span><span class="co">#&gt;      id cvar  scenario gcm        period spag  dt           val</span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 28679 et    rcp85    HadGEM2-ES month  none  2080-01-31 0.626</span></span>
+<span><span class="co">#&gt; 2 28679 et    rcp85    HadGEM2-ES month  none  2080-02-29 0.870</span></span>
+<span><span class="co">#&gt; 3 28679 et    rcp85    HadGEM2-ES month  none  2080-03-31 1.75 </span></span>
+<span><span class="co">#&gt; 4 28679 et    rcp85    HadGEM2-ES month  none  2080-04-30 2.82 </span></span>
+<span><span class="co">#&gt; 5 28679 et    rcp85    HadGEM2-ES month  none  2080-05-31 3.05 </span></span>
+<span><span class="co">#&gt; 6 28679 et    rcp85    HadGEM2-ES month  none  2080-06-30 2.09</span></span></code></pre></div>
+<p>Suppose your analysis calls for mean ET for all years and all GCMs
+combined. You can generate that metric for each LOCA grid with:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">locaschl_meanet_tbl</span> <span class="op">&lt;-</span> <span class="va">locaschl_et_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html" class="external-link">summarise</a></span><span class="op">(</span>mean_et <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">val</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span>
-  
-<span class="va">locaschl_meanet_tbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 2</span></span>
-<span class="co">#&gt;      id mean_et</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">28</span>679   1.02 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> <span style="text-decoration: underline;">28</span>686   0.802</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> <span style="text-decoration: underline;">28</span>705   1.77 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> <span style="text-decoration: underline;">28</span>817   2.18 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> <span style="text-decoration: underline;">28</span>843   1.19 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> <span style="text-decoration: underline;">28</span>846   1.41</span></code></pre></div>
-<p>We can now join the summary of ET for each LOCA grid cell back to the schools layer, using the grid <code>id</code> as the join field.</p>
+<code class="sourceCode R"><span><span class="va">locaschl_meanet_tbl</span> <span class="op">&lt;-</span> <span class="va">locaschl_et_rtbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_et <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">val</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">locaschl_meanet_tbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 2</span></span>
+<span><span class="co">#&gt;      id mean_et</span></span>
+<span><span class="co">#&gt;   &lt;int&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 28679   1.02 </span></span>
+<span><span class="co">#&gt; 2 28686   0.802</span></span>
+<span><span class="co">#&gt; 3 28705   1.77 </span></span>
+<span><span class="co">#&gt; 4 28817   2.18 </span></span>
+<span><span class="co">#&gt; 5 28843   1.19 </span></span>
+<span><span class="co">#&gt; 6 28846   1.41</span></span></code></pre></div>
+<p>We can now join the summary of ET for each LOCA grid cell back to the
+schools layer, using the grid <code>id</code> as the join field.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ca_schools_et_sf</span> <span class="op">&lt;-</span> <span class="va">ca_schools_loca_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">locaschl_meanet_tbl</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> 
-
-<span class="va">ca_schools_et_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; Simple feature collection with 6 features and 5 fields</span>
-<span class="co">#&gt; Geometry type: POINT</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: -122.2836 ymin: 37.71595 xmax: -122.1182 ymax: 37.84737</span>
-<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
-<span class="co">#&gt;   OBJECTID                              SchoolName     SchoolType    id</span>
-<span class="co">#&gt; 1        1  Envision Academy for Arts &amp; Technology           High 39897</span>
-<span class="co">#&gt; 2        2 Community School for Creative Education     Elementary 39898</span>
-<span class="co">#&gt; 3        3                         Yu Ming Charter     Elementary 39750</span>
-<span class="co">#&gt; 4        4                Urban Montessori Charter     Elementary 39898</span>
-<span class="co">#&gt; 5        5                            Epic Charter         Middle 39898</span>
-<span class="co">#&gt; 6        6      Alameda County Juvenile Hall/Court Juvenile Court 40047</span>
-<span class="co">#&gt;     mean_et                   geometry</span>
-<span class="co">#&gt; 1 0.5725853 POINT (-122.2684 37.80468)</span>
-<span class="co">#&gt; 2 0.4645488 POINT (-122.2386 37.78464)</span>
-<span class="co">#&gt; 3 0.4560700 POINT (-122.2836 37.84737)</span>
-<span class="co">#&gt; 4 0.4645488  POINT (-122.188 37.78676)</span>
-<span class="co">#&gt; 5 0.4645488 POINT (-122.2296 37.77711)</span>
-<span class="co">#&gt; 6 1.0476258 POINT (-122.1182 37.71595)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ca_schools_et_sf</span> <span class="op">&lt;-</span> <span class="va">ca_schools_loca_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">locaschl_meanet_tbl</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ca_schools_et_sf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Simple feature collection with 6 features and 5 fields</span></span>
+<span><span class="co">#&gt; Geometry type: POINT</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -122.2836 ymin: 37.71595 xmax: -122.1182 ymax: 37.84737</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span><span class="co">#&gt;   OBJECTID                              SchoolName     SchoolType    id   mean_et                   geometry</span></span>
+<span><span class="co">#&gt; 1        1  Envision Academy for Arts &amp; Technology           High 39897 0.5725853 POINT (-122.2684 37.80468)</span></span>
+<span><span class="co">#&gt; 2        2 Community School for Creative Education     Elementary 39898 0.4645488 POINT (-122.2386 37.78464)</span></span>
+<span><span class="co">#&gt; 3        3                         Yu Ming Charter     Elementary 39750 0.4560700 POINT (-122.2836 37.84737)</span></span>
+<span><span class="co">#&gt; 4        4                Urban Montessori Charter     Elementary 39898 0.4645488  POINT (-122.188 37.78676)</span></span>
+<span><span class="co">#&gt; 5        5                            Epic Charter         Middle 39898 0.4645488 POINT (-122.2296 37.77711)</span></span>
+<span><span class="co">#&gt; 6        6      Alameda County Juvenile Hall/Court Juvenile Court 40047 1.0476258 POINT (-122.1182 37.71595)</span></span></code></pre></div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Andy Lyons.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Andy Lyons.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
-  
 
 
-  
+
 
   </body>
 </html>

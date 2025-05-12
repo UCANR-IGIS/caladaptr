@@ -1,10 +1,14 @@
 #' Split a large geom into blocks small enough to ask the API for rasters
 #'
 #' @param x A big geom
+#' @param block_area_mi2 Maximum area for each block in square miles. See details.
 #'
-#' @details The Cal-Adapt API has a limit of around 20,000 mi^2 as the maximum area for which you can download a raster.
-#' This function will take a sf data frame larger than this and return blocks that cover the same extent. Subsequently you can
+#' @details The Cal-Adapt API has a limit on the maximum area for which you can download a raster.
+#' This function will take a sf object larger than this and return blocks that cover the same extent. Subsequently you can
 #' download rasters for the individual blocks and mosaic them into the full area using ca_stars_mosaic.
+#'
+#' The size limit of the API is around 20,000 square miles (51,800 km2). The default value for `block_area_mi2` 18,000 mi^2 (46,600 km2)
+#' to provide a bit of a buffer. Smaller values will result in more polygons.
 #'
 #' Note while this function can help you work around the maximum area you can download tifs via the API, it won't help you get
 #' spatially aggregated values from a large area using the API. For that, you would need to a) use this function to download rasters,
@@ -30,11 +34,11 @@
 #'
 #' }
 
-ca_biggeom_blocks <- function(x) {
+ca_biggeom_blocks <- function(x, block_area_mi2 = 18000) {
 
   ## Define the target area and width in m2
-  target_area_m2 <- set_units(20000, "mi^2") %>% set_units("m^2") ##  51,800 km2
-  target_width_m <- target_area_m2 %>% sqrt() %>% round()         ## about 228 km
+  target_area_m2 <- set_units(block_area_mi2, "mi^2") %>% set_units("m^2")
+  target_width_m <- target_area_m2 %>% sqrt() %>% round()
 
   ## We'll use web mercator (units = m)
   epsg_webmerc <- 3857

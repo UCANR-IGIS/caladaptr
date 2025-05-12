@@ -1,3 +1,17 @@
+# caladaptr 0.7.0 (2025-05-11)
+
+* `ca_aoipreset_geom`: fixed an error caused when this function was called without loading the package (i.e., `caladaptr::ca_aoipreset_geom`). (#5)
+
+* `plot.ca_apireq`: updated argument names from tmap v3 to v4.
+
+* All vignettes converted to pre-computed Rmds, all figures given alt text (so they'll render on R-Universe - hopefully!)
+
+* add variable `block_area_mi2` argument to `ca_biggeom_blocks` (@dlebauer, #3)
+
+# caladaptr 0.6.9 (2024-05-23)
+
+* `ca_loc_pt`: fixed an issue when coords is a data frame with columns names other than `x` and `y` 
+
 # caladaptr 0.6.8 (2022-11-29)
 
 * `ca_getvals_db()`, `ca_getvals_tbl()`: trapped an error where a preset AOI falls outside the LOCA grid (e.g., Farallon Islands HUC10 watershed)

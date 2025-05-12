@@ -9,4 +9,6 @@
 ^pkgdown$
 ^Meta$
 ^tests/testthat
-
+^vignettes/articles$
+^vignettes/precompile.R$
+^vignettes/*.orig$

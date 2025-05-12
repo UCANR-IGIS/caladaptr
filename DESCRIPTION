@@ -1,8 +1,8 @@
 Package: caladaptr
 Type: Package
 Title: Import Climate Data from Cal-Adapt via the API
-Version: 0.6.8
-Date: 2022-11-29
+Version: 0.7.0
+Date: 2025-05-11
 Authors@R: c(person(given = "Andy",
                   family = "Lyons", 
                   role = c("aut", "cre"),
@@ -42,20 +42,18 @@ Imports:
     units,
     utils,
     zip
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Suggests: 
-    chillR,
-    cubelyr,
     ggplot2,
     lubridate,
-    DiagrammeR,
+    maptiles,
     httptest,
     testthat,
-    knitr,
-    parallel,
     rmarkdown,
-    roxygen2
+    roxygen2,
+    knitr
 Depends: 
     R (>= 3.6)
-VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/Needs/website: rmarkdown
+VignetteBuilder: knitr
